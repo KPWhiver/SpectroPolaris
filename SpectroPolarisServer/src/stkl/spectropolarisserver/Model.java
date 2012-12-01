@@ -1,4 +1,8 @@
+import java.util.ArrayList;
+
 
 public class Model {
-	private ArrayList<Character> d_characters;
+	private ArrayList<GameCharacter> d_characters;
+	
+	
 }

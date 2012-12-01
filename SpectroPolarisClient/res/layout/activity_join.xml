@@ -1,0 +1,55 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:background="#000000" >
+
+    <TextView
+        android:id="@+id/join_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_medium"
+        android:text="@string/menu_title"
+        android:textSize="40sp"
+        android:textColor="#ffff00"
+        android:textStyle="bold"
+        android:layout_marginBottom="10dp"
+        tools:context=".JoinActivity" />
+    
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    xmlns:tools="http://schemas.android.com/tools"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content" 
+	    android:orientation="horizontal"
+	    android:gravity="center_horizontal"
+	    android:layout_marginBottom="10dp" >
+	    
+        <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:padding="@dimen/padding_medium"
+	        android:text="@string/menu_hostIP"
+	        android:textColor="#ffff00"
+	        android:textStyle="bold" />
+        
+        <EditText 
+            android:id="@+id/join_ip"
+            android:layout_width="250dp"
+	        android:layout_height="wrap_content"
+	        android:hint="@string/menu_ipMessage"
+	        android:digits="0123456789." />
+    
+	</LinearLayout>
+	
+    <Button
+        android:id="@+id/join_join"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:text="@string/menu_join"
+        android:layout_marginBottom="10dp"
+        android:onClick="joinGame"/>
+
+
+</LinearLayout>

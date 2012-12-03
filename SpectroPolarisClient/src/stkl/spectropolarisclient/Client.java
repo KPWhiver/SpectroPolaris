@@ -8,21 +8,24 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class Client extends Thread {
+	private final int SERVER_PORT = 1337;
+	private final int TIMEOUT = 10000;
+	
 	private static Client instance;
-	final int SERVER_PORT = 1337;
 	private Socket skt;
 	private boolean connected;
-	DataOutputStream out;
+	private DataOutputStream out;
+	private DataInputStream in;
 	
 	public Client(String ip) throws UnknownHostException, IOException {
 		skt = new Socket();
-		skt.connect(new InetSocketAddress(ip, SERVER_PORT), 10000);
-		System.out.println(skt.getSoTimeout());
-		skt.setSoTimeout(10000);
+		skt.connect(new InetSocketAddress(ip, SERVER_PORT), TIMEOUT);
+		skt.setSoTimeout(TIMEOUT);
 		connected = true;
 		instance = this;
 		
 		out = new DataOutputStream(skt.getOutputStream());
+		in = new DataInputStream(skt.getInputStream());
 	}
 	
 	public static Client getInstance() {
@@ -42,31 +45,35 @@ public class Client extends Thread {
 	}
 	
 	public void run() {
-		try {
-			DataInputStream in = new DataInputStream(skt.getInputStream());
-			
+		//try {
 			while(connected) {
-				in.read();
+				//in.read();
 				
 				// Do stuff with received stuff
 				// Redraw
 				try {
 					sleep(33);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
+					System.err.println("Exception occured while tring to sleep");
 					e.printStackTrace();
 				}
 			}
-			
+		//} catch (IOException e) {
+		//	System.err.println("IOException occured reading from input stream");
+		//	e.printStackTrace();
+		//}
+		
+		try {
 			in.close();
+			out.close();
 			skt.close();
-			
-			System.out.println("Socket has been closed");
-			
 		} catch (IOException e) {
-			System.err.println("IOException occured trying to create BufferedReader");
+			System.err.println("Exception occured while closing streams and socket.");
 			e.printStackTrace();
 		}
+		
+		
+		System.out.println("Socket has been closed");
 	}
 	
 	public void close() {

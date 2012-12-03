@@ -2,6 +2,7 @@ package stkl.spectropolarisclient;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.view.MotionEvent;
 import android.view.View;
 
 public class GameView extends View {

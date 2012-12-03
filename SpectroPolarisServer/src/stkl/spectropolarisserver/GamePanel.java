@@ -11,5 +11,13 @@ public class GamePanel extends JPanel {
 
 	private Model d_model;
 	
+	public GamePanel() {
+		d_model = new Model();
+	}
+	
+	public Model model() {
+		return d_model;
+	}
+	
 	
 }

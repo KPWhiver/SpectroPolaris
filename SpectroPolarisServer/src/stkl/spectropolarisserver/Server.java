@@ -1,6 +1,6 @@
 import java.io.IOException;
 import java.net.*;
-import java.util.ArrayList;
+import java.util.*;
 
 public class Server extends Thread {
 	
@@ -42,5 +42,13 @@ public class Server extends Thread {
     public InetAddress ip() {
     	return d_server.getInetAddress();
     }
+
+	public void shutdown() {		
+		try {
+			d_server.close();
+		} catch (Exception e) {
+			System.out.println(e.getMessage() + ", java... :|");
+		}
+	}
 	
 }

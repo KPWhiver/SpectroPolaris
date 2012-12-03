@@ -27,6 +27,9 @@ public class Server extends Thread {
     public void run() {
     	while(true)
     	{
+    		if(d_server.isClosed())
+    			return;
+    		
     		try {
 				Socket socket = d_server.accept();
 				ServerThread thread = new ServerThread(socket);

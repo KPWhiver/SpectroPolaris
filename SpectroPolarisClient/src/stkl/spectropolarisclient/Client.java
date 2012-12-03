@@ -39,6 +39,7 @@ public class Client extends Thread {
 			}
 			
 			in.close();
+			skt.close();
 			
 		} catch (IOException e) {
 			System.err.println("IOException occured trying to create BufferedReader");
@@ -46,4 +47,7 @@ public class Client extends Thread {
 		}
 	}
 	
+	public void close() {
+		connected = false;
+	}
 }

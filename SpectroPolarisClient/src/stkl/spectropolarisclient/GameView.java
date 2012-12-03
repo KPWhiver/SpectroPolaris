@@ -8,15 +8,17 @@ import android.view.View;
 public class GameView extends View {
 	private int w;
 	private int h;
+	private Model model;
 
-	public GameView(Context context) {
+	public GameView(Context context, Model model) {
 		super(context);
-
+		this.model = model;
 	}
 	
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-		canvas.drawCircle((int)(0.5 * w), (int)(0.5 * h), 15, new Paint());
+		
+		model.draw(canvas);
 	}
 	
 	@Override

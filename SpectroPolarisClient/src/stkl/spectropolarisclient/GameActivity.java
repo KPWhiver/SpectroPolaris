@@ -14,10 +14,12 @@ public class GameActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
-        GameView gameView =  new GameView(this);
+        Model model = new Model();
+        
+        GameView gameView =  new GameView(this, model);
         setContentView(gameView);
         
-        GameThread gameThread = new GameThread(gameView);
+        GameThread gameThread = new GameThread(gameView, model);
         gameThread.run();
     }
 

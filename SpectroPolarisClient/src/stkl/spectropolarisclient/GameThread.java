@@ -31,12 +31,15 @@ public class GameThread extends Thread {
 			
 			// Sent data
 			//Client.getInstance().sent();
+
 			try {
-				sleep(500);
+				sleep(33);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+		
+		Client.getInstance().close();
 	}
 }

@@ -2,7 +2,6 @@ package stkl.spectropolarisclient;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.view.View;
 
 public class GameView extends View {
@@ -17,7 +16,6 @@ public class GameView extends View {
 	
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-		
 		model.draw(canvas);
 	}
 	

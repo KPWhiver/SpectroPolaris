@@ -7,6 +7,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 public class GameActivity extends Activity {
+	private GameThread gameThread;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -17,10 +18,11 @@ public class GameActivity extends Activity {
         Model model = new Model();
         
         GameView gameView =  new GameView(this, model);
+        //gameView.setModel(model);
         setContentView(gameView);
         
-        GameThread gameThread = new GameThread(gameView, model);
-        gameThread.run();
+        gameThread = new GameThread(gameView, model);
+        gameThread.start();
     }
 
     @Override
@@ -29,5 +31,10 @@ public class GameActivity extends Activity {
         return true;
     }
 
-    
+    @Override
+    protected void onStop() {
+    	super.onStop();
+    	System.out.println("onStop has been called");
+    	gameThread.close();
+    }
 }

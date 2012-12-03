@@ -8,6 +8,8 @@ import android.graphics.Point;
 
 public class Model {
 	private ArrayList<GameCharacter> d_characters;
+	private Player d_player;
+	
 	private Point motionOrigin;
 	private float motionControlX;
 	private float motionControlY;
@@ -16,6 +18,7 @@ public class Model {
 	private float shootControlY;	
 	
 	public Model() {
+		d_player = new Player(10, 10, new Paint(Paint.ANTI_ALIAS_FLAG));
 		d_characters = new ArrayList<GameCharacter>();
 		motionOrigin = new Point(-1, -1);
 		shootOrigin = new Point(-1, -1);
@@ -44,11 +47,16 @@ public class Model {
 	}
 	
 	public void step() {
+		d_player.update(motionControlX, motionControlY);
+		d_player.step();
+		
 		for(GameCharacter character : d_characters)
 			character.step();
 	}
 	
 	public void draw(Canvas canvas) {
+		d_player.draw(canvas);
+		
 		for(GameCharacter character : d_characters)
 			character.draw(canvas);
 		

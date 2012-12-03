@@ -20,7 +20,7 @@ public class GameCharacter {
 		d_x = x;
 		d_y = y;
 		d_direction = direction;
-		d_speed = 1;
+		d_speed = 0;
 		d_paint = paint;
 	}
 	

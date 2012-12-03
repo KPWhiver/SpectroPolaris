@@ -56,51 +56,57 @@ public class GameActivity extends Activity {
     		pointerCount = 2;
     	}    	
     	
+    	int actionId = event.getActionIndex();
+    	
     	for (int i = 0; i < pointerCount; i++) {
-    		int id = event.getPointerId(i);
     		
+    		int id = event.getPointerId(i);
     		int action = (event.getAction() & MotionEvent.ACTION_MASK);
     		float x = event.getX(i);
     		float y = event.getY(i);
     		
     		switch (action){
-    		case MotionEvent.ACTION_DOWN: case MotionEvent.ACTION_POINTER_DOWN:
-    			System.out.println("Down: " + event.findPointerIndex(0) + ", " + event.findPointerIndex(1));
-    			if(x > centerHorizontal) {
-    				motionPointerId = id;
-    				model.setMotionOrigin(x, y);
-    			} else {
-    				shootPointerId = id;
-    				model.setShootOrigin(x, y);
-    			}
-    			originX[id] = x;
-				originY[id] = y;
-    			break;
-
-    		case MotionEvent.ACTION_MOVE:
-    			float deltaX = x - originX[id];
-				float deltaY = y - originY[id];
-				if (id == motionPointerId) {
-					model.setMotionControls(deltaX, deltaY);
-				} else if (id == shootPointerId) {
-					model.setShootControls(deltaX, deltaY);
-				}
-    			break;
-    			
-    		case MotionEvent.ACTION_UP: case MotionEvent.ACTION_POINTER_UP: 
-    			System.out.println("Up: " + event.findPointerIndex(0) + ", " + event.findPointerIndex(1));
-    			if (id == motionPointerId) {
-    				//System.out.println("Motion released, event: " + action + " as id: " + id);
-    				motionPointerId = -2;
-					model.setMotionControls(0, 0);
-					model.setMotionOrigin(-1, -1);
-				} else if (id == shootPointerId) {
-					//System.out.println("Shoot released, event: " + action + " as id: " + id);
-					shootPointerId = -2;
-					model.setShootControls(0, 0);
-					model.setShootOrigin(-1, -1);
-				}
-    			break;
+	    		case MotionEvent.ACTION_DOWN: case MotionEvent.ACTION_POINTER_DOWN:
+	    			if (actionId == i) { 
+		    			System.out.println("Down: " + event.findPointerIndex(0) + ", " + event.findPointerIndex(1));
+		    			if(x > centerHorizontal) {
+		    				motionPointerId = id;
+		    				model.setMotionOrigin(x, y);
+		    			} else {
+		    				shootPointerId = id;
+		    				model.setShootOrigin(x, y);
+		    			}
+		    			originX[id] = x;
+						originY[id] = y;
+	    			}
+	    			break;
+	
+	    		case MotionEvent.ACTION_MOVE:
+	    			float deltaX = x - originX[id];
+					float deltaY = y - originY[id];
+					if (id == motionPointerId) {
+						model.setMotionControls(deltaX, deltaY);
+					} else if (id == shootPointerId) {
+						model.setShootControls(deltaX, deltaY);
+					}
+	    			break;
+	    			
+	    		case MotionEvent.ACTION_UP: case MotionEvent.ACTION_POINTER_UP: 
+	    			if (actionId == i) { 
+		    			System.out.println("Up: " + event.findPointerIndex(0) + ", " + event.findPointerIndex(1));
+		    			if (id == motionPointerId) {
+		    				//System.out.println("Motion released, event: " + action + " as id: " + id);
+		    				motionPointerId = -2;
+							model.setMotionControls(0, 0);
+							model.setMotionOrigin(-1, -1);
+						} else if (id == shootPointerId) {
+							//System.out.println("Shoot released, event: " + action + " as id: " + id);
+							shootPointerId = -2;
+							model.setShootControls(0, 0);
+							model.setShootOrigin(-1, -1);
+						}
+	    			}
+	    			break;
     			
     		}
     	}

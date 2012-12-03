@@ -11,10 +11,6 @@ public class GameThread extends Thread {
 		this.view = view;
 		this.model = model;
 		this.running = true;
-		
-		Paint paint = new Paint();
-		paint.setAntiAlias(true);
-		model.addGameCharacter(new GameCharacter(50, 50, 0, paint));
 	}
 
 	public void close() {

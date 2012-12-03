@@ -3,7 +3,7 @@ import java.awt.*;
 import javax.swing.*;
 
 
-public class GameCharacter extends JComponent {
+public class GameCharacter {
 	/**
 	 * 
 	 */
@@ -12,6 +12,7 @@ public class GameCharacter extends JComponent {
 	private int d_y;
 	
 	private float d_direction;
+	private float d_speed;
 	
 	private Color d_color;
 	private int d_id;
@@ -20,18 +21,24 @@ public class GameCharacter extends JComponent {
 		d_x = x;
 		d_y = y;
 		d_direction = direction;
+		d_speed = 0;
 		d_color = color;
 	}
 	
-	public void step() {
-		
+	public void update(int x, int y, float direction, float speed) {
+		d_x = x;
+		d_y = y;
+		d_direction = direction;
+		d_speed = speed;
 	}
 	
-	@Override
-    public void paintComponent(Graphics g) {
-		super.paintComponent(g);
+	public void step() {
+		d_x += Math.sin(d_direction) * d_speed;
+		d_y += Math.cos(d_direction) * d_speed;
+	}
 
-		Graphics2D g2d = (Graphics2D) g;
+    public void draw(Graphics2D g2d) {
+
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 			RenderingHints.VALUE_ANTIALIAS_ON);
 		

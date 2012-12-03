@@ -2,18 +2,16 @@ package stkl.spectropolarisclient;
 
 import java.util.regex.Matcher;
 
-import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Patterns;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
-import android.support.v4.app.NavUtils;
 
 public class JoinActivity extends Activity {
 
@@ -40,7 +38,24 @@ public class JoinActivity extends Activity {
     	Matcher matcher = Patterns.IP_ADDRESS.matcher(ipAdress);
     	
     	if(matcher.matches()) {
-    		// Connect to server with ip ipAdress.
+    		try { 
+    			Client client = new Client(ipAdress);
+    			client.start();
+    			
+    			// Start the game
+    			
+    		} catch(Exception e) {
+    			e.printStackTrace();
+    			
+    			
+    			// Show toaster to tell user connection could not be setup.
+        		Context context = getApplicationContext();
+        		CharSequence text = "Connection failed!";
+        		int duration = Toast.LENGTH_SHORT;
+
+        		Toast toast = Toast.makeText(context, text, duration);
+        		toast.show();
+    		}
     		
     	} else {
     		// Show toaster to tell user IP is invalid.

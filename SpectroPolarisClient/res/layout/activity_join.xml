@@ -39,7 +39,9 @@
             android:layout_width="250dp"
 	        android:layout_height="wrap_content"
 	        android:hint="@string/menu_ipMessage"
-	        android:digits="0123456789." />
+	        android:digits="0123456789."
+	        android:text="123.123.123.123" />
+        	<!-- Test text --> 
     
 	</LinearLayout>
 	

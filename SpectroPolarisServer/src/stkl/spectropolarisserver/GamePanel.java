@@ -1,5 +1,7 @@
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.*;
 
@@ -29,6 +31,4 @@ public class GamePanel extends JPanel {
 		Graphics2D g2d = (Graphics2D) g;
 		d_model.draw(g2d);
 	}
-	
-	
 }

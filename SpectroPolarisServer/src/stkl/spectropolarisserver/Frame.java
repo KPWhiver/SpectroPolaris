@@ -63,6 +63,7 @@ public class Frame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				d_layout.show(d_cardPanel, "game");
+				d_game.requestFocus();
 			}
 		});
 		

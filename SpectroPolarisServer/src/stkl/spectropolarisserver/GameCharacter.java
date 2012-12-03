@@ -33,8 +33,8 @@ public class GameCharacter {
 	}
 	
 	public void step() {
-		d_x += Math.sin(d_direction) * d_speed;
-		d_y += Math.cos(d_direction) * d_speed;
+		//d_x += Math.sin(d_direction) * d_speed;
+		//d_y += Math.cos(d_direction) * d_speed;
 	}
 
     public void draw(Graphics2D g2d) {

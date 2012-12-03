@@ -12,8 +12,8 @@ public class GameActivity extends Activity {
 	private GameThread gameThread;
 	private Model model;
 	private int centerHorizontal;
-	private int motionPointerId = -1;
-	private int shootPointerId = -1;
+	private int motionPointerId = -2;
+	private int shootPointerId = -2;
 	private float[] originX = new float[2];
 	private float[] originY = new float[2];
 
@@ -54,20 +54,24 @@ public class GameActivity extends Activity {
     	// Process no more than 2 touches
     	if (pointerCount > 2) {
     		pointerCount = 2;
-    	}
-    	  	
+    	}    	
+    	
     	for (int i = 0; i < pointerCount; i++) {
     		int id = event.getPointerId(i);
-    		int action =  (event.getAction() & MotionEvent.ACTION_MASK);
+    		
+    		int action = (event.getAction() & MotionEvent.ACTION_MASK);
     		float x = event.getX(i);
     		float y = event.getY(i);
     		
     		switch (action){
     		case MotionEvent.ACTION_DOWN: case MotionEvent.ACTION_POINTER_DOWN:
+    			System.out.println("Down: " + event.findPointerIndex(0) + ", " + event.findPointerIndex(1));
     			if(x > centerHorizontal) {
     				motionPointerId = id;
+    				model.setMotionOrigin(x, y);
     			} else {
     				shootPointerId = id;
+    				model.setShootOrigin(x, y);
     			}
     			originX[id] = x;
 				originY[id] = y;
@@ -84,12 +88,17 @@ public class GameActivity extends Activity {
     			break;
     			
     		case MotionEvent.ACTION_UP: case MotionEvent.ACTION_POINTER_UP: 
+    			System.out.println("Up: " + event.findPointerIndex(0) + ", " + event.findPointerIndex(1));
     			if (id == motionPointerId) {
-    				motionPointerId = -1;
+    				//System.out.println("Motion released, event: " + action + " as id: " + id);
+    				motionPointerId = -2;
 					model.setMotionControls(0, 0);
+					model.setMotionOrigin(-1, -1);
 				} else if (id == shootPointerId) {
-					shootPointerId = -1;
+					//System.out.println("Shoot released, event: " + action + " as id: " + id);
+					shootPointerId = -2;
 					model.setShootControls(0, 0);
+					model.setShootOrigin(-1, -1);
 				}
     			break;
     			

@@ -19,7 +19,7 @@ public class ServerThread extends Thread {
 			System.out.println(e.getMessage() + ", java... :|");
 			return;
 		}
-		
+		System.out.println("Connected to client");
 		d_character = new GameCharacter(100, 100, 0, Color.black);
 		SpectroPolaris.frame().gamePanel().model().addGameCharacter(d_character);
 	}

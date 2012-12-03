@@ -13,10 +13,14 @@ public class GameCharacter extends JComponent {
 	
 	private float d_direction;
 	
-	public GameCharacter(int x, int y, float direction) {
+	private Color d_color;
+	private int d_id;
+	
+	public GameCharacter(int x, int y, float direction, Color color) {
 		d_x = x;
 		d_y = y;
 		d_direction = direction;
+		d_color = color;
 	}
 	
 	public void step() {

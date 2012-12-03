@@ -19,10 +19,13 @@ public class Model {
 			character.step();
 	}
 	
-	public void draw(Graphics g) {
-		Graphics2D g2d = (Graphics2D) g;
+	public void draw(Graphics2D g2d) {
 		
 		for(GameCharacter character : d_characters)
 			character.draw(g2d);
+	}
+
+	public void removeGameCharacter(GameCharacter character) {
+		d_characters.remove(character);
 	}
 }

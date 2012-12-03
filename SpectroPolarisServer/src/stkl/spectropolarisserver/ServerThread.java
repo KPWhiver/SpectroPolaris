@@ -27,7 +27,7 @@ public class ServerThread extends Thread {
 	@Override
     public void run() {
 		if(d_character == null)
-			interrupt();
+			return;
 		
 		while(true)
 		{
@@ -39,7 +39,9 @@ public class ServerThread extends Thread {
 				
 				d_character.update(x, y, direction, speed);
 			} catch (Exception e) {
-				System.out.println(e.getMessage() + ", java... :|");
+				System.out.println("Connection to client lost");
+				SpectroPolaris.frame().gamePanel().model().removeGameCharacter(d_character);
+				return;
 			}
 		}
 	}

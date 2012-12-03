@@ -1,3 +1,6 @@
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+
 import javax.swing.*;
 
 
@@ -17,6 +20,14 @@ public class GamePanel extends JPanel {
 	
 	public Model model() {
 		return d_model;
+	}
+	
+	@Override
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		
+		Graphics2D g2d = (Graphics2D) g;
+		d_model.draw(g2d);
 	}
 	
 	

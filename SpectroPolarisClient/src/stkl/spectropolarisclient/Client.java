@@ -1,13 +1,13 @@
 package stkl.spectropolarisclient;
 
-import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class Client extends Thread {
+	private static Client instance;
 	final int SERVER_PORT = 1337;
 	private Socket skt;
 	private boolean connected;
@@ -16,6 +16,11 @@ public class Client extends Thread {
 		skt = new Socket();
 		skt.connect(new InetSocketAddress(ip, SERVER_PORT), 10000);
 		connected = true;
+		instance = this;
+	}
+	
+	public static Client getInstance() {
+		return instance;
 	}
 	
 	public void sent() {
@@ -24,10 +29,10 @@ public class Client extends Thread {
 	
 	public void run() {
 		try {
-			BufferedReader in = new BufferedReader(new InputStreamReader(skt.getInputStream()));
+			DataInputStream in = new DataInputStream(skt.getInputStream());
 			
 			while(connected) {
-				in.readLine();
+				in.read();
 				
 				// Do stuff with received stuff
 				// Redraw

@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.Menu;
@@ -38,11 +39,14 @@ public class JoinActivity extends Activity {
     	Matcher matcher = Patterns.IP_ADDRESS.matcher(ipAdress);
     	
     	if(matcher.matches()) {
+    		
     		try { 
     			Client client = new Client(ipAdress);
     			client.start();
     			
-    			// Start the game
+    			// Start the GameActivity
+    			Intent intent = new Intent(JoinActivity.this, GameActivity.class);
+    	    	JoinActivity.this.startActivity(intent);
     			
     		} catch(Exception e) {
     			e.printStackTrace();

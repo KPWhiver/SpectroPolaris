@@ -11,5 +11,6 @@
     <string name="title_activity_join">JoinActivity</string>
     <string name="menu_hostIP">Host IP:</string>
     <string name="menu_ipMessage">Host\'s ip adress</string>
+    <string name="title_activity_game">GameActivity</string>
 
 </resources>

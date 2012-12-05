@@ -31,7 +31,7 @@ public class GameActivity extends Activity {
         centerHorizontal = (int)(display.getWidth() /2);
         
         // Start game
-        model = new Model();
+        model = new Model(this);
         
         GameView gameView =  new GameView(this, model);
         //gameView.setModel(model);

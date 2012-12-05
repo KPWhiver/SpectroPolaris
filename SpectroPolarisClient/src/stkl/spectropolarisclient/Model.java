@@ -1,13 +1,18 @@
 package stkl.spectropolarisclient;
 
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 
 public class Model {
 	private ArrayList<GameCharacter> d_characters;
+	private ArrayList<Block> d_blocks;
 	private Player d_player;
 	
 	private Point motionOrigin;
@@ -17,11 +22,39 @@ public class Model {
 	private float shootControlX;
 	private float shootControlY;	
 	
-	public Model() {
+	public Model(Context context) {
 		d_player = new Player(10, 10, new Paint(Paint.ANTI_ALIAS_FLAG));
 		d_characters = new ArrayList<GameCharacter>();
 		motionOrigin = new Point(-1, -1);
 		shootOrigin = new Point(-1, -1);
+		
+		
+		InputStream is = context.getResources().openRawResource(R.raw.map);
+		DataInputStream file = new DataInputStream(is);
+		try {
+		int numOfBlocks = file.readInt();
+		
+		for(int idx = 0; idx != numOfBlocks; ++idx) {
+			int x = file.readInt();
+			int y = file.readInt();
+			int width = file.readInt();
+			int height;
+			
+			height = file.readInt();
+
+			addBlock(new Block(x, y, width, height));
+		}
+			
+		file.close();
+		
+		} catch (IOException e) {
+			System.err.println("Error occured reading from file");
+			e.printStackTrace();
+		} 
+	}
+	
+	public void addBlock(Block block) {
+		d_blocks.add(block);
 	}
 	
 	public void setMotionOrigin(float x, float y) {
@@ -59,6 +92,9 @@ public class Model {
 		
 		for(GameCharacter character : d_characters)
 			character.draw(canvas);
+				
+		for(Block block : d_blocks)
+			block.draw(canvas);
 		
 		Paint paint = new Paint();
 		paint.setTextSize(20);

@@ -9,13 +9,14 @@ import android.view.Window;
 import android.view.WindowManager;
 
 public class GameActivity extends Activity {
-	private GameThread gameThread;
-	private Model model;
-	private int centerHorizontal;
-	private int motionPointerId = -2;
-	private int shootPointerId = -2;
-	private float[] originX = new float[2];
-	private float[] originY = new float[2];
+	private GameThread d_gameThread;
+	private Model d_model;
+	private int d_centerHorizontal;
+	private int d_centerVertical;
+	private int d_motionPointerId = -2;
+	private int d_shootPointerId = -2;
+	private float[] d_originX = new float[2];
+	private float[] d_originY = new float[2];
 
 
     @SuppressWarnings("deprecation")
@@ -28,17 +29,26 @@ public class GameActivity extends Activity {
         
         // Calculate screen dimension
         Display display = getWindowManager().getDefaultDisplay();
-        centerHorizontal = (int)(display.getWidth() /2);
+        d_centerHorizontal = (int)(display.getWidth() / 2);
+        d_centerVertical = (int)(display.getHeight() / 2);
         
         // Start game
-        model = new Model(this);
+        d_model = new Model(this);
         
-        GameView gameView =  new GameView(this, model);
+        GameView gameView =  new GameView(this, d_model);
         //gameView.setModel(model);
         setContentView(gameView);
         
-        gameThread = new GameThread(gameView, model);
-        gameThread.start();
+        d_gameThread = new GameThread(gameView, d_model);
+        d_gameThread.start();
+    }
+    
+    public int centerHorizontal() {
+    	return d_centerHorizontal;
+    }
+    
+    public int centerVertical() {
+    	return d_centerVertical;
     }
 
     @Override
@@ -69,41 +79,41 @@ public class GameActivity extends Activity {
 	    		case MotionEvent.ACTION_DOWN: case MotionEvent.ACTION_POINTER_DOWN:
 	    			if (actionId == i) { 
 		    			System.out.println("Down: " + event.findPointerIndex(0) + ", " + event.findPointerIndex(1));
-		    			if(x > centerHorizontal) {
-		    				motionPointerId = id;
-		    				model.setMotionOrigin(x, y);
+		    			if(x > d_centerHorizontal) {
+		    				d_motionPointerId = id;
+		    				d_model.setMotionOrigin(x, y);
 		    			} else {
-		    				shootPointerId = id;
-		    				model.setShootOrigin(x, y);
+		    				d_shootPointerId = id;
+		    				d_model.setShootOrigin(x, y);
 		    			}
-		    			originX[id] = x;
-						originY[id] = y;
+		    			d_originX[id] = x;
+		    			d_originY[id] = y;
 	    			}
 	    			break;
 	
 	    		case MotionEvent.ACTION_MOVE:
-	    			float deltaX = x - originX[id];
-					float deltaY = y - originY[id];
-					if (id == motionPointerId) {
-						model.setMotionControls(deltaX, deltaY);
-					} else if (id == shootPointerId) {
-						model.setShootControls(deltaX, deltaY);
+	    			float deltaX = x - d_originX[id];
+					float deltaY = y - d_originY[id];
+					if (id == d_motionPointerId) {
+						d_model.setMotionControls(deltaX, deltaY);
+					} else if (id == d_shootPointerId) {
+						d_model.setShootControls(deltaX, deltaY);
 					}
 	    			break;
 	    			
 	    		case MotionEvent.ACTION_UP: case MotionEvent.ACTION_POINTER_UP: 
 	    			if (actionId == i) { 
 		    			System.out.println("Up: " + event.findPointerIndex(0) + ", " + event.findPointerIndex(1));
-		    			if (id == motionPointerId) {
+		    			if (id == d_motionPointerId) {
 		    				//System.out.println("Motion released, event: " + action + " as id: " + id);
-		    				motionPointerId = -2;
-							model.setMotionControls(0, 0);
-							model.setMotionOrigin(-1, -1);
-						} else if (id == shootPointerId) {
+		    				d_motionPointerId = -2;
+		    				d_model.setMotionControls(0, 0);
+		    				d_model.setMotionOrigin(-1, -1);
+						} else if (id == d_shootPointerId) {
 							//System.out.println("Shoot released, event: " + action + " as id: " + id);
-							shootPointerId = -2;
-							model.setShootControls(0, 0);
-							model.setShootOrigin(-1, -1);
+							d_shootPointerId = -2;
+							d_model.setShootControls(0, 0);
+							d_model.setShootOrigin(-1, -1);
 						}
 	    			}
 	    			break;
@@ -117,6 +127,6 @@ public class GameActivity extends Activity {
     @Override
     protected void onStop() {
     	super.onStop();
-    	gameThread.close();
+    	d_gameThread.close();
     }
 }

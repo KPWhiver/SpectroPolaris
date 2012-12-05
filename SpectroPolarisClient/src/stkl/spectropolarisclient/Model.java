@@ -15,19 +15,23 @@ public class Model {
 	private ArrayList<Block> d_blocks;
 	private Player d_player;
 	
-	private Point motionOrigin;
-	private float motionControlX;
-	private float motionControlY;
-	private Point shootOrigin;
-	private float shootControlX;
-	private float shootControlY;	
+	private GameActivity d_context;
 	
-	public Model(Context context) {
+	private Point d_motionOrigin;
+	private float d_motionControlX;
+	private float d_motionControlY;
+	private Point d_shootOrigin;
+	private float d_shootControlX;
+	private float d_shootControlY;	
+	
+	public Model(GameActivity context) {
 		d_player = new Player(10, 10, new Paint(Paint.ANTI_ALIAS_FLAG));
 		d_characters = new ArrayList<GameCharacter>();
-		motionOrigin = new Point(-1, -1);
-		shootOrigin = new Point(-1, -1);
+		d_blocks = new ArrayList<Block>();
+		d_motionOrigin = new Point(-1, -1);
+		d_shootOrigin = new Point(-1, -1);
 		
+		d_context = context;
 		
 		InputStream is = context.getResources().openRawResource(R.raw.map);
 		DataInputStream file = new DataInputStream(is);
@@ -58,21 +62,21 @@ public class Model {
 	}
 	
 	public void setMotionOrigin(float x, float y) {
-		motionOrigin.set((int)x, (int)y);
+		d_motionOrigin.set((int)x, (int)y);
 	}
 
 	public void setShootOrigin(float x, float y) {
-		shootOrigin.set((int)x, (int)y);
+		d_shootOrigin.set((int)x, (int)y);
 	}
 	
 	public void setMotionControls(float controlX, float controlY) {
-		this.motionControlX = controlX;
-		this.motionControlY = controlY;
+		d_motionControlX = controlX;
+		d_motionControlY = controlY;
 	}
 	
 	public void setShootControls(float controlX, float controlY) {
-		this.shootControlX = controlX;
-		this.shootControlY = controlY;
+		d_shootControlX = controlX;
+		d_shootControlY = controlY;
 	}
 	
 	public void addGameCharacter(GameCharacter character) {
@@ -80,7 +84,7 @@ public class Model {
 	}
 	
 	public void step() {
-		d_player.update(motionControlX, motionControlY);
+		d_player.update(d_motionControlX, d_motionControlY);
 		d_player.step();
 		
 		for(GameCharacter character : d_characters)
@@ -88,7 +92,14 @@ public class Model {
 	}
 	
 	public void draw(Canvas canvas) {
-		d_player.draw(canvas);
+		canvas.save();
+		
+		canvas.scale(4, 4, d_context.centerHorizontal(), d_context.centerVertical());
+		
+		d_player.draw(canvas, d_context.centerHorizontal(), d_context.centerVertical());
+		
+		canvas.translate(-d_player.xOffset() + d_context.centerHorizontal(),
+				 -d_player.yOffset() + d_context.centerVertical());
 		
 		for(GameCharacter character : d_characters)
 			character.draw(canvas);
@@ -96,16 +107,18 @@ public class Model {
 		for(Block block : d_blocks)
 			block.draw(canvas);
 		
+		canvas.restore();
+		
 		Paint paint = new Paint();
 		paint.setTextSize(20);
-		canvas.drawText("Motion Controls: " + motionControlX + ", " + motionControlY, 10, 20, paint);
-		canvas.drawText("Shoot Controls: " + shootControlX + ", " + shootControlY, 10, 40, paint);
+		canvas.drawText("Motion Controls: " + d_motionControlX + ", " + d_motionControlY, 10, 20, paint);
+		canvas.drawText("Shoot Controls: " + d_shootControlX + ", " + d_shootControlY, 10, 40, paint);
 		
-		if(!motionOrigin.equals(-1, -1)) {
-			canvas.drawCircle(motionOrigin.x, motionOrigin.y, 5, paint);
+		if(!d_motionOrigin.equals(-1, -1)) {
+			canvas.drawCircle(d_motionOrigin.x, d_motionOrigin.y, 5, paint);
 		}
-		if(!shootOrigin.equals(-1, -1)) {
-			canvas.drawCircle(shootOrigin.x, shootOrigin.y, 5, paint);
+		if(!d_shootOrigin.equals(-1, -1)) {
+			canvas.drawCircle(d_shootOrigin.x, d_shootOrigin.y, 5, paint);
 		}
 	}
 }

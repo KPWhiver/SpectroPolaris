@@ -6,7 +6,7 @@ import android.graphics.Paint;
 public class Player {
 	private final int MAX_OFFSET = 50;
 	private final int MIN_OFFSET = -MAX_OFFSET;
-	private final double SPEED_MOD = 0.1;
+	private final double SPEED_MOD = 0.05;
 	
 	private int d_x;
 	private int d_y;
@@ -35,8 +35,16 @@ public class Player {
 		
 		Client.getInstance().sent(d_x, d_y, d_xOffset, d_yOffset);
 	}
+	
+	public float xOffset() {
+		return d_x;
+	}
+	
+	public float yOffset() {
+		return d_y;
+	}
 
-    public void draw(Canvas canvas) {
-    	canvas.drawCircle(d_x, d_y, 20, d_paint);
+    public void draw(Canvas canvas, int centerHorizontal, int centerVertical) {
+    	canvas.drawCircle(centerHorizontal, centerVertical, 5, d_paint);
 	}
 }

@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.io.*;
 import java.net.*;
+import java.nio.ByteBuffer;
 
 
 public class ServerThread extends Thread {
@@ -9,12 +10,12 @@ public class ServerThread extends Thread {
 	
 	GameCharacter d_character = null;
 	
-	DataInputStream d_in;
+	InputStream d_in;
 	
 	public ServerThread(Socket socket) {
 		d_socket = socket;
 		try {
-			d_in = new DataInputStream(d_socket.getInputStream());
+			d_in = d_socket.getInputStream();
 		} catch (Exception e) {
 			System.out.println(e.getMessage() + ", java... :|");
 			return;
@@ -25,17 +26,31 @@ public class ServerThread extends Thread {
 	}
 	
 	@Override
-    public void run() {
+  public void run() {
 		if(d_character == null)
 			return;
 		
-		while(true)
-		{
+		byte[] bytes = new byte[16];
+		
+		while(true) {
 			try {
-				int x = d_in.readInt();
-				int y = d_in.readInt();
-				float direction = d_in.readFloat();
-				float speed = d_in.readFloat();
+			  int numOfBytes = d_in.read(bytes, 0, 16);
+			  			  
+			  if(numOfBytes < 0) {
+			    throw new Exception("Connection to client lost");
+			  }
+			  if(numOfBytes < 16) {
+			    System.out.println("Received only " + numOfBytes + " bytes");
+			    continue;
+			  }
+
+			  
+			  ByteBuffer wrapper = ByteBuffer.wrap(bytes);
+			  
+				int x = wrapper.getInt();
+				int y = wrapper.getInt();
+				float direction = wrapper.getFloat();
+				float speed = wrapper.getFloat();
 				
 				d_character.update(x, y, direction, speed);
 			} catch (Exception e) {

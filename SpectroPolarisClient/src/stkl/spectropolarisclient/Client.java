@@ -33,12 +33,12 @@ public class Client extends Thread {
 		return instance;
 	}
 	
-	public void sent(int x, int y, float direction, float speed) {
+	public void sent(float x, float y, float direction, float speed) {
 		try {
 			ByteBuffer buffer = ByteBuffer.allocate(16);
 			
-			buffer.putInt(x);
-			buffer.putInt(y);
+			buffer.putFloat(x);
+			buffer.putFloat(y);
 			buffer.putFloat(direction);
 			buffer.putFloat(speed);
 			

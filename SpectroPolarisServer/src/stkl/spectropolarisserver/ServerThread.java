@@ -10,12 +10,12 @@ public class ServerThread extends Thread {
 	
 	GameCharacter d_character = null;
 	
-	InputStream d_in;
+	BufferedInputStream d_in;
 	
 	public ServerThread(Socket socket) {
 		d_socket = socket;
 		try {
-			d_in = d_socket.getInputStream();
+			d_in = new BufferedInputStream(d_socket.getInputStream());
 		} catch (Exception e) {
 			System.out.println(e.getMessage() + ", java... :|");
 			return;
@@ -34,18 +34,17 @@ public class ServerThread extends Thread {
 		
 		while(true) {
 			try {
-			  int numOfBytes = d_in.read(bytes, 0, 16);
+			    int numOfBytes = d_in.read(bytes, 0, 16);
 			  			  
-			  if(numOfBytes < 0) {
-			    throw new Exception("Connection to client lost");
-			  }
-			  if(numOfBytes < 16) {
-			    System.out.println("Received only " + numOfBytes + " bytes");
-			    continue;
-			  }
-
+			    if(numOfBytes < 0) {
+			        throw new Exception("Connection to client lost");
+			    }
+			    if(numOfBytes < 16) {
+			      System.out.println("Received only " + numOfBytes + " bytes");
+			      continue;
+			    }
 			  
-			  ByteBuffer wrapper = ByteBuffer.wrap(bytes);
+			    ByteBuffer wrapper = ByteBuffer.wrap(bytes);
 			  
 				float x = wrapper.getFloat();
 				float y = wrapper.getFloat();

@@ -1,3 +1,5 @@
+import java.util.Timer;
+
 public class SpectroPolaris 
 {
 	private static Frame s_frame;
@@ -25,12 +27,12 @@ public class SpectroPolaris
 		s_server.start();
 		
 		while(s_frame.isVisible())
-		{
+		{			
 			s_frame.gamePanel().model().step();
 			
 			s_frame.gamePanel().repaint();
 			try {
-				Thread.sleep(10);
+				Thread.sleep(6);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

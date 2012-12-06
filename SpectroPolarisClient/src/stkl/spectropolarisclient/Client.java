@@ -1,11 +1,12 @@
 package stkl.spectropolarisclient;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 
 public class Client extends Thread {
 	private final int SERVER_PORT = 1337;
@@ -14,8 +15,8 @@ public class Client extends Thread {
 	private static Client instance;
 	private Socket skt;
 	private boolean connected;
-	private DataOutputStream out;
-	private DataInputStream in;
+	private OutputStream out;
+	private InputStream in;
 	
 	public Client(String ip) throws UnknownHostException, IOException {
 		skt = new Socket();
@@ -24,20 +25,24 @@ public class Client extends Thread {
 		connected = true;
 		instance = this;
 		
-		out = new DataOutputStream(skt.getOutputStream());
-		in = new DataInputStream(skt.getInputStream());
+		out = skt.getOutputStream();
+		in = skt.getInputStream();
 	}
 	
 	public static Client getInstance() {
 		return instance;
 	}
 	
-	public void sent(int x, int y, float direction, float speed) {
+	public void sent(float x, float y, float direction, float speed) {
 		try {
-			out.writeInt(x);
-			out.writeInt(y);
-			out.writeFloat(direction);
-			out.writeFloat(speed);
+			ByteBuffer buffer = ByteBuffer.allocate(16);
+			
+			buffer.putFloat(x);
+			buffer.putFloat(y);
+			buffer.putFloat(direction);
+			buffer.putFloat(speed);
+			
+			out.write(buffer.array());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

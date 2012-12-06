@@ -43,7 +43,8 @@ public class GameCharacter {
 			RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		g2d.setColor(Color.red);
-		g2d.fillOval((int) (d_x) - 10, (int) (d_y) - 10, 20, 20);
+		
+		g2d.fillOval((int) (d_x) - 5, (int) (d_y) - 5, 10, 10);
 	}
 	
 	

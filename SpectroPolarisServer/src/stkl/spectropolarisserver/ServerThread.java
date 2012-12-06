@@ -47,8 +47,8 @@ public class ServerThread extends Thread {
 			  
 			  ByteBuffer wrapper = ByteBuffer.wrap(bytes);
 			  
-				int x = wrapper.getInt();
-				int y = wrapper.getInt();
+				float x = wrapper.getFloat();
+				float y = wrapper.getFloat();
 				float direction = wrapper.getFloat();
 				float speed = wrapper.getFloat();
 				

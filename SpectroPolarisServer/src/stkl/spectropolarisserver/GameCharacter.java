@@ -45,7 +45,7 @@ public class GameCharacter {
 		g2d.setColor(Color.red);
 		g2d.fillOval((int) (d_x) - 5, (int) (d_y) - 5, 10, 10);
 		
-		System.out.println((int) (d_x) + " " + (int) (d_y));
+		System.out.println("draw: " + (int) (d_x) + " " + (int) (d_y));
 	}
 	
 	

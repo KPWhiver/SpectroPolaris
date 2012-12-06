@@ -52,6 +52,8 @@ public class ServerThread extends Thread {
 				float direction = wrapper.getFloat();
 				float speed = wrapper.getFloat();
 				
+				System.out.println("rcv: " + (int) (x) + " " + (int) (y));
+				
 				d_character.update(x, y, direction, speed);
 			} catch (Exception e) {
 				System.out.println("Connection to client lost");

@@ -32,8 +32,8 @@ public class ServerThread extends Thread {
 		while(true)
 		{
 			try {
-				int x = d_in.readInt();
-				int y = d_in.readInt();
+				float x = d_in.readFloat();
+				float y = d_in.readFloat();
 				float direction = d_in.readFloat();
 				float speed = d_in.readFloat();
 				

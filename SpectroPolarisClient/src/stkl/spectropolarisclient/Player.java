@@ -1,6 +1,7 @@
 package stkl.spectropolarisclient;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 
 public class Player {
@@ -22,6 +23,7 @@ public class Player {
 		d_xOffset = 0;
 		d_yOffset = 0;
 		d_paint = paint;
+		d_paint.setColor(Color.RED);
 	}
 	
 	public void update(float xOffset, float yOffset) {

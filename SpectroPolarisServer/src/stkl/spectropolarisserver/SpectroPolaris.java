@@ -28,7 +28,7 @@ public class SpectroPolaris
 		{
 			s_frame.gamePanel().model().step();
 			try {
-				Thread.sleep(17);
+				Thread.sleep(33);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

@@ -7,8 +7,8 @@ import android.util.FloatMath;
 
 
 public class GameCharacter {
-	private int d_x;
-	private int d_y;
+	private float d_x;
+	private float d_y;
 	
 	private float d_direction;
 	private float d_speed;
@@ -16,7 +16,7 @@ public class GameCharacter {
 	private Paint d_paint;
 	private int d_id;
 	
-	public GameCharacter(int x, int y, float direction, Paint paint) {
+	public GameCharacter(float x, float y, float direction, Paint paint) {
 		d_x = x;
 		d_y = y;
 		d_direction = direction;
@@ -24,7 +24,7 @@ public class GameCharacter {
 		d_paint = paint;
 	}
 	
-	public void update(int x, int y, float direction, float speed) {
+	public void update(float x, float y, float direction, float speed) {
 		d_x = x;
 		d_y = y;
 		d_direction = direction;

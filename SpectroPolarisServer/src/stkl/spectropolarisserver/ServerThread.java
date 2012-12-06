@@ -34,30 +34,29 @@ public class ServerThread extends Thread {
 		
 		while(true) {
 			try {
+			  int numOfBytes = d_in.read(bytes, 0, 16);
+			  			  
+			  if(numOfBytes < 0) {
+			    throw new Exception("Connection to client lost");
+			  }
+			  if(numOfBytes < 16) {
+			    System.out.println("Received only " + numOfBytes + " bytes");
+			    continue;
+			  }
 
-				int numOfBytes = d_in.read(bytes, 0, 16);
-				  			  
-				if(numOfBytes < 0) {
-				    throw new Exception("Connection to client lost");
-				}
-				if(numOfBytes < 16) {
-				    System.out.println("Received only " + numOfBytes + " bytes");
-				    continue;
-				}
-				
-				  
-				ByteBuffer wrapper = ByteBuffer.wrap(bytes);
-				
-				float x = wrapper.getFloat();
-				float y = wrapper.getFloat();
+			  
+			  ByteBuffer wrapper = ByteBuffer.wrap(bytes);
+			  
+				int x = wrapper.getInt();
+				int y = wrapper.getInt();
 				float direction = wrapper.getFloat();
 				float speed = wrapper.getFloat();
 				
 				d_character.update(x, y, direction, speed);
 			} catch (Exception e) {
-			    System.out.println("Connection to client lost");
-			    SpectroPolaris.frame().gamePanel().model().removeGameCharacter(d_character);
-			    return;
+				System.out.println("Connection to client lost");
+				SpectroPolaris.frame().gamePanel().model().removeGameCharacter(d_character);
+				return;
 			}
 		}
 	}

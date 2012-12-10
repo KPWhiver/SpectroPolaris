@@ -57,7 +57,7 @@ public class ServerThread extends Thread {
 				d_player.update(x, y, direction, speed);
 			} catch (Exception e) {
 				System.out.println("Connection to client lost");
-				SpectroPolaris.frame().gamePanel().model().removeGameCharacter(d_player);
+				SpectroPolaris.frame().gamePanel().model().removePlayer(d_player);
 				return;
 			}
 			

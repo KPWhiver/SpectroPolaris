@@ -16,6 +16,7 @@ import android.graphics.Point;
 public class Model {
 	private ArrayList<GameCharacter> d_characters;
 	private ArrayList<Bullet> d_bullets;
+	private int d_numOfBullets;
 	private ArrayList<Block> d_blocks;
 	private Player d_player;
 	
@@ -31,7 +32,10 @@ public class Model {
 	public Model(GameActivity context) {
 		d_player = new Player(10, 10, new Paint(Paint.ANTI_ALIAS_FLAG));
 		d_characters = new ArrayList<GameCharacter>();
+		
 		d_bullets = new ArrayList<Bullet>();
+		d_numOfBullets = 0;
+		
 		d_blocks = new ArrayList<Block>();
 		d_motionOrigin = new Point(-1, -1);
 		d_shootOrigin = new Point(-1, -1);
@@ -88,13 +92,21 @@ public class Model {
 		d_characters.add(character);
 	}
 	
-	public void addBullet(Bullet bullet) {
-		d_bullets.add(bullet);
+	public Bullet addBullet() {
+		if(d_numOfBullets == d_bullets.size()) {
+			Bullet newBullet = new Bullet();
+			d_bullets.add(newBullet);
+			++d_numOfBullets;
+			return newBullet;
+		}
+		else // d_numOfBullets < d_bullets.size()
+		{
+			++d_numOfBullets;
+			return d_bullets.get(d_numOfBullets - 1);
+		}
 	}
 	
-	public void removeBullet(Bullet bullet) {
-		d_bullets.remove(bullet);
-	}
+
 	
 	public void step() {
 		d_player.update(d_motionControlX, d_motionControlY, d_shootControlX, d_shootControlY);
@@ -103,12 +115,22 @@ public class Model {
 		for(GameCharacter character : d_characters)
 			character.step();
 		
-		Iterator<Bullet> i = d_bullets.iterator();
-		while (i.hasNext())
-			if(i.next().step())
-				i.remove();
+		for(int index = 0; index != d_numOfBullets; ++index) {
+			Bullet bullet = d_bullets.get(index);
+			if(bullet.step())
+			{
+				removeBullet(bullet);
+				--index;
+			}
+		}
 	}
-	
+
+	public void removeBullet(Bullet bullet) {
+		--d_numOfBullets;
+		bullet.instantiate(d_bullets.get(d_numOfBullets));
+		d_bullets.get(d_numOfBullets).destroy();
+	}
+
 	public void draw(Canvas canvas) {
 		canvas.save();
 		
@@ -150,9 +172,7 @@ public class Model {
 		{
 			if(block.collision(potentialX, potentialY, radius))
 				return true;
-		}
-		
-		
+		}	
 		return false;
 	}
 }

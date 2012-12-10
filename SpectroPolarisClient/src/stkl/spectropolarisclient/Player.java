@@ -40,7 +40,7 @@ public class Player {
 		
 		if(xShootOffset != 0 && yShootOffset != 0) {
 			d_shootDirection = (float) Math.atan2(xShootOffset, yShootOffset);
-			new Bullet(d_x, d_y, d_shootDirection);
+			GameActivity.getInstance().model().addBullet().instantiate(d_x, d_y, d_shootDirection);
 		}
 	}
 	

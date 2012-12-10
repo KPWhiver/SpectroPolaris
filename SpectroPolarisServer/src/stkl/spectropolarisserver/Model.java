@@ -96,8 +96,11 @@ public class Model {
 		for(GameCharacter character : d_characters)
 			character.draw(g2d);
 		
-		for(Player player : d_players)
-			player.draw(g2d);
+		synchronized(d_players) {
+			
+			for(Player player : d_players)
+				player.draw(g2d);
+		}
 		
 		for(Block block : d_blocks)
 			block.draw(g2d);

@@ -21,6 +21,7 @@ public class Model {
 	private Player d_player;
 	
 	private GameActivity d_context;
+	private float d_scale;
 	
 	private Point d_motionOrigin;
 	private float d_motionControlX;
@@ -64,6 +65,11 @@ public class Model {
 			System.err.println("Error occured reading from file");
 			e.printStackTrace();
 		} 
+		
+		float numOfPixels = 500;
+		float minScreenDimension = Math.min(d_context.centerHorizontal() * 2, d_context.centerVertical() * 2);
+		
+		d_scale = minScreenDimension / numOfPixels;
 	}
 	
 	public void addBlock(Block block) {
@@ -134,7 +140,7 @@ public class Model {
 	public void draw(Canvas canvas) {
 		canvas.save();
 		
-		canvas.scale(4, 4, d_context.centerHorizontal(), d_context.centerVertical());
+		canvas.scale(4 * d_scale, 4 * d_scale, d_context.centerHorizontal(), d_context.centerVertical());
 		
 		d_player.draw(canvas, d_context.centerHorizontal(), d_context.centerVertical());
 		

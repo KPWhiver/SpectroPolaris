@@ -32,7 +32,8 @@ public class JoinActivity extends Activity {
         
         // Read ip adresses from memory
         try {
-        	ObjectInputStream in = new ObjectInputStream(openFileInput("ip_adresses"));
+        	ObjectInputStream in = new ObjectInputStream(
+        			openFileInput(getResources().getString(R.string.ip_adresses)));
 			adresses = (ArrayList<String>) in.readObject();
 			in.close();
 		} catch (IOException e) {
@@ -43,10 +44,7 @@ public class JoinActivity extends Activity {
 		}
         
         if(adresses == null)
-        	System.out.println("adresses equals null");
         	adresses = new ArrayList<String>();
-        
-        System.out.println(adresses.toString());
         
         CustomAutoCompleteTextView textView = (CustomAutoCompleteTextView) findViewById(R.id.join_ip);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, adresses);
@@ -56,12 +54,10 @@ public class JoinActivity extends Activity {
     @Override
     protected void onPause() {
     	// Store the ip adresses
-    	System.out.println("Storing adresses");
-    	System.out.println(adresses.toString());
     	try {
-			ObjectOutputStream out =  new ObjectOutputStream(openFileOutput("ip_adresses", MODE_PRIVATE));
+			ObjectOutputStream out =  new ObjectOutputStream(
+					openFileOutput(getResources().getString(R.string.ip_adresses), MODE_PRIVATE));
 			out.writeObject(adresses);
-			out.flush();
 			out.close();
 		} catch (IOException e) {
 			System.err.println("Error writing ip adresses to file");
@@ -91,8 +87,9 @@ public class JoinActivity extends Activity {
     			Client client = new Client(ipAdress);
     			client.start();
     			
-    			adresses.add(ipAdress);
-    			
+    			if(!adresses.contains(ipAdress)) {
+    				adresses.add(ipAdress);
+    			}    			
     			
     			// Start the GameActivity
     			Intent intent = new Intent(JoinActivity.this, GameActivity.class);

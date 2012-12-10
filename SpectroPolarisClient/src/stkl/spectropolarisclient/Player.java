@@ -18,13 +18,17 @@ public class Player {
 	
 	private Paint d_paint;
 	
-	public Player(int x, int y, Paint paint) {
+	private Model d_model;
+	
+	public Player(int x, int y, Paint paint, Model model) {
 		d_x = x;
 		d_y = y;
 		d_direction = 0;
 		d_speed = 0;
 		d_paint = paint;
 		d_paint.setColor(Color.RED);
+		
+		d_model = model;
 	}
 	
 	public void update(float xOffset, float yOffset) {
@@ -35,8 +39,14 @@ public class Player {
 	}
 	
 	public void step() {
-		d_x += FloatMath.sin(d_direction) * d_speed;
-		d_y += FloatMath.cos(d_direction) * d_speed;
+		float potentialX = d_x + FloatMath.sin(d_direction) * d_speed;
+		float potentialY = d_y + FloatMath.cos(d_direction) * d_speed;
+		
+		if(d_model.collision(potentialX, potentialY, 5) == false)
+		{
+			d_x = potentialX;
+			d_y = potentialY;
+		}
 		
 		Client.getInstance().sent(d_x, d_y, d_direction, d_speed);
 	}

@@ -77,7 +77,11 @@ public class Model {
 			character.step();
 	}
 	
+	private static long time = 0;
+	
 	public void draw(Graphics2D g2d) {
+		System.out.println(System.nanoTime() - time);
+		time = System.nanoTime();
 		
 		for(GameCharacter character : d_characters)
 			character.draw(g2d);

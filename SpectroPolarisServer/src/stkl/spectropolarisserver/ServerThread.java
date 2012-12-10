@@ -33,15 +33,16 @@ public class ServerThread extends Thread {
 		byte[] bytes = new byte[16];
 		
 		while(true) {
+			
 			try {
 			    int numOfBytes = d_in.read(bytes, 0, 16);
 			  			  
-			    if(numOfBytes < 0) {
+			    if(numOfBytes < 0)
 			        throw new Exception("Connection to client lost");
-			    }
+			    
 			    if(numOfBytes < 16) {
-			      System.out.println("Received only " + numOfBytes + " bytes");
-			      continue;
+			        System.out.println("Received only " + numOfBytes + " bytes");
+			        continue;
 			    }
 			  
 			    ByteBuffer wrapper = ByteBuffer.wrap(bytes);
@@ -51,7 +52,7 @@ public class ServerThread extends Thread {
 				float direction = wrapper.getFloat();
 				float speed = wrapper.getFloat();
 				
-				System.out.println("rcv: " + (int) (x) + " " + (int) (y));
+				//System.out.println("rcv: " + (int) (x) + " " + (int) (y));
 				
 				d_character.update(x, y, direction, speed);
 			} catch (Exception e) {
@@ -59,6 +60,7 @@ public class ServerThread extends Thread {
 				SpectroPolaris.frame().gamePanel().model().removeGameCharacter(d_character);
 				return;
 			}
+			
 		}
 	}
 

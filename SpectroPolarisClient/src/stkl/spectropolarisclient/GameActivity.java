@@ -129,4 +129,5 @@ public class GameActivity extends Activity {
     	super.onStop();
     	d_gameThread.close();
     }
+
 }

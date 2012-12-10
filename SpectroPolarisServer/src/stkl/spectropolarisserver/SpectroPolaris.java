@@ -31,13 +31,12 @@ public class SpectroPolaris
 			s_frame.gamePanel().model().step();
 			
 			s_frame.gamePanel().repaint();
+			
 			try {
-				Thread.sleep(6);
+				Thread.sleep(1);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
-			
 		}
 	}
 

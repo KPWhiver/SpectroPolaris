@@ -40,9 +40,6 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 		
 		Graphics2D g2d = (Graphics2D) g;
 		d_model.draw(g2d);
-		
-		
-		
 	}
 
 	@Override

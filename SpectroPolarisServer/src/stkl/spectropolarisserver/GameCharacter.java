@@ -17,6 +17,8 @@ public class GameCharacter {
 	private Color d_color;
 	private int d_id;
 	
+	private static long time = 0;
+	
 	public GameCharacter(float x, float y, float direction, Color color) {
 		d_x = x;
 		d_y = y;
@@ -38,14 +40,14 @@ public class GameCharacter {
 	}
 
     public void draw(Graphics2D g2d) {
-
+    	
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 			RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		g2d.setColor(Color.red);
 		g2d.fillOval((int) (d_x) - 5, (int) (d_y) - 5, 10, 10);
 		
-		System.out.println("draw: " + (int) (d_x) + " " + (int) (d_y));
+		//System.out.println("draw: " + (int) (d_x) + " " + (int) (d_y));
 	}
 	
 	

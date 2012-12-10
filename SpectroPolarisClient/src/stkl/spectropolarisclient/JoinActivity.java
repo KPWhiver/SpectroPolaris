@@ -47,7 +47,7 @@ public class JoinActivity extends Activity {
     			// Start the GameActivity
     			Intent intent = new Intent(JoinActivity.this, GameActivity.class);
     	    	JoinActivity.this.startActivity(intent);
-    			
+
     		} catch(Exception e) {
     			e.printStackTrace();
     			

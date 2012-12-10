@@ -42,5 +42,13 @@ public class Block {
 	public void draw(Canvas canvas) {
 		canvas.drawRect(rect, paint);
 	}
+
+	public boolean collision(float potentialX, float potentialY, int radius) {
+		
+		if(Rect.intersects(rect, new Rect((int)potentialX - radius, (int)potentialY - radius, (int)potentialX + radius, (int)potentialY + radius)))
+			return true;
+		
+		return false;
+	}
 }
 

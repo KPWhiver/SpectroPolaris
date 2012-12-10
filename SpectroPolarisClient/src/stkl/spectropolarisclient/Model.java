@@ -26,7 +26,7 @@ public class Model {
 	private float d_shootControlY;	
 	
 	public Model(GameActivity context) {
-		d_player = new Player(10, 10, new Paint(Paint.ANTI_ALIAS_FLAG));
+		d_player = new Player(10, 10, new Paint(Paint.ANTI_ALIAS_FLAG), this);
 		d_characters = new ArrayList<GameCharacter>();
 		d_blocks = new ArrayList<Block>();
 		d_motionOrigin = new Point(-1, -1);
@@ -122,5 +122,17 @@ public class Model {
 		if(!d_shootOrigin.equals(-1, -1)) {
 			canvas.drawCircle(d_shootOrigin.x, d_shootOrigin.y, 5, paint);
 		}
+	}
+
+	public boolean collision(float potentialX, float potentialY, int radius) {
+				
+		for(Block block : d_blocks)
+		{
+			if(block.collision(potentialX, potentialY, radius))
+				return true;
+		}
+		
+		
+		return false;
 	}
 }

@@ -34,8 +34,6 @@ public class GameCharacter {
 	public void step() {
 		d_x += FloatMath.sin(d_direction) * d_speed;
 		d_y += FloatMath.cos(d_direction) * d_speed;
-		
-		Client.getInstance().sent(d_x, d_y, d_direction, d_speed);
 	}
 
     public void draw(Canvas canvas) {

@@ -34,14 +34,13 @@
 	        android:textColor="#ffff00"
 	        android:textStyle="bold" />
         
-        <EditText 
+        <stkl.spectropolarisclient.CustomAutoCompleteTextView 
             android:id="@+id/join_ip"
             android:layout_width="250dp"
 	        android:layout_height="wrap_content"
 	        android:hint="@string/menu_ipMessage"
 	        android:digits="0123456789."
-	        android:text="129.125.75.220" />
-        	<!-- Test text --> 
+	        android:completionThreshold="1" />
     
 	</LinearLayout>
 	

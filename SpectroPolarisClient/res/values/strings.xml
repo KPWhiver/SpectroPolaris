@@ -12,5 +12,6 @@
     <string name="menu_hostIP">Host IP:</string>
     <string name="menu_ipMessage">Host\'s ip adress</string>
     <string name="title_activity_game">GameActivity</string>
+    <string name="ip_adresses">ip_adresses</string>
 
 </resources>

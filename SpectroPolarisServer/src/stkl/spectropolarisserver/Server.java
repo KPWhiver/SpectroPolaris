@@ -8,8 +8,38 @@ public class Server extends Thread {
 	
 	private ArrayList<ServerThread> d_threads;
 	
+	private String d_ip;
+	
 	public Server(int port)
 	{
+		d_ip = null;
+		try {
+			Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+	        while(interfaces.hasMoreElements())
+	        {
+	            NetworkInterface netInterface = interfaces.nextElement();
+	            Enumeration<InetAddress> addresses = netInterface.getInetAddresses();
+	            while(addresses.hasMoreElements())
+	            {
+	                InetAddress address = addresses.nextElement();
+	                
+	                if(address.getHostAddress().contains(":") || address.getHostAddress().startsWith("127"))
+	                	continue;
+	                else 
+	                {
+	                	d_ip = address.getHostAddress();
+	                	break;
+	                }
+	            }
+	            if(d_ip != null)
+	            	break;
+	        }
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.exit(1);
+		}
+		
 		d_threads = new ArrayList<ServerThread>();
 		
 		d_server = null;
@@ -42,8 +72,12 @@ public class Server extends Thread {
     	}
     }
     
-    public InetAddress ip() {
-    	return d_server.getInetAddress();
+    public String ip() {
+    	return d_ip;
+    }
+    
+    public int port() {
+    	return d_server.getLocalPort();
     }
 
 	public void shutdown() {		

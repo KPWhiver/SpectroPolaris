@@ -112,7 +112,7 @@ public class Model {
 			d_players.get(index).drawUI(g2d, index);
 		
 		g2d.setColor(Color.WHITE);
-		g2d.drawString("Connect to: " + SpectroPolaris.server().ip() + ":" + SpectroPolaris.server().port(), 805, 750);
+		g2d.drawString("Connect to: " + SpectroPolaris.server().ip(), 805, 750);
 	}
 
 	public void removeGameCharacter(GameCharacter character) {

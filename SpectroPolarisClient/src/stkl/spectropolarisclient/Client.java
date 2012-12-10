@@ -20,6 +20,7 @@ public class Client extends Thread {
 	
 	public Client(String ip) throws UnknownHostException, IOException {
 		skt = new Socket();
+		skt.setTcpNoDelay(true);
 		skt.connect(new InetSocketAddress(ip, SERVER_PORT), TIMEOUT);
 		skt.setSoTimeout(TIMEOUT);
 		connected = true;

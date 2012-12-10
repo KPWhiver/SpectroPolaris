@@ -15,7 +15,7 @@ import android.graphics.Point;
 
 public class Model {
 	private ArrayList<GameCharacter> d_characters;
-	private List<Bullet> d_bullets;
+	private ArrayList<Bullet> d_bullets;
 	private ArrayList<Block> d_blocks;
 	private Player d_player;
 	
@@ -31,7 +31,7 @@ public class Model {
 	public Model(GameActivity context) {
 		d_player = new Player(10, 10, new Paint(Paint.ANTI_ALIAS_FLAG));
 		d_characters = new ArrayList<GameCharacter>();
-		d_bullets = Collections.synchronizedList(new ArrayList<Bullet>());
+		d_bullets = new ArrayList<Bullet>();
 		d_blocks = new ArrayList<Block>();
 		d_motionOrigin = new Point(-1, -1);
 		d_shootOrigin = new Point(-1, -1);
@@ -93,9 +93,7 @@ public class Model {
 	}
 	
 	public void removeBullet(Bullet bullet) {
-		synchronized(d_bullets) {
-			d_bullets.remove(bullet);
-		}
+		d_bullets.remove(bullet);
 	}
 	
 	public void step() {
@@ -105,14 +103,10 @@ public class Model {
 		for(GameCharacter character : d_characters)
 			character.step();
 		
-		synchronized(d_bullets) {
-			//Iterator<Bullet> i = d_bullets.iterator();
-			//while (i.hasNext())
-			//	i.next().step();
-			
-			for(Bullet bullet : d_bullets)
-				bullet.step();
-		}
+		Iterator<Bullet> i = d_bullets.iterator();
+		while (i.hasNext())
+			if(i.next().step())
+				i.remove();
 	}
 	
 	public void draw(Canvas canvas) {

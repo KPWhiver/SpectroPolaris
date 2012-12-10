@@ -30,7 +30,7 @@ public class Bullet {
 		GameActivity.getInstance().model().addBullet(this);
 	}
 	
-	public void step() {
+	public boolean step() {
 		float potentialX = d_x + FloatMath.sin(d_direction) * d_speed;
 		float potentialY = d_y + FloatMath.cos(d_direction) * d_speed;
 		
@@ -38,14 +38,15 @@ public class Bullet {
 		{
 			d_x = potentialX;
 			d_y = potentialY;
+			return false;
 		} else {
 			destroy();
+			return true;
 		}
 	}
 	
 	public void destroy() {
 		destroyed = true;
-		// GameActivity.getInstance().model().removeBullet(this);
 	}
 
     public void draw(Canvas canvas) {

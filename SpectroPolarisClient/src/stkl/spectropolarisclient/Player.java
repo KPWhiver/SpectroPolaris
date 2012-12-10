@@ -16,33 +16,39 @@ public class Player {
 	private float d_direction;
 	private float d_speed;
 	
+	private float d_shootDirection;
+	private boolean d_shooting;
+	
 	private Paint d_paint;
 	
-	private Model d_model;
-	
-	public Player(int x, int y, Paint paint, Model model) {
+	public Player(int x, int y, Paint paint) {
 		d_x = x;
 		d_y = y;
 		d_direction = 0;
+		d_shootDirection = 0;
+		d_shooting = false;
 		d_speed = 0;
 		d_paint = paint;
 		d_paint.setColor(Color.RED);
-		
-		d_model = model;
 	}
 	
-	public void update(float xOffset, float yOffset) {
-		d_direction = (float) Math.atan2(xOffset, yOffset);
+	public void update(float xMoveOffset, float yMoveOffset, float xShootOffset, float yShootOffset) {
+		d_direction = (float) Math.atan2(xMoveOffset, yMoveOffset);
 		
-		float distance = (float) Math.hypot(xOffset, yOffset);
+		float distance = (float) Math.hypot(xMoveOffset, yMoveOffset);
 		d_speed = (float) (Math.max(Math.min(distance, MAX_OFFSET), MIN_OFFSET) * SPEED_MOD);
+		
+		if(xShootOffset != 0 && yShootOffset != 0) {
+			d_shootDirection = (float) Math.atan2(xShootOffset, yShootOffset);
+			new Bullet(d_x, d_y, d_shootDirection);
+		}
 	}
 	
 	public void step() {
 		float potentialX = d_x + FloatMath.sin(d_direction) * d_speed;
 		float potentialY = d_y + FloatMath.cos(d_direction) * d_speed;
 		
-		if(d_model.collision(potentialX, potentialY, 5) == false)
+		if(GameActivity.getInstance().model().collision(potentialX, potentialY, 5) == false)
 		{
 			d_x = potentialX;
 			d_y = potentialY;

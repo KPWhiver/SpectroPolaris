@@ -9,6 +9,8 @@ import android.view.Window;
 import android.view.WindowManager;
 
 public class GameActivity extends Activity {
+	private static GameActivity instance;
+	
 	private GameThread d_gameThread;
 	private Model d_model;
 	private int d_centerHorizontal;
@@ -19,8 +21,7 @@ public class GameActivity extends Activity {
 	private float[] d_originY = new float[2];
 
 
-    @SuppressWarnings("deprecation")
-	@Override
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Initialize window
@@ -41,6 +42,16 @@ public class GameActivity extends Activity {
         
         d_gameThread = new GameThread(gameView, d_model);
         d_gameThread.start();
+        
+        instance = this;
+    }
+    
+    public static GameActivity getInstance() {
+    	return instance;
+    }
+    
+    public Model model() {
+    	return d_model;
     }
     
     public int centerHorizontal() {

@@ -24,6 +24,8 @@ public class GameActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        instance = this;
         // Initialize window
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -43,7 +45,7 @@ public class GameActivity extends Activity {
         d_gameThread = new GameThread(gameView, d_model);
         d_gameThread.start();
         
-        instance = this;
+        
     }
     
     public static GameActivity getInstance() {

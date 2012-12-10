@@ -125,5 +125,10 @@ public class Model {
 		d_blocks.remove(remove);
 	}
 
+	public void removePlayer(Player player) {
+		d_players.remove(player);
+		
+	}
+
 
 }

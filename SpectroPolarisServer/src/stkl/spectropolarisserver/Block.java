@@ -41,7 +41,7 @@ public class Block {
 	}
 	
     public boolean pointCollision(int x, int y) {
-    	return x > d_x && y > d_y && x < d_x + d_width && y < d_y + d_height;
+    	return x >= d_x && y >= d_y && x <= d_x + d_width && y <= d_y + d_height;
     }
 
 	public void draw(Graphics2D g2d) {

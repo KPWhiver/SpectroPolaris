@@ -21,8 +21,11 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 	private int d_yStart = -1;
 	private Block d_edit;
 	
+	private float d_scale;
+	
 	public GamePanel() {
 		d_model = new Model();
+		d_scale = 1;
 		setFocusable(true);
 		
 		addMouseListener(this);
@@ -39,6 +42,10 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 		super.paintComponent(g);
 		
 		Graphics2D g2d = (Graphics2D) g;
+		
+		d_scale = getHeight() / 768.0f;
+		g2d.scale(d_scale, d_scale);
+		
 		d_model.draw(g2d);
 	}
 
@@ -56,13 +63,16 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+		int eventX = (int) (e.getX() / d_scale);
+		int eventY = (int) (e.getY() / d_scale);
+		
 		if(e.isShiftDown()) {
-			d_model.removeBlock(e.getX(), e.getY());
+			d_model.removeBlock(eventX, eventY);
 			return;
 		}
 		
-		d_xStart = (int) (10 * Math.floor(e.getX() / 10.0));
-		d_yStart = (int) (10 * Math.floor(e.getY() / 10.0));
+		d_xStart = (int) (10 * Math.floor(eventX / 10.0));
+		d_yStart = (int) (10 * Math.floor(eventY / 10.0));
 		
 		d_edit = new Block(d_xStart, d_yStart, 0, 0);
 		d_model.addBlock(d_edit);
@@ -71,22 +81,29 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 	@Override
 	public void mouseReleased(MouseEvent e) {	
 		if(d_xStart < 0)
-			return;
+			return;		
 		
-		
+		if(d_edit.height() <= 0 || d_edit.width() <= 0)
+			d_model.removeBlock(d_xStart, d_yStart);
+			
+		d_edit = null;
 		d_xStart = -1;
 		d_yStart = -1;
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
+		int eventX = (int) (e.getX() / d_scale);
+		int eventY = (int) (e.getY() / d_scale);
+		
 		if(d_xStart < 0)
 			return;
 		
-		int x = (int) (10 * Math.floor(e.getX() / 10.0));
-		int y = (int) (10 * Math.floor(e.getY() / 10.0));
+		int x = (int) (10 * Math.floor(eventX / 10.0));
+		int y = (int) (10 * Math.floor(eventY / 10.0));
 		
-		d_edit.update(d_xStart, d_yStart, x - d_xStart, y - d_yStart);
+
+	    d_edit.update(d_xStart, d_yStart, x - d_xStart, y - d_yStart);
 	}
 
 	@Override

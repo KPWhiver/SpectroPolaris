@@ -33,7 +33,7 @@ public class SpectroPolaris
 			s_frame.gamePanel().repaint();
 			
 			try {
-				Thread.sleep(1);
+				Thread.sleep(33);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

@@ -8,7 +8,7 @@ public class ServerThread extends Thread {
 
 	Socket d_socket;
 	
-	GameCharacter d_character = null;
+	Player d_player = null;
 	
 	BufferedInputStream d_in;
 	
@@ -21,13 +21,13 @@ public class ServerThread extends Thread {
 			return;
 		}
 		System.out.println("Connected to client");
-		d_character = new GameCharacter(0, 0, 0, Color.black);
-		SpectroPolaris.frame().gamePanel().model().addGameCharacter(d_character);
+		d_player = new Player(0, 0, 0, Color.black);
+		SpectroPolaris.frame().gamePanel().model().addPlayer(d_player);
 	}
 	
 	@Override
   public void run() {
-		if(d_character == null)
+		if(d_player == null)
 			return;
 		
 		byte[] bytes = new byte[16];
@@ -54,10 +54,10 @@ public class ServerThread extends Thread {
 				
 				//System.out.println("rcv: " + (int) (x) + " " + (int) (y));
 				
-				d_character.update(x, y, direction, speed);
+				d_player.update(x, y, direction, speed);
 			} catch (Exception e) {
 				System.out.println("Connection to client lost");
-				SpectroPolaris.frame().gamePanel().model().removeGameCharacter(d_character);
+				SpectroPolaris.frame().gamePanel().model().removeGameCharacter(d_player);
 				return;
 			}
 			

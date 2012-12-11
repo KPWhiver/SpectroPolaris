@@ -51,35 +51,50 @@ public class Client extends Thread {
 	}
 	
 	public void run() {
-		//try {
-			while(connected) {
-				//in.read();
+		
+		byte[] bytes = new byte[4];
+		ByteBuffer byteToInt = ByteBuffer.wrap(bytes);
+		
+		while(true) {
+			
+			try {
+				int numOfBytes = in.read(bytes);
+				int messageType = byteToInt.getInt();
+				if(messageType != 0)
+					continue;
+				byteToInt.reset();
 				
-				// Do stuff with received stuff
-				// Redraw
+				numOfBytes = in.read(bytes);
+				int numOfCharacters = byteToInt.getInt();
+				byteToInt.reset();
+				
+				ByteBuffer buffer = ByteBuffer.allocate(numOfCharacters * GameCharacter.sendSize());
+				
+			    numOfBytes = in.read(buffer.array());			    
+			    
+			    if(numOfBytes < 0)
+			        throw new Exception("Connection to server lost");
+			    
+			    if(numOfBytes < buffer.capacity()) {
+			        System.err.println("Received only " + numOfBytes + " bytes");
+			        continue;
+			    }
+			  		
+			    GameActivity.getInstance().model().receive(buffer, numOfCharacters);
+
+			} catch (Exception e) {
+				System.out.println("Connection to server lost");
+				GameActivity.getInstance().finish();
 				try {
-					sleep(33);
-				} catch (InterruptedException e) {
-					System.err.println("Exception occured while tring to sleep");
-					e.printStackTrace();
+					skt.close();
+				} catch (IOException e2) {
+					System.err.println(e2.getMessage());
+					e2.printStackTrace();
 				}
+				return;
 			}
-		//} catch (IOException e) {
-		//	System.err.println("IOException occured reading from input stream");
-		//	e.printStackTrace();
-		//}
-		
-		try {
-			in.close();
-			out.close();
-			skt.close();
-		} catch (IOException e) {
-			System.err.println("Exception occured while closing streams and socket.");
-			e.printStackTrace();
+			
 		}
-		
-		
-		System.out.println("Socket has been closed");
 	}
 	
 	public void close() {

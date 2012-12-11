@@ -21,6 +21,8 @@ public class Player {
 	
 	private Paint d_paint;
 	
+	private int d_id;
+	
 	public Player(int x, int y, Paint paint) {
 		d_x = x;
 		d_y = y;
@@ -67,5 +69,9 @@ public class Player {
 
     public void draw(Canvas canvas, int centerHorizontal, int centerVertical) {
     	canvas.drawCircle(centerHorizontal, centerVertical, 5, d_paint);
+	}
+
+	public int id() {
+		return d_id;
 	}
 }

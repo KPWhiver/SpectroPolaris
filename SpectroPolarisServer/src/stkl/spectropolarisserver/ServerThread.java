@@ -11,11 +11,13 @@ public class ServerThread extends Thread {
 	Player d_player = null;
 	
 	BufferedInputStream d_in;
+	OutputStream d_out;
 	
 	public ServerThread(Socket socket) {
 		d_socket = socket;
 		try {
 			d_in = new BufferedInputStream(d_socket.getInputStream());
+			d_out = d_socket.getOutputStream();
 		} catch (Exception e) {
 			System.out.println(e.getMessage() + ", java... :|");
 			return;
@@ -26,7 +28,7 @@ public class ServerThread extends Thread {
 	}
 	
 	@Override
-  public void run() {
+    public void run() {
 		if(d_player == null)
 			return;
 		
@@ -58,10 +60,31 @@ public class ServerThread extends Thread {
 			} catch (Exception e) {
 				System.out.println("Connection to client lost");
 				SpectroPolaris.frame().gamePanel().model().removePlayer(d_player);
+				try {
+					d_socket.close();
+				} catch (IOException e2) {
+					System.err.println(e2 + ", java made me do it...");
+					e2.printStackTrace();
+				}
 				return;
 			}
 			
 		}
 	}
+
+	public boolean send(byte[] message) {
+		if(isAlive())
+			return false;
+		
+		try {
+			d_out.write(message);
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return true;
+	}
+
 
 }

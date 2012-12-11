@@ -77,18 +77,6 @@ public class Client extends Thread {
 		}
 	}
 	
-	private void id(byte[] message) {
-		
-	}
-	
-	private void characters(byte[] message) {
-		
-	}
-	
-	private void bullets(byte[] message) {
-		
-	}
-	
 	private void receiveCharacters(ByteBuffer intByteBuffer) throws Exception {
 		
 		// Read next 4 bytes (int, numOfCharacters) from stream

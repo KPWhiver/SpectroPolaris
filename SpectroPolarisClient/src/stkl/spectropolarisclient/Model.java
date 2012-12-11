@@ -5,14 +5,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.support.v4.app.NotificationCompat.Style;
 
 public class Model {
 	private ArrayList<GameCharacter> d_characters;
@@ -34,6 +32,8 @@ public class Model {
 	private int d_mapWidth = 800;
 	private int d_mapHeight = 768;
 	
+	private Paint d_borderPaint;
+	
 	public Model(GameActivity context) {
 		d_player = new Player(10, 10, new Paint(Paint.ANTI_ALIAS_FLAG));
 		d_characters = new ArrayList<GameCharacter>();
@@ -44,6 +44,9 @@ public class Model {
 		d_blocks = new ArrayList<Block>();
 		d_motionOrigin = new Point(-1, -1);
 		d_shootOrigin = new Point(-1, -1);
+		
+		d_borderPaint = new Paint();
+		d_borderPaint.setStyle(Paint.Style.STROKE);
 		
 		d_context = context;
 		
@@ -159,6 +162,10 @@ public class Model {
 				
 		for(Block block : d_blocks)
 			block.draw(canvas);
+		
+		
+		
+		canvas.drawRect(-1, -1, d_mapWidth+1, d_mapHeight+1, d_borderPaint);
 		
 		canvas.restore();
 		

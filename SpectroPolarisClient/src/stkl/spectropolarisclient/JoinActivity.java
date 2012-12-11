@@ -130,11 +130,11 @@ public class JoinActivity extends Activity {
     		
     		try {     			
     			// Start the GameActivity
-    			Intent intent = new Intent(JoinActivity.this, GameActivity.class);
-    	    	JoinActivity.this.startActivity(intent);
-    	    	
     			Client client = new Client(ipAdress);
     			client.start();
+    			
+    			Intent intent = new Intent(JoinActivity.this, GameActivity.class);
+    	    	JoinActivity.this.startActivity(intent);
     			
     			if(!adresses.contains(ipAdress)) {
     				adresses.add(ipAdress);

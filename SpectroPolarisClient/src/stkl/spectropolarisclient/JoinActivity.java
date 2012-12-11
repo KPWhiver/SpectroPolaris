@@ -22,6 +22,8 @@ import android.widget.Toast;
 
 public class JoinActivity extends Activity {
 	private ArrayList<String> adresses;
+	private Client client;
+	
 	private String username;
 	private int color = 0xff000000;
 
@@ -101,6 +103,11 @@ public class JoinActivity extends Activity {
     	if(requestCode == 1 && resultCode == Activity.RESULT_OK) {
     		color = data.getIntExtra("color", 0xff000000);
     		((LinearLayout)findViewById(R.id.join_pickColorBar)).setBackgroundColor(color);
+    	} else if(requestCode == 2) {
+    		System.out.println(resultCode);
+    		if(client.isAlive()) {
+    			client.close();
+    		}
     	}
     	super.onActivityResult(requestCode, resultCode, data);
     }
@@ -130,11 +137,11 @@ public class JoinActivity extends Activity {
     		
     		try {     			
     			// Start the GameActivity
-    			Client client = new Client(ipAdress, username, color);
+    			client = new Client(ipAdress, username, color);
     			client.start();
     			
     			Intent intent = new Intent(JoinActivity.this, GameActivity.class);
-    	    	JoinActivity.this.startActivity(intent);
+    	    	JoinActivity.this.startActivityForResult(intent, 2);
     			
     			if(!adresses.contains(ipAdress)) {
     				adresses.add(ipAdress);

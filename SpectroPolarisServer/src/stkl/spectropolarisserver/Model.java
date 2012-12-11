@@ -72,8 +72,9 @@ public class Model {
 	}
 	
 	public void addPlayer(Player player) {
-		d_players.add(player);
-		
+		synchronized(this) {
+			d_players.add(player);
+		}
 	}
 		
 	public void addBlock(Block block) {
@@ -140,7 +141,9 @@ public class Model {
 	}
 
 	public void removePlayer(Player player) {
-		d_players.remove(player);
+		synchronized(this) {
+			d_players.remove(player);
+		}
 		
 	}
 

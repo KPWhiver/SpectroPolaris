@@ -31,6 +31,9 @@ public class Model {
 	private float d_shootControlX;
 	private float d_shootControlY;	
 	
+	private int d_mapWidth = 800;
+	private int d_mapHeight = 768;
+	
 	public Model(GameActivity context) {
 		d_player = new Player(10, 10, new Paint(Paint.ANTI_ALIAS_FLAG));
 		d_characters = new ArrayList<GameCharacter>();
@@ -52,12 +55,10 @@ public class Model {
 		for(int idx = 0; idx != numOfBlocks; ++idx) {
 			int x = file.readInt();
 			int y = file.readInt();
-			int width = file.readInt();
-			int height;
-			
-			height = file.readInt();
+			int blockWidth = file.readInt();
+			int blockHeight = file.readInt();
 
-			addBlock(new Block(x, y, width, height));
+			addBlock(new Block(x, y, blockWidth, blockHeight));
 		}
 			
 		file.close();
@@ -176,6 +177,10 @@ public class Model {
 	}
 
 	public boolean collision(float potentialX, float potentialY, int radius) {
+		if(potentialX < radius || potentialX + radius > d_mapWidth 
+				|| potentialY < radius || potentialY + radius > d_mapHeight) {
+			return true;
+		}
 				
 		for(Block block : d_blocks)
 		{

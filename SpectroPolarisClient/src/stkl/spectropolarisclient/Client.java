@@ -49,6 +49,13 @@ public class Client extends Thread {
 			e.printStackTrace();
 			GameActivity.getInstance().finish();
 			close();
+			try {
+				skt.close();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			System.exit(1);
 		}
 	}
 	

@@ -130,11 +130,11 @@ public class JoinActivity extends Activity {
     		
     		try {     			
     			// Start the GameActivity
-    			Intent intent = new Intent(JoinActivity.this, GameActivity.class);
-    	    	JoinActivity.this.startActivity(intent);
-    	    	
     			Client client = new Client(ipAdress);
     			client.start();
+    			
+    			Intent intent = new Intent(JoinActivity.this, GameActivity.class);
+    	    	JoinActivity.this.startActivity(intent);
     			
     			if(!adresses.contains(ipAdress)) {
     				adresses.add(ipAdress);
@@ -152,7 +152,6 @@ public class JoinActivity extends Activity {
         		Toast toast = Toast.makeText(this, text, duration);
         		toast.show();
     		}
-
     		
     	} else {
     		// Show toaster to tell user IP is invalid.

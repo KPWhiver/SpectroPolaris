@@ -13,5 +13,7 @@
     <string name="menu_ipMessage">Host\'s ip adress</string>
     <string name="title_activity_game">GameActivity</string>
     <string name="ip_adresses">ip_adresses</string>
+    <string name="menu_nameMessage">User name</string>
+    <string name="menu_username">Username:</string>
 
 </resources>

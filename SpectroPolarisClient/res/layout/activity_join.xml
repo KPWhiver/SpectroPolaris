@@ -27,20 +27,48 @@
 	    android:layout_marginBottom="10dp" >
 	    
         <TextView
-	        android:layout_width="wrap_content"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:padding="@dimen/padding_medium"
+	        android:text="@string/menu_username"
+	        android:textColor="#ffff00"
+	        android:textStyle="bold"
+	        android:layout_weight="1" />
+        
+        <EditText
+            android:id="@+id/username"
+            android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:hint="@string/menu_nameMessage"
+	        android:layout_weight="4"/>
+    
+	</LinearLayout>
+    
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    xmlns:tools="http://schemas.android.com/tools"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content" 
+	    android:orientation="horizontal"
+	    android:gravity="center_horizontal"
+	    android:layout_marginBottom="10dp" >
+	    
+        <TextView
+	        android:layout_width="0dp"
 	        android:layout_height="wrap_content"
 	        android:padding="@dimen/padding_medium"
 	        android:text="@string/menu_hostIP"
 	        android:textColor="#ffff00"
-	        android:textStyle="bold" />
+	        android:textStyle="bold"
+			android:layout_weight="1" />
         
         <stkl.spectropolarisclient.CustomAutoCompleteTextView 
             android:id="@+id/join_ip"
-            android:layout_width="250dp"
+            android:layout_width="0dp"
 	        android:layout_height="wrap_content"
 	        android:hint="@string/menu_ipMessage"
 	        android:digits="0123456789."
-	        android:completionThreshold="1" />
+	        android:completionThreshold="1"
+	        android:layout_weight="4" />
     
 	</LinearLayout>
 	

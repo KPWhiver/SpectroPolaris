@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 public class JoinActivity extends Activity {
 	private ArrayList<String> adresses;
+	private String username;
 
     @SuppressWarnings("unchecked")
 	@Override
@@ -35,6 +36,7 @@ public class JoinActivity extends Activity {
         	ObjectInputStream in = new ObjectInputStream(
         			openFileInput(getResources().getString(R.string.ip_adresses)));
 			adresses = (ArrayList<String>) in.readObject();
+			username = (String) in.readObject();
 			in.close();
 		} catch (IOException e) {
 			System.err.println("Error reading ip adresses from file");
@@ -49,15 +51,18 @@ public class JoinActivity extends Activity {
         CustomAutoCompleteTextView textView = (CustomAutoCompleteTextView) findViewById(R.id.join_ip);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, adresses);
         textView.setAdapter(adapter);
+        
+        ((EditText)findViewById(R.id.username)).setText(username);
     }
     
     @Override
     protected void onPause() {
-    	// Store the ip adresses
+    	// Store the ip adresses and username
     	try {
 			ObjectOutputStream out =  new ObjectOutputStream(
 					openFileOutput(getResources().getString(R.string.ip_adresses), MODE_PRIVATE));
 			out.writeObject(adresses);
+			out.writeObject(username);
 			out.close();
 		} catch (IOException e) {
 			System.err.println("Error writing ip adresses to file");
@@ -81,6 +86,20 @@ public class JoinActivity extends Activity {
     	String ipAdress = ipAdressEdit.getText().toString();
     	Matcher matcher = Patterns.IP_ADDRESS.matcher(ipAdress);
     	
+    	EditText nameEdit = (EditText)findViewById(R.id.username);
+    	
+    	
+    	if(!(nameEdit.length() > 0)) {
+    		CharSequence text = "Please enter a name!";
+    		int duration = Toast.LENGTH_SHORT;
+
+    		Toast toast = Toast.makeText(this, text, duration);
+    		toast.show();
+    		return;
+    	}
+    	
+    	username = nameEdit.getText().toString();
+    	
     	if(matcher.matches()) {
     		
     		try { 
@@ -100,21 +119,19 @@ public class JoinActivity extends Activity {
     			
     			
     			// Show toaster to tell user connection could not be setup.
-        		Context context = getApplicationContext();
         		CharSequence text = "Connection failed!";
         		int duration = Toast.LENGTH_SHORT;
 
-        		Toast toast = Toast.makeText(context, text, duration);
+        		Toast toast = Toast.makeText(this, text, duration);
         		toast.show();
     		}
     		
     	} else {
     		// Show toaster to tell user IP is invalid.
-    		Context context = getApplicationContext();
     		CharSequence text = "Invalid IP!";
     		int duration = Toast.LENGTH_SHORT;
 
-    		Toast toast = Toast.makeText(context, text, duration);
+    		Toast toast = Toast.makeText(this, text, duration);
     		toast.show();
     	}
     }

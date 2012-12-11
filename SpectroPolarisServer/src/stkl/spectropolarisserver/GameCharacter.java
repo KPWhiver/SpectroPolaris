@@ -15,7 +15,7 @@ public class GameCharacter {
 	private float d_direction;
 	private float d_speed;
 	
-	private Color d_color;
+	protected Color d_color;
 	private int d_id;
 	
 	private static int s_count = 0;
@@ -61,7 +61,7 @@ public class GameCharacter {
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 			RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		g2d.setColor(Color.red);
+		g2d.setColor(d_color);
 		g2d.fillOval((int) (d_x) - 5, (int) (d_y) - 5, 10, 10);
 		
 		//System.out.println("draw: " + (int) (d_x) + " " + (int) (d_y));

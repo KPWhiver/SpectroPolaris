@@ -28,6 +28,8 @@ public class Client extends Thread {
 		
 		out = skt.getOutputStream();
 		in = skt.getInputStream();
+		
+		sentInit(name, color);
 	}
 	
 	public void sentInit(String name, int color) {
@@ -75,18 +77,6 @@ public class Client extends Thread {
 			}
 			System.exit(1);
 		}
-	}
-	
-	private void id(byte[] message) {
-		
-	}
-	
-	private void characters(byte[] message) {
-		
-	}
-	
-	private void bullets(byte[] message) {
-		
 	}
 	
 	private void receiveCharacters(ByteBuffer intByteBuffer) throws Exception {

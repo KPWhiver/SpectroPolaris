@@ -17,7 +17,6 @@ public class Player {
 	private float d_speed;
 	
 	private float d_shootDirection;
-	private boolean d_shooting;
 	
 	private Paint d_paint;
 	
@@ -28,7 +27,6 @@ public class Player {
 		d_y = y;
 		d_direction = 0;
 		d_shootDirection = 0;
-		d_shooting = false;
 		d_speed = 0;
 		d_paint = paint;
 		d_paint.setColor(Color.RED);

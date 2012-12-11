@@ -14,8 +14,10 @@ public class Player extends GameCharacter {
 	}
 	
     public void drawUI(Graphics2D g2d, int index) {
-    	g2d.setColor(Color.LIGHT_GRAY);
+    	g2d.setColor(d_color);
     	g2d.fillRect(805, 5 + index * 50, 214, 40);
+    	g2d.setColor(Color.BLACK);
+    	g2d.drawString(d_name, 820, 5 + index * 50 + 10);
 		
 	}
 

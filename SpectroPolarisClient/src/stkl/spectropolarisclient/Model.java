@@ -116,11 +116,13 @@ public class Model {
 
 	
 	public void step() {
-		d_player.update(d_motionControlX, d_motionControlY, d_shootControlX, d_shootControlY);
-		d_player.step();
-		
-		for(GameCharacter character : d_characters)
-			character.step();
+		synchronized(this) {
+			d_player.update(d_motionControlX, d_motionControlY, d_shootControlX, d_shootControlY);
+			d_player.step();
+			
+			for(GameCharacter character : d_characters)
+				character.step();
+		}
 		
 		for(int index = 0; index != d_numOfBullets; ++index) {
 			Bullet bullet = d_bullets.get(index);
@@ -209,7 +211,7 @@ public class Model {
 		}
 		
 		if(numOfCharacters < d_characters.size()) {
-			for(int idx = numOfCharacters - 1; idx != d_characters.size(); ++idx)
+			for(int idx = numOfCharacters; idx != d_characters.size(); ++idx)
 				d_characters.get(idx).instantiate(0, 0, 0, 0, 0, -1);
 		}
 	}

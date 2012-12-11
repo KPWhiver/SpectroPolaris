@@ -107,7 +107,7 @@ public class Model {
 		for(GameCharacter character : d_characters)
 			character.draw(g2d);
 		
-		synchronized(d_players) {
+		synchronized(this) {
 			
 			for(Player player : d_players)
 				player.draw(g2d);

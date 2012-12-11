@@ -45,8 +45,10 @@ public class Client extends Thread {
 			
 			out.write(buffer.array());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.out.println("Connection to server lost");
 			e.printStackTrace();
+			GameActivity.getInstance().finish();
+			close();
 		}
 	}
 	
@@ -55,7 +57,9 @@ public class Client extends Thread {
 		byte[] bytes = new byte[4];
 		ByteBuffer byteToInt = ByteBuffer.wrap(bytes);
 		
-		while(true) {
+		while(connected) {
+			if(GameActivity.getInstance() == null)
+				continue;
 			
 			try {
 				int numOfBytes = in.read(bytes);
@@ -68,6 +72,8 @@ public class Client extends Thread {
 				int numOfCharacters = byteToInt.getInt();
 				byteToInt.clear();
 				
+				System.out.println(numOfCharacters);
+				
 				ByteBuffer buffer = ByteBuffer.allocate(numOfCharacters * GameCharacter.sendSize());
 				
 			    numOfBytes = in.read(buffer.array());			    
@@ -79,11 +85,12 @@ public class Client extends Thread {
 			        System.err.println("Received only " + numOfBytes + " bytes");
 			        continue;
 			    }
-			  		
+			    
 			    GameActivity.getInstance().model().receive(buffer, numOfCharacters);
+			    
 
 			} catch (Exception e) {
-				System.out.println("Connection lost");
+				System.out.println("Connection to server lost");
 				e.printStackTrace();
 				GameActivity.getInstance().finish();
 				try {

@@ -28,6 +28,8 @@ public class Client extends Thread {
 		
 		out = skt.getOutputStream();
 		in = skt.getInputStream();
+		
+		sentInit(name, color);
 	}
 	
 	public void sentInit(String name, int color) {

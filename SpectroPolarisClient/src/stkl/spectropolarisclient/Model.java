@@ -165,7 +165,7 @@ public class Model {
 		
 		
 		
-		canvas.drawRect(-1, -1, d_mapWidth+1, d_mapHeight+1, d_borderPaint);
+		canvas.drawRect(0, 0, d_mapWidth, d_mapHeight, d_borderPaint);
 		
 		canvas.restore();
 		

@@ -108,6 +108,8 @@ public class ServerThread extends Thread {
 		
 		d_player.setName(name);
 		d_player.setColor(color);
+		
+		System.out.println("Received new namecolor: " + name + ", " + color);
 	}
 	
 	@Override

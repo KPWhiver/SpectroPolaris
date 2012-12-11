@@ -62,18 +62,18 @@ public class Client extends Thread {
 				int messageType = byteToInt.getInt();
 				if(messageType != 0)
 					continue;
-				byteToInt.reset();
+				byteToInt.clear();
 				
 				numOfBytes = in.read(bytes);
 				int numOfCharacters = byteToInt.getInt();
-				byteToInt.reset();
+				byteToInt.clear();
 				
 				ByteBuffer buffer = ByteBuffer.allocate(numOfCharacters * GameCharacter.sendSize());
 				
 			    numOfBytes = in.read(buffer.array());			    
 			    
 			    if(numOfBytes < 0)
-			        throw new Exception("Connection to server lost");
+			        throw new Exception(new String("Connection to server lost"));
 			    
 			    if(numOfBytes < buffer.capacity()) {
 			        System.err.println("Received only " + numOfBytes + " bytes");
@@ -83,7 +83,8 @@ public class Client extends Thread {
 			    GameActivity.getInstance().model().receive(buffer, numOfCharacters);
 
 			} catch (Exception e) {
-				System.out.println("Connection to server lost");
+				System.out.println("Connection lost");
+				e.printStackTrace();
 				GameActivity.getInstance().finish();
 				try {
 					skt.close();

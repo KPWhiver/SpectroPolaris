@@ -73,7 +73,7 @@ public class ServerThread extends Thread {
 	}
 
 	public boolean send(byte[] message) {
-		if(isAlive())
+		if(isAlive() == false)
 			return false;
 		
 		try {

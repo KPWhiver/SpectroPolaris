@@ -33,7 +33,8 @@ public class Client extends Thread {
 	public void sentInit(String name, int color) {
 		byte[] bName = name.getBytes();
 		
-		ByteBuffer buffer = ByteBuffer.allocate(4 + bName.length + 4);
+		ByteBuffer buffer = ByteBuffer.allocate(12 + bName.length);
+		buffer.putInt(Message.NAMECOLOR.value());		
 		buffer.putInt(bName.length);
 		buffer.put(bName);
 		buffer.putInt(color);
@@ -52,8 +53,9 @@ public class Client extends Thread {
 	
 	public void sent(float x, float y, float direction, float speed) {
 		try {
-			ByteBuffer buffer = ByteBuffer.allocate(16);
+			ByteBuffer buffer = ByteBuffer.allocate(20);
 			
+			buffer.putInt(Message.PLAYER.value());
 			buffer.putFloat(x);
 			buffer.putFloat(y);
 			buffer.putFloat(direction);
@@ -75,6 +77,20 @@ public class Client extends Thread {
 		}
 	}
 	
+	private void id(byte[] message) {
+		
+	}
+	
+	private void characters(byte[] message) {
+		
+	}
+	
+	private void bullets(byte[] message) {
+		
+	}
+	
+	
+	
 	public void run() {
 		
 		byte[] bytes = new byte[4];
@@ -85,15 +101,16 @@ public class Client extends Thread {
 				continue;
 			
 			try {
-				int numOfBytes = in.read(bytes);
+				// Read first 4 bytes (int) from stream
+				in.read(bytes);
 				int messageType = byteToInt.getInt();
-				if(messageType != 0)
-					continue;
 				byteToInt.clear();
 				
-				numOfBytes = in.read(bytes);
-				int numOfCharacters = byteToInt.getInt();
+				// Read next 4 bytes (int) from stream
+				in.read(bytes);
+				int secondInteger = byteToInt.getInt();
 				byteToInt.clear();
+				
 				
 				ByteBuffer buffer = ByteBuffer.allocate(numOfCharacters * GameCharacter.sendSize());
 				
@@ -106,6 +123,16 @@ public class Client extends Thread {
 			        System.err.println("Received only " + numOfBytes + " bytes");
 			        continue;
 			    }
+			    
+			    if(messageType == Message.CHARACTERS.value()) {
+					characters(numOfBytes);
+				} else if(messageType == Message.ID.value()) {
+					
+				} else if(messageType == Message.BULLETS.value()) {
+					
+				} else {
+					System.err.println("Received message with unkown id: " + messageType);
+				}
 			    
 			    GameActivity.getInstance().model().receive(buffer, numOfCharacters);
 			    

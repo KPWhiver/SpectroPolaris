@@ -89,54 +89,77 @@ public class Client extends Thread {
 		
 	}
 	
+	private void receiveCharacters(ByteBuffer intByteBuffer) throws Exception {
+		
+		// Read next 4 bytes (int, numOfCharacters) from stream
+		in.read(intByteBuffer.array());
+		int numOfCharacters = intByteBuffer.getInt();
+		intByteBuffer.clear();
+		
+		// Prepare byte buffer
+		ByteBuffer buffer = ByteBuffer.allocate(numOfCharacters * GameCharacter.sendSize());
+				
+	    int numOfBytes = in.read(buffer.array());			    
+	    
+	    if(numOfBytes < 0)
+	        throw new Exception(new String("Connection to server lost"));
+	    
+	    if(numOfBytes < buffer.capacity()) {
+	        System.err.println("Received only " + numOfBytes + " bytes in receiveCharacters");
+	        return;
+	    }
+	    
+	    GameActivity.getInstance().model().receive(buffer, numOfCharacters);
+	}
 	
+	private void receiveId(ByteBuffer intByteBuffer) throws Exception {
+		
+		// Read next 4 bytes (int, id) from stream
+		int numOfBytes = in.read(intByteBuffer.array());
+		int id = intByteBuffer.getInt();
+		intByteBuffer.clear();
+		
+	    if(numOfBytes < 0)
+	        throw new Exception("Connection to server lost");
+	    
+	    if(numOfBytes < 4) {
+	        System.err.println("Received only " + numOfBytes + " bytes in receiveId");
+	        return;
+	    }
+	    
+	    GameActivity.getInstance().model().player().setId(id);
+	}
+	
+	private void receiveBullets(ByteBuffer intByteBuffer) {
+		// TODO contents
+	}
 	
 	public void run() {
 		
 		byte[] bytes = new byte[4];
-		ByteBuffer byteToInt = ByteBuffer.wrap(bytes);
+		ByteBuffer intByteBuffer = ByteBuffer.wrap(bytes);
 		
 		while(connected) {
 			if(GameActivity.getInstance() == null)
 				continue;
 			
 			try {
-				// Read first 4 bytes (int) from stream
+				// Read first 4 bytes (int, messageType) from stream
 				in.read(bytes);
-				int messageType = byteToInt.getInt();
-				byteToInt.clear();
+				int messageType = intByteBuffer.getInt();
+				intByteBuffer.clear(); // Clear buffer so we can read from it again
 				
-				// Read next 4 bytes (int) from stream
-				in.read(bytes);
-				int secondInteger = byteToInt.getInt();
-				byteToInt.clear();
-				
-				
-				ByteBuffer buffer = ByteBuffer.allocate(numOfCharacters * GameCharacter.sendSize());
-				
-			    numOfBytes = in.read(buffer.array());			    
-			    
-			    if(numOfBytes < 0)
-			        throw new Exception(new String("Connection to server lost"));
-			    
-			    if(numOfBytes < buffer.capacity()) {
-			        System.err.println("Received only " + numOfBytes + " bytes");
-			        continue;
-			    }
-			    
+				// Receive appropriate message based on received messageType
 			    if(messageType == Message.CHARACTERS.value()) {
-					characters(numOfBytes);
+					receiveCharacters(intByteBuffer);
 				} else if(messageType == Message.ID.value()) {
-					
+					receiveId(intByteBuffer);
 				} else if(messageType == Message.BULLETS.value()) {
-					
+					//receiveBullets(intByteBuffer);
 				} else {
 					System.err.println("Received message with unkown id: " + messageType);
 				}
 			    
-			    GameActivity.getInstance().model().receive(buffer, numOfCharacters);
-			    
-
 			} catch (Exception e) {
 				System.out.println("Connection to server lost");
 				e.printStackTrace();

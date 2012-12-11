@@ -32,6 +32,7 @@ public class Player {
 		d_speed = 0;
 		d_paint = paint;
 		d_paint.setColor(Color.RED);
+		d_id = -1;
 	}
 	
 	public void update(float xMoveOffset, float yMoveOffset, float xShootOffset, float yShootOffset) {
@@ -73,5 +74,9 @@ public class Player {
 
 	public int id() {
 		return d_id;
+	}
+	
+	public void setId(int id) {
+		d_id = id;
 	}
 }

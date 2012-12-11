@@ -86,7 +86,7 @@ public class Model {
 		
 		int numOfCharacters = d_players.size() + d_characters.size();
 		ByteBuffer buffer = ByteBuffer.allocate(4 + 4 + numOfCharacters * GameCharacter.sendSize());
-		buffer.putInt(0);
+		buffer.putInt(Message.CHARACTERS.value());
 		buffer.putInt(numOfCharacters);
 		
 		for(Player player : d_players)

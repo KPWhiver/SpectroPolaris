@@ -186,6 +186,9 @@ public class Model {
 	}
 
 	public void receive(ByteBuffer buffer, int numOfCharacters) {
+		if(d_player.id() == -1)
+			return;
+		
 		// Don't count the Player as a character
 		--numOfCharacters;
 		
@@ -214,5 +217,10 @@ public class Model {
 			for(int idx = numOfCharacters; idx != d_characters.size(); ++idx)
 				d_characters.get(idx).instantiate(0, 0, 0, 0, 0, -1);
 		}
+	}
+
+	public Player player() {
+		
+		return d_player;
 	}
 }

@@ -92,7 +92,6 @@ public class GameActivity extends Activity {
     		switch (action){
 	    		case MotionEvent.ACTION_DOWN: case MotionEvent.ACTION_POINTER_DOWN:
 	    			if (actionId == i) { 
-		    			System.out.println("Down: " + event.findPointerIndex(0) + ", " + event.findPointerIndex(1));
 		    			if(x > d_centerHorizontal) {
 		    				d_motionPointerId = id;
 		    				d_model.setMotionOrigin(x, y);
@@ -117,7 +116,6 @@ public class GameActivity extends Activity {
 	    			
 	    		case MotionEvent.ACTION_UP: case MotionEvent.ACTION_POINTER_UP: 
 	    			if (actionId == i) { 
-		    			System.out.println("Up: " + event.findPointerIndex(0) + ", " + event.findPointerIndex(1));
 		    			if (id == d_motionPointerId) {
 		    				//System.out.println("Motion released, event: " + action + " as id: " + id);
 		    				d_motionPointerId = -2;

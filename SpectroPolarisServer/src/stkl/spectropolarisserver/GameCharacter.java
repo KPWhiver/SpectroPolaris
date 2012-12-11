@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.nio.ByteBuffer;
 
 import javax.swing.*;
 
@@ -17,7 +18,21 @@ public class GameCharacter {
 	private Color d_color;
 	private int d_id;
 	
-	private static long time = 0;
+	private static int s_count = 0;
+	
+	public static int sendSize() {
+		
+		return 6 * 4;
+	}
+	
+	public void addToBuffer(ByteBuffer buffer) {
+		buffer.putFloat(d_x);
+		buffer.putFloat(d_y);
+		buffer.putFloat(d_direction);
+		buffer.putFloat(d_speed);
+		buffer.putInt(d_color.getRGB());
+		buffer.putInt(d_id);
+	}
 	
 	public GameCharacter(float x, float y, float direction, Color color) {
 		d_x = x;
@@ -25,6 +40,8 @@ public class GameCharacter {
 		d_direction = direction;
 		d_speed = 0;
 		d_color = color;
+		d_id = s_count;
+		++s_count;
 	}
 	
 	public void update(float x, float y, float direction, float speed) {
@@ -35,8 +52,8 @@ public class GameCharacter {
 	}
 	
 	public void step() {
-		//d_x += Math.sin(d_direction) * d_speed;
-		//d_y += Math.cos(d_direction) * d_speed;
+		d_x += Math.sin(d_direction) * d_speed;
+		d_y += Math.cos(d_direction) * d_speed;
 	}
 
     public void draw(Graphics2D g2d) {
@@ -49,6 +66,8 @@ public class GameCharacter {
 		
 		//System.out.println("draw: " + (int) (d_x) + " " + (int) (d_y));
 	}
+
+
 	
 	
 	

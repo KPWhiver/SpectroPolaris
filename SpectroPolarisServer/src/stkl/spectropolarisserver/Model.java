@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -80,11 +81,21 @@ public class Model {
 	}
 	
 	public void step() {
-		
-		
-		
 		for(GameCharacter character : d_characters)
 			character.step();
+		
+		int numOfCharacters = d_players.size() + d_characters.size();
+		ByteBuffer buffer = ByteBuffer.allocate(4 + 4 + numOfCharacters * GameCharacter.sendSize());
+		buffer.putInt(0);
+		buffer.putInt(numOfCharacters);
+		
+		for(Player player : d_players)
+			player.addToBuffer(buffer);
+		
+		for(GameCharacter character : d_characters)
+			character.addToBuffer(buffer);
+		
+		SpectroPolaris.server().send(buffer.array());
 	}
 	
 	//private static long time = 0;

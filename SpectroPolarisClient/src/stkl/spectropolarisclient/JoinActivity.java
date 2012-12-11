@@ -128,7 +128,11 @@ public class JoinActivity extends Activity {
     	
     	if(matcher.matches()) {
     		
-    		try { 
+    		try {     			
+    			// Start the GameActivity
+    			Intent intent = new Intent(JoinActivity.this, GameActivity.class);
+    	    	JoinActivity.this.startActivity(intent);
+    	    	
     			Client client = new Client(ipAdress);
     			client.start();
     			
@@ -136,9 +140,6 @@ public class JoinActivity extends Activity {
     				adresses.add(ipAdress);
     			}    			
     			
-    			// Start the GameActivity
-    			Intent intent = new Intent(JoinActivity.this, GameActivity.class);
-    	    	startActivity(intent);
 
     		} catch(Exception e) {
     			e.printStackTrace();
@@ -151,6 +152,10 @@ public class JoinActivity extends Activity {
         		Toast toast = Toast.makeText(this, text, duration);
         		toast.show();
     		}
+
+    		// Start the GameActivity
+    			Intent intent = new Intent(JoinActivity.this, GameActivity.class);
+    	    	startActivity(intent);
     		
     	} else {
     		// Show toaster to tell user IP is invalid.

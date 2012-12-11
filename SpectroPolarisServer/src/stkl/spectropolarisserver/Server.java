@@ -53,6 +53,15 @@ public class Server extends Thread {
 		}
 	}
 	
+	public void send(byte[] message) {
+		Iterator<ServerThread> iter = d_threads.iterator();
+		while(iter.hasNext()) {
+			if(iter.next().send(message) == false)
+				iter.remove();
+				
+		}
+	}
+	
     @Override
     public void run() {
     	while(true)

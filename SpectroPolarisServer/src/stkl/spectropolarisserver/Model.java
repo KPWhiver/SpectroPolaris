@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -12,10 +13,17 @@ public class Model {
 	
 	private ArrayList<Block> d_blocks;
 	
+	private Rectangle d_hill;
+	private int d_points;
+	
 	public Model() {
 		d_characters = new ArrayList<GameCharacter>();
 		d_blocks = new ArrayList<Block>();
 		d_players = new ArrayList<Player>();
+		
+		d_hill = new Rectangle(200, 200, 100, 100);
+		
+		
 
 		try {		
 			DataInputStream file = new DataInputStream(new FileInputStream("map.dat"));
@@ -82,8 +90,21 @@ public class Model {
 	}
 	
 	public void step() {
-		for(GameCharacter character : d_characters)
+		boolean hillCaptured = false;
+		
+		for(Player player : d_players) {
+			if(d_hill.contains(player.x(), player.y()))
+				hillCaptured = true;
+		}
+		
+		for(GameCharacter character : d_characters) {
 			character.step();
+			if(d_hill.contains(character.x(), character.y()))
+				hillCaptured = false;
+		}
+		
+		if(hillCaptured)
+			d_points += 1;
 		
 		int numOfCharacters = d_players.size() + d_characters.size();
 		ByteBuffer buffer = ByteBuffer.allocate(4 + 4 + numOfCharacters * GameCharacter.sendSize());
@@ -105,6 +126,9 @@ public class Model {
 		//System.out.println(System.nanoTime() - time);
 		//time = System.nanoTime();
 		
+		g2d.setColor(Color.YELLOW);
+		g2d.fill(d_hill);
+		
 		for(GameCharacter character : d_characters)
 			character.draw(g2d);
 		
@@ -124,6 +148,7 @@ public class Model {
 			d_players.get(index).drawUI(g2d, index);
 		
 		g2d.setColor(Color.WHITE);
+		g2d.drawString("Points: " + d_points, 805, 730);
 		g2d.drawString("Connect to: " + SpectroPolaris.server().ip(), 805, 750);
 	}
 

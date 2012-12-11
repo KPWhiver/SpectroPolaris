@@ -35,7 +35,8 @@ public class GameActivity extends Activity {
         d_centerVertical = (int)(display.getHeight() / 2);
         
         // Start game
-        d_model = new Model(this);
+        int color = getIntent().getExtras().getInt("stkl.spectropolarisclient.color");
+        d_model = new Model(this, color);
         
         instance = this;
         

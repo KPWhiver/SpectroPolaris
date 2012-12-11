@@ -29,7 +29,6 @@ public class Player {
 		d_shootDirection = 0;
 		d_speed = 0;
 		d_paint = paint;
-		d_paint.setColor(Color.RED);
 		d_id = -1;
 	}
 	

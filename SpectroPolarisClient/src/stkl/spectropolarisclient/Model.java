@@ -34,8 +34,10 @@ public class Model {
 	
 	private Paint d_borderPaint;
 	
-	public Model(GameActivity context) {
-		d_player = new Player(10, 10, new Paint(Paint.ANTI_ALIAS_FLAG));
+	public Model(GameActivity context, int color) {
+		Paint playerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+		playerPaint.setColor(color);
+		d_player = new Player(10, 10, playerPaint);
 		d_characters = new ArrayList<GameCharacter>();
 		
 		d_bullets = new ArrayList<Bullet>();
@@ -171,9 +173,9 @@ public class Model {
 		
 		Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		paint.setColor(Color.CYAN);
-		paint.setTextSize(20);
-		canvas.drawText("Motion Controls: " + d_motionControlX + ", " + d_motionControlY, 10, 20, paint);
-		canvas.drawText("Shoot Controls: " + d_shootControlX + ", " + d_shootControlY, 10, 40, paint);
+		//paint.setTextSize(20);
+		//canvas.drawText("Motion Controls: " + d_motionControlX + ", " + d_motionControlY, 10, 20, paint);
+		//canvas.drawText("Shoot Controls: " + d_shootControlX + ", " + d_shootControlY, 10, 40, paint);
 		
 		if(!d_motionOrigin.equals(-1, -1)) {
 			canvas.drawCircle(d_motionOrigin.x, d_motionOrigin.y, 5, paint);

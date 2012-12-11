@@ -67,6 +67,14 @@ public class GameCharacter {
 		//System.out.println("draw: " + (int) (d_x) + " " + (int) (d_y));
 	}
 
+    public float x() {
+    	return d_x;
+    }
+    
+    public float y() {
+    	return d_y;
+    }
+    
     public int id() {
     	return d_id;
     }

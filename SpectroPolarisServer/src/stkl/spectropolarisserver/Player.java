@@ -17,7 +17,8 @@ public class Player extends GameCharacter {
     	g2d.setColor(d_color);
     	g2d.fillRect(805, 5 + index * 50, 214, 40);
     	g2d.setColor(Color.BLACK);
-    	g2d.drawString(d_name, 820, 5 + index * 50 + 10);
+    	
+    	g2d.drawString(d_name, 820, 15 + index * 50 + 10);
 		
 	}
 

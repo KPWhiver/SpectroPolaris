@@ -140,8 +140,9 @@ public class JoinActivity extends Activity {
     			client = new Client(ipAdress, username, color);
     			client.start();
     			
-    			Intent intent = new Intent(JoinActivity.this, GameActivity.class);
-    	    	JoinActivity.this.startActivityForResult(intent, 2);
+    			Intent intent = new Intent(this, GameActivity.class);
+    			intent.putExtra("stkl.spectropolarisclient.color", color);
+    	    	startActivityForResult(intent, 2);
     			
     			if(!adresses.contains(ipAdress)) {
     				adresses.add(ipAdress);

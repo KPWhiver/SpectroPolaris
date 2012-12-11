@@ -130,7 +130,7 @@ public class JoinActivity extends Activity {
     		
     		try {     			
     			// Start the GameActivity
-    			Client client = new Client(ipAdress);
+    			Client client = new Client(ipAdress, username, color);
     			client.start();
     			
     			Intent intent = new Intent(JoinActivity.this, GameActivity.class);

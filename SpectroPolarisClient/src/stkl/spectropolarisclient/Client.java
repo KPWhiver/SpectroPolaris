@@ -18,7 +18,7 @@ public class Client extends Thread {
 	private OutputStream out;
 	private InputStream in;
 	
-	public Client(String ip) throws UnknownHostException, IOException {
+	public Client(String ip, String name, int color) throws UnknownHostException, IOException {
 		skt = new Socket();
 		skt.setTcpNoDelay(true);
 		skt.connect(new InetSocketAddress(ip, SERVER_PORT), TIMEOUT);
@@ -28,6 +28,22 @@ public class Client extends Thread {
 		
 		out = skt.getOutputStream();
 		in = skt.getInputStream();
+	}
+	
+	public void sentInit(String name, int color) {
+		byte[] bName = name.getBytes();
+		
+		ByteBuffer buffer = ByteBuffer.allocate(4 + bName.length + 4);
+		buffer.putInt(bName.length);
+		buffer.put(bName);
+		buffer.putInt(color);
+		
+		try {
+			out.write(buffer.array());
+		} catch (IOException e) {
+			System.err.println("Error occured while sending player info");
+			e.printStackTrace();
+		}
 	}
 	
 	public static Client getInstance() {

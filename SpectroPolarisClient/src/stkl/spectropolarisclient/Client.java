@@ -46,6 +46,7 @@ public class Client extends Thread {
 		} catch (IOException e) {
 			System.err.println("Error occured while sending player info");
 			e.printStackTrace();
+			close();
 		}
 	}
 	
@@ -54,6 +55,9 @@ public class Client extends Thread {
 	}
 	
 	public void sent(float x, float y, float direction, float speed) {
+		if(!connected)
+			return;
+		
 		try {
 			ByteBuffer buffer = ByteBuffer.allocate(20);
 			
@@ -69,13 +73,6 @@ public class Client extends Thread {
 			e.printStackTrace();
 			GameActivity.getInstance().finish();
 			close();
-			try {
-				skt.close();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			System.exit(1);
 		}
 	}
 	
@@ -148,20 +145,13 @@ public class Client extends Thread {
 				} else if(messageType == Message.BULLETS.value()) {
 					//receiveBullets(intByteBuffer);
 				} else {
-					System.err.println("Received message with unkown id: " + messageType);
+					System.err.println("Received message with unknown id: " + messageType);
 				}
 			    
 			} catch (Exception e) {
 				System.out.println("Connection to server lost");
 				e.printStackTrace();
-				GameActivity.getInstance().finish();
-				try {
-					skt.close();
-				} catch (IOException e2) {
-					System.err.println(e2.getMessage());
-					e2.printStackTrace();
-				}
-				return;
+				close();
 			}
 			
 		}
@@ -169,5 +159,11 @@ public class Client extends Thread {
 	
 	public void close() {
 		connected = false;
+		try {
+			skt.close();
+		} catch (IOException e) {
+			System.err.println("Socket already closed");
+		}
+		GameActivity.getInstance().finish();
 	}
 }

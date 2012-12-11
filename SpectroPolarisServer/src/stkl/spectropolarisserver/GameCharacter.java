@@ -67,7 +67,13 @@ public class GameCharacter {
 		//System.out.println("draw: " + (int) (d_x) + " " + (int) (d_y));
 	}
 
-
+    public int id() {
+    	return d_id;
+    }
+    
+    public void setColor(int color) {
+    	d_color = new Color(color);
+    }
 	
 	
 	

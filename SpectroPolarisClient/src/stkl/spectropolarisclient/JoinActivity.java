@@ -103,8 +103,8 @@ public class JoinActivity extends Activity {
     	if(requestCode == 1 && resultCode == Activity.RESULT_OK) {
     		color = data.getIntExtra("color", 0xff000000);
     		((LinearLayout)findViewById(R.id.join_pickColorBar)).setBackgroundColor(color);
-    	} else if(requestCode == 2) {
-    		System.out.println(resultCode);
+    	} else if(requestCode == 2) { // GameActivity has ended, stop the Client if needed
+    		System.out.println("Result code GameActivity: " + resultCode);
     		if(client.isAlive()) {
     			client.close();
     		}

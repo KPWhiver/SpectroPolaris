@@ -204,30 +204,34 @@ public class Model {
 		// Don't count the Player as a character
 		--numOfCharacters;
 		
-		for(int idx = 0; idx != numOfCharacters; ++idx) {
-			float x = buffer.getFloat();
-			float y = buffer.getFloat();
-			float direction = buffer.getFloat();
-			float speed = buffer.getFloat();
-			int color = buffer.getInt();
-			int id = buffer.getInt();
-			
-			if(id == d_player.id()) {
-				--idx;
-				continue;
-			}
-			
-			if(idx < d_characters.size())
-				d_characters.get(idx).instantiate(x, y, direction, speed, color, id);
-			else {
-				GameCharacter character = new GameCharacter(x, y, direction, speed, color, id);
-				d_characters.add(character);
-			}
-		}
+		synchronized(this) {
 		
-		if(numOfCharacters < d_characters.size()) {
-			for(int idx = numOfCharacters; idx != d_characters.size(); ++idx)
-				d_characters.get(idx).instantiate(0, 0, 0, 0, 0, -1);
+			for(int idx = 0; idx != numOfCharacters; ++idx) {
+				float x = buffer.getFloat();
+				float y = buffer.getFloat();
+				float direction = buffer.getFloat();
+				float speed = buffer.getFloat();
+				int color = buffer.getInt();
+				int id = buffer.getInt();
+				
+				if(id == d_player.id()) {
+					--idx;
+					continue;
+				}
+				
+				if(idx < d_characters.size())
+					d_characters.get(idx).instantiate(x, y, direction, speed, color, id);
+				else {
+					GameCharacter character = new GameCharacter(x, y, direction, speed, color, id);
+					d_characters.add(character);
+				}
+			}
+			
+			if(numOfCharacters < d_characters.size()) {
+				for(int idx = numOfCharacters; idx != d_characters.size(); ++idx)
+					d_characters.get(idx).instantiate(0, 0, 0, 0, 0, -1);
+			}
+		
 		}
 	}
 

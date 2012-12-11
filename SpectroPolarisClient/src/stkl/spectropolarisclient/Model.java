@@ -31,7 +31,7 @@ public class Model {
 	private float d_shootControlX;
 	private float d_shootControlY;	
 	
-	private int d_mapWidth = 1024;
+	private int d_mapWidth = 800;
 	private int d_mapHeight = 768;
 	
 	public Model(GameActivity context) {

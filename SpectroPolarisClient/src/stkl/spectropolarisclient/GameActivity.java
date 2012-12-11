@@ -24,8 +24,7 @@ public class GameActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        instance = this;
+            
         // Initialize window
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -37,6 +36,8 @@ public class GameActivity extends Activity {
         
         // Start game
         d_model = new Model(this);
+        
+        instance = this;
         
         GameView gameView =  new GameView(this, d_model);
         //gameView.setModel(model);

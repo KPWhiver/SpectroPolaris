@@ -79,8 +79,6 @@ public class Client extends Thread {
 				int numOfCharacters = byteToInt.getInt();
 				byteToInt.clear();
 				
-				System.out.println(numOfCharacters);
-				
 				ByteBuffer buffer = ByteBuffer.allocate(numOfCharacters * GameCharacter.sendSize());
 				
 			    numOfBytes = in.read(buffer.array());			    

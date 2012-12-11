@@ -153,9 +153,6 @@ public class JoinActivity extends Activity {
         		toast.show();
     		}
 
-    		// Start the GameActivity
-    			Intent intent = new Intent(JoinActivity.this, GameActivity.class);
-    	    	startActivity(intent);
     		
     	} else {
     		// Show toaster to tell user IP is invalid.

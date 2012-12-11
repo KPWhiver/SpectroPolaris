@@ -4,6 +4,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_menu">SpectroPolaris</string>
+    <string name="title_color_picker">ColorPicker</string>
     <string name="menu_title">SpectroPolaris</string>
     <string name="menu_join">Join game</string>
     <string name="menu_options">Options</string>
@@ -15,5 +16,6 @@
     <string name="ip_adresses">ip_adresses</string>
     <string name="menu_nameMessage">User name</string>
     <string name="menu_username">Username:</string>
+    <string name="menu_colorButton">Choose Color</string>
 
 </resources>

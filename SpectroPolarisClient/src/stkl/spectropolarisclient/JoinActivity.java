@@ -6,8 +6,8 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 
+import stkl.spectropolarisclient.mColorPicker.ColorPickerActivity;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
@@ -17,11 +17,13 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 public class JoinActivity extends Activity {
 	private ArrayList<String> adresses;
 	private String username;
+	private int color = 0xff000000;
 
     @SuppressWarnings("unchecked")
 	@Override
@@ -37,6 +39,7 @@ public class JoinActivity extends Activity {
         			openFileInput(getResources().getString(R.string.ip_adresses)));
 			adresses = (ArrayList<String>) in.readObject();
 			username = (String) in.readObject();
+			color = in.readInt();
 			in.close();
 		} catch (IOException e) {
 			System.err.println("Error reading ip adresses from file");
@@ -48,21 +51,27 @@ public class JoinActivity extends Activity {
         if(adresses == null)
         	adresses = new ArrayList<String>();
         
+        // Add ip adresses to AutoCompleteTextView
         CustomAutoCompleteTextView textView = (CustomAutoCompleteTextView) findViewById(R.id.join_ip);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, adresses);
         textView.setAdapter(adapter);
         
+        // Set name in username EditText
         ((EditText)findViewById(R.id.username)).setText(username);
+        
+        // Set color in ColorChooser
+        ((LinearLayout)findViewById(R.id.join_pickColorBar)).setBackgroundColor(color);
     }
     
     @Override
     protected void onPause() {
-    	// Store the ip adresses and username
+    	// Store the ip adresses, username and color
     	try {
 			ObjectOutputStream out =  new ObjectOutputStream(
 					openFileOutput(getResources().getString(R.string.ip_adresses), MODE_PRIVATE));
 			out.writeObject(adresses);
 			out.writeObject(username);
+			out.writeInt(color);
 			out.close();
 		} catch (IOException e) {
 			System.err.println("Error writing ip adresses to file");
@@ -77,6 +86,24 @@ public class JoinActivity extends Activity {
         getMenuInflater().inflate(R.menu.activity_join, menu);
         return true;
     }
+    
+    /*
+     * Pick color button has been pressed. Start ColorPickerActivity.
+     */
+    public void pickColor(View view) {
+    	Intent color_intent = new Intent(this, ColorPickerActivity.class);
+    	color_intent.putExtra("color", color);
+    	startActivityForResult(color_intent, 1);
+    }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	if(requestCode == 1 && resultCode == Activity.RESULT_OK) {
+    		color = data.getIntExtra("color", 0xff000000);
+    		((LinearLayout)findViewById(R.id.join_pickColorBar)).setBackgroundColor(color);
+    	}
+    	super.onActivityResult(requestCode, resultCode, data);
+    }
 
     /* 
      * Join game button has been pressed. Get server ip from EditText, verify correctness and connect to server.
@@ -87,7 +114,6 @@ public class JoinActivity extends Activity {
     	Matcher matcher = Patterns.IP_ADDRESS.matcher(ipAdress);
     	
     	EditText nameEdit = (EditText)findViewById(R.id.username);
-    	
     	
     	if(!(nameEdit.length() > 0)) {
     		CharSequence text = "Please enter a name!";
@@ -112,7 +138,7 @@ public class JoinActivity extends Activity {
     			
     			// Start the GameActivity
     			Intent intent = new Intent(JoinActivity.this, GameActivity.class);
-    	    	JoinActivity.this.startActivity(intent);
+    	    	startActivity(intent);
 
     		} catch(Exception e) {
     			e.printStackTrace();

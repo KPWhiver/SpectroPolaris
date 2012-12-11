@@ -35,6 +35,11 @@
             android:screenOrientation="landscape" >
 
         </activity>
+        <activity
+            android:name=".mColorPicker.ColorPickerActivity"
+            android:label="@string/title_color_picker"
+            android:screenOrientation="portrait" >
+        </activity>
     </application>
 
 </manifest>

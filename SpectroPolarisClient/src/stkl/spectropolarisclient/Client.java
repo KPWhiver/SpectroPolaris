@@ -164,6 +164,7 @@ public class Client extends Thread {
 		} catch (IOException e) {
 			System.err.println("Socket already closed");
 		}
-		GameActivity.getInstance().finish();
+		if(GameActivity.getInstance() != null)
+			GameActivity.getInstance().finish();
 	}
 }

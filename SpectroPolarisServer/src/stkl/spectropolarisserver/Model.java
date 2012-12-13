@@ -95,6 +95,8 @@ public class Model {
 		for(GameCharacter character : d_characters)
 			character.addToBuffer(buffer);
 		
+		System.out.println(4 + 4 + numOfCharacters * GameCharacter.sendSize());
+				
 		SpectroPolaris.server().send(buffer.array());
 	}
 	

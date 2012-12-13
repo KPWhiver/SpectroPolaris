@@ -96,6 +96,8 @@ public class Client extends Thread {
 	        return;
 	    }
 	    
+	    System.err.println("buffer size: " + buffer.capacity() + "numOfCharacters: " + numOfCharacters);
+	    
 	    GameActivity.getInstance().model().receive(buffer, numOfCharacters);
 	}
 	
@@ -115,6 +117,8 @@ public class Client extends Thread {
 	    }
 	    
 	    GameActivity.getInstance().model().player().setId(id);
+	    
+	    System.out.println("id: " + GameActivity.getInstance().model().player().id());
 	}
 	
 	private void receiveBullets(ByteBuffer intByteBuffer) {
@@ -164,6 +168,8 @@ public class Client extends Thread {
 		} catch (IOException e) {
 			System.err.println("Socket already closed");
 		}
-		GameActivity.getInstance().finish();
+		if(GameActivity.getInstance() != null){
+			GameActivity.getInstance().finish();
+		}
 	}
 }

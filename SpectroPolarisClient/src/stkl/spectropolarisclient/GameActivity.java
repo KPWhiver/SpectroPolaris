@@ -140,6 +140,7 @@ public class GameActivity extends Activity {
     protected void onStop() {
     	super.onStop();
     	// Tell JoinActivity this activity has ended
+    	instance = null;
     	setResult(RESULT_OK);
     	d_gameThread.close();
     }

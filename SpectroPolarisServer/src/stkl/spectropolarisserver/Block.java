@@ -46,10 +46,6 @@ public class Block {
 
 	public void draw(Graphics2D g2d) {
 
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-			RenderingHints.VALUE_ANTIALIAS_ON);
-		
-		g2d.setColor(Color.black);
 		g2d.fillRect(d_x, d_y, d_width, d_height);
 	}
 }

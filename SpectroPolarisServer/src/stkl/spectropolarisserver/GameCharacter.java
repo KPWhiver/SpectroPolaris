@@ -57,10 +57,7 @@ public class GameCharacter {
 	}
 
     public void draw(Graphics2D g2d) {
-    	
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-			RenderingHints.VALUE_ANTIALIAS_ON);
-		
+
 		g2d.setColor(d_color);
 		g2d.fillOval((int) (d_x) - 5, (int) (d_y) - 5, 10, 10);
 		

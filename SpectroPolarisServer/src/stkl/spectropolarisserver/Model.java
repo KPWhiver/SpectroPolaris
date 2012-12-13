@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -127,6 +128,9 @@ public class Model {
 	public void draw(Graphics2D g2d) {
 		//System.out.println(System.nanoTime() - time);
 		//time = System.nanoTime();
+    	
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+			RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		g2d.setColor(Color.YELLOW);
 		g2d.fill(d_hill);
@@ -140,6 +144,7 @@ public class Model {
 				player.draw(g2d);
 		}
 		
+		g2d.setColor(Color.BLACK);
 		for(Block block : d_blocks)
 			block.draw(g2d);
 		

@@ -155,6 +155,19 @@ public class Model {
 		
 		canvas.scale(4 * d_scale, 4 * d_scale, d_context.centerHorizontal(), d_context.centerVertical());
 		
+		
+		
+		canvas.translate(-d_player.xOffset() + d_context.centerHorizontal(),
+				 -d_player.yOffset() + d_context.centerVertical());
+				
+		synchronized(d_bullets) {
+			for(Bullet bullet : d_bullets)
+				bullet.draw(canvas);
+		}
+		
+		canvas.translate(d_player.xOffset() - d_context.centerHorizontal(),
+				 d_player.yOffset() - d_context.centerVertical());
+		
 		d_player.draw(canvas, d_context.centerHorizontal(), d_context.centerVertical());
 		
 		canvas.translate(-d_player.xOffset() + d_context.centerHorizontal(),
@@ -163,11 +176,6 @@ public class Model {
 		for(GameCharacter character : d_characters)
 			character.draw(canvas);
 		
-		synchronized(d_bullets) {
-			for(Bullet bullet : d_bullets)
-				bullet.draw(canvas);
-		}
-				
 		for(Block block : d_blocks)
 			block.draw(canvas);
 		

@@ -96,8 +96,6 @@ public class Client extends Thread {
 	        return;
 	    }
 	    
-	    System.err.println("buffer size: " + buffer.capacity() + "numOfCharacters: " + numOfCharacters);
-	    
 	    GameActivity.getInstance().model().receive(buffer, numOfCharacters);
 	}
 	

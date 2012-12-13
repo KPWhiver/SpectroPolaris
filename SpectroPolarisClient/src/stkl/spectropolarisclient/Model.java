@@ -106,23 +106,25 @@ public class Model {
 	}
 	
 	public Bullet addBullet() {
-		if(d_numOfBullets == d_bullets.size()) {
-			Bullet newBullet = new Bullet();
-			d_bullets.add(newBullet);
-			++d_numOfBullets;
-			return newBullet;
-		}
-		else // d_numOfBullets < d_bullets.size()
-		{
-			++d_numOfBullets;
-			return d_bullets.get(d_numOfBullets - 1);
+		synchronized(d_bullets) {
+			if(d_numOfBullets == d_bullets.size()) {
+				Bullet newBullet = new Bullet();
+				d_bullets.add(newBullet);
+				++d_numOfBullets;
+				return newBullet;
+			}
+			else // d_numOfBullets < d_bullets.size()
+			{
+				++d_numOfBullets;
+				return d_bullets.get(d_numOfBullets - 1);
+			}
 		}
 	}
 	
 
 	
 	public void step() {
-		synchronized(this) {
+		synchronized(d_player) {
 			d_player.update(d_motionControlX, d_motionControlY, d_shootControlX, d_shootControlY);
 			d_player.step();
 			
@@ -141,9 +143,11 @@ public class Model {
 	}
 
 	public void removeBullet(Bullet bullet) {
-		--d_numOfBullets;
-		bullet.instantiate(d_bullets.get(d_numOfBullets));
-		d_bullets.get(d_numOfBullets).destroy();
+		synchronized(d_bullets) {
+			--d_numOfBullets;
+			bullet.instantiate(d_bullets.get(d_numOfBullets));
+			d_bullets.get(d_numOfBullets).destroy();
+		}
 	}
 
 	public void draw(Canvas canvas) {
@@ -159,8 +163,10 @@ public class Model {
 		for(GameCharacter character : d_characters)
 			character.draw(canvas);
 		
-		for(Bullet bullet : d_bullets)
-			bullet.draw(canvas);
+		synchronized(d_bullets) {
+			for(Bullet bullet : d_bullets)
+				bullet.draw(canvas);
+		}
 				
 		for(Block block : d_blocks)
 			block.draw(canvas);
@@ -203,7 +209,7 @@ public class Model {
 		if(d_player.id() == -1)
 			return;
 				
-		synchronized(this) {
+		synchronized(d_player) {
 		
 			for(int idx = 0; idx != numOfCharacters; ++idx) {
 				float x = buffer.getFloat();
@@ -212,8 +218,6 @@ public class Model {
 				float speed = buffer.getFloat();
 				int color = buffer.getInt();
 				int id = buffer.getInt();
-				
-				System.err.println(x + " " + y + " " + id + " " + d_player.id());
 				
 				if(id == d_player.id()) {
 					--idx;

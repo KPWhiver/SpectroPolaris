@@ -32,16 +32,20 @@ public class Player {
 		d_id = -1;
 	}
 	
+	private long s_timeSinceLastBullet = 0;
+	
 	public void update(float xMoveOffset, float yMoveOffset, float xShootOffset, float yShootOffset) {
 		d_direction = (float) Math.atan2(xMoveOffset, yMoveOffset);
 		
 		float distance = (float) Math.hypot(xMoveOffset, yMoveOffset);
 		d_speed = (float) (Math.max(Math.min(distance, MAX_OFFSET), MIN_OFFSET) * SPEED_MOD);
 		
-		if(xShootOffset != 0 && yShootOffset != 0) {
+		if(xShootOffset != 0 && yShootOffset != 0 && System.nanoTime() - s_timeSinceLastBullet > 250000000) {
 			d_shootDirection = (float) Math.atan2(xShootOffset, yShootOffset);
 			GameActivity.getInstance().model().addBullet().instantiate(d_x, d_y, d_shootDirection);
+			s_timeSinceLastBullet = System.nanoTime();
 		}
+		
 	}
 	
 	public void step() {

@@ -155,8 +155,6 @@ public class ServerThread extends Thread {
 		if(isAlive() == false)
 			return false;
 		
-		System.out.println("Sending package to id: " + d_player.id());
-		
 		try {
 			d_out.write(message);
 		} catch (IOException e) {

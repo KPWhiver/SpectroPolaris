@@ -202,10 +202,7 @@ public class Model {
 	public void receive(ByteBuffer buffer, int numOfCharacters) {
 		if(d_player.id() == -1)
 			return;
-		
-		// Don't count the Player as a character
-		--numOfCharacters;
-		
+				
 		synchronized(this) {
 		
 			for(int idx = 0; idx != numOfCharacters; ++idx) {
@@ -216,8 +213,11 @@ public class Model {
 				int color = buffer.getInt();
 				int id = buffer.getInt();
 				
+				System.err.println(x + " " + y + " " + id + " " + d_player.id());
+				
 				if(id == d_player.id()) {
 					--idx;
+					--numOfCharacters;
 					continue;
 				}
 				

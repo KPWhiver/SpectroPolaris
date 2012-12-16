@@ -78,15 +78,33 @@ public class Client extends Thread {
 	
 	private void receiveCharacters(ByteBuffer intByteBuffer) throws Exception {
 		
-		// Read next 4 bytes (int, numOfCharacters) from stream
+		// Read amount of characters from stream
 		in.read(intByteBuffer.array());
 		int numOfCharacters = intByteBuffer.getInt();
 		intByteBuffer.clear();
 		
+		// Read amount of bullets from stream
+ 		//in.read(intByteBuffer.array());
+ 		//int numOfBullets = intByteBuffer.getInt();
+ 		//intByteBuffer.clear();
+		
+		// Read amount of pickups from stream
+ 		in.read(intByteBuffer.array());
+ 		int numOfPickups = intByteBuffer.getInt();
+ 		intByteBuffer.clear();
+		
+		int numOfBytes = 0;
+		// characters
+		numOfBytes += numOfCharacters * GameCharacter.sendSize();
+		// bullets
+		//numOfBytes += 4 + numOfBullets * Bullet.sendSize();
+		// pickups
+		numOfBytes += numOfPickups * HealthPickup.sendSize();
+ 		
 		// Prepare byte buffer
-		ByteBuffer buffer = ByteBuffer.allocate(numOfCharacters * GameCharacter.sendSize());
-				
-	    int numOfBytes = in.read(buffer.array());			    
+		ByteBuffer buffer = ByteBuffer.allocate(numOfBytes);	 
+		
+		numOfBytes = in.read(buffer.array());
 	    
 	    if(numOfBytes < 0)
 	        throw new Exception(new String("Connection to server lost"));
@@ -96,7 +114,7 @@ public class Client extends Thread {
 	        return;
 	    }
 	    
-	    GameActivity.getInstance().model().receive(buffer, numOfCharacters);
+	    GameActivity.getInstance().model().receive(buffer, numOfCharacters, 0, numOfPickups);
 	}
 	
 	private void receiveId(ByteBuffer intByteBuffer) throws Exception {
@@ -117,10 +135,6 @@ public class Client extends Thread {
 	    GameActivity.getInstance().model().player().setId(id);
 	    
 	    System.out.println("id: " + GameActivity.getInstance().model().player().id());
-	}
-	
-	private void receiveBullets(ByteBuffer intByteBuffer) {
-		// TODO contents
 	}
 	
 	@Override

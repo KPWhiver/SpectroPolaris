@@ -180,17 +180,38 @@ public class Model {
 		if(hillCaptured)
 			d_points += 1;
 		
-		int numOfCharacters = d_players.size() + d_characters.size();
-		ByteBuffer buffer = ByteBuffer.allocate(4 + 4 + numOfCharacters * GameCharacter.sendSize());
-		buffer.putInt(Message.CHARACTERS.value());
-		buffer.putInt(numOfCharacters);
 		
+		
+		int numOfCharacters = d_players.size() + d_characters.size();
+		int numOfBytes = 4;
+		// characters
+		numOfBytes += 4 + numOfCharacters * GameCharacter.sendSize();
+		// bullets
+		//numOfBytes += 4 + d_bullets.size() * Bullet.sendSize();
+		// pickups
+		numOfBytes += 4 + d_health.size() * HealthPickup.sendSize();
+		
+		// message type
+		ByteBuffer buffer = ByteBuffer.allocate(numOfBytes);
+		buffer.putInt(Message.CHARACTERS.value());
+		
+		// number of items
+		buffer.putInt(numOfCharacters);
+		//buffer.putInt(d_bullets.size());
+		buffer.putInt(d_health.size());
+		
+		// characters
 		for(Player player : d_players)
 			player.addToBuffer(buffer);
 		
 		for(GameCharacter character : d_characters)
 			character.addToBuffer(buffer);
+		
+		// pickups
+		for(HealthPickup pickup : d_health)
+			pickup.addToBuffer(buffer);
 				
+		// send the buffer
 		SpectroPolaris.server().send(buffer.array());
 	}
 	

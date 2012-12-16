@@ -18,7 +18,6 @@ public class Model {
 	private ArrayList<GameCharacter> d_characters;
 	private ArrayList<Bullet> d_bullets;
 	private int d_numOfBullets;
-	//private ArrayList<Block> d_blocks;
 	private Player d_player;
 	
 	// tileMap with blocks (true means block, false means noblock)
@@ -28,6 +27,9 @@ public class Model {
 	
 	private final int d_mapWidth = 800;
 	private final int d_mapHeight = 768;
+	
+	// pickups
+	private ArrayList<HealthPickup> d_health;
 	
 	private GameActivity d_context;
 	private float d_scale;
@@ -52,6 +54,9 @@ public class Model {
 		
 		d_tileMap = new boolean[d_mapHeight / d_tileSize][d_mapWidth / d_tileSize];
 		d_blockPaint = new Paint();
+		
+		// pickups
+		d_health = new ArrayList<HealthPickup>();
 		
 		//d_blocks = new ArrayList<Block>();
 		d_motionOrigin = new Point(-1, -1);
@@ -185,6 +190,11 @@ public class Model {
 		canvas.translate(-d_player.xOffset() + d_context.centerHorizontal(),
 				 -d_player.yOffset() + d_context.centerVertical());
 				
+		synchronized(d_health) {
+			for(HealthPickup pickup : d_health)
+				pickup.draw(canvas);
+		}
+		
 		synchronized(d_bullets) {
 			for(Bullet bullet : d_bullets)
 				bullet.draw(canvas);
@@ -311,7 +321,7 @@ public class Model {
 		return null;
 	}
 
-	public void receive(ByteBuffer buffer, int numOfCharacters) {
+	public void receive(ByteBuffer buffer, int numOfCharacters, int numOfBullets, int numOfPickups) {
 		if(d_player.id() == -1)
 			return;
 				
@@ -344,6 +354,31 @@ public class Model {
 					d_characters.get(idx).instantiate(0, 0, 0, 0, 0, -1);
 			}
 		
+		}
+		
+		synchronized(d_health) {
+			
+			// Check if a pickup has been picked up
+			//if(numOfPickups < d_health.size())
+				//for()
+			
+			for(int idx = 0; idx != numOfPickups; ++idx) {
+				int x = buffer.getInt();
+				int y = buffer.getInt();
+				
+				if(idx < d_health.size())
+					d_health.get(idx).instantiate(x, y);
+				else {
+					System.err.println("Alloc");
+					HealthPickup pickup = new HealthPickup(x, y);
+					d_health.add(pickup);
+				}
+			}
+			
+			if(numOfPickups < d_health.size()) {
+				for(int idx = numOfPickups; idx != d_health.size(); ++idx)
+					d_health.get(idx).instantiate(-1, -1);
+			}
 		}
 	}
 

@@ -1,6 +1,7 @@
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.nio.ByteBuffer;
 
 
 public class HealthPickup {
@@ -31,5 +32,14 @@ public class HealthPickup {
 				player.y() - player.radius() < d_y + d_width && player.y() + player.radius() > d_y;
 		
 		return coll;
+	}
+
+	public static int sendSize() {
+		return 2 * 4;
+	}
+
+	public void addToBuffer(ByteBuffer buffer) {
+		buffer.putInt(d_x);
+		buffer.putInt(d_y);
 	}
 }

@@ -12,19 +12,21 @@ public class Model {
 	private ArrayList<GameCharacter> d_characters;
 	private ArrayList<Player> d_players;
 	
-	private ArrayList<Block> d_blocks;
+	//private ArrayList<Block> d_blocks;
+	
+	private Block[][] d_tileMap;
 	
 	private Rectangle d_hill;
 	private int d_points;
 	
 	public Model() {
 		d_characters = new ArrayList<GameCharacter>();
-		d_blocks = new ArrayList<Block>();
+		//d_blocks = new ArrayList<Block>();
 		d_players = new ArrayList<Player>();
 		
 		d_hill = new Rectangle(200, 200, 100, 100);
 		
-		
+		d_tileMap = new[][];
 
 		try {		
 			DataInputStream file = new DataInputStream(new FileInputStream("map.dat"));

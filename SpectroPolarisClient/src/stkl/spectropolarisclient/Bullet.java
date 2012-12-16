@@ -3,13 +3,17 @@ package stkl.spectropolarisclient;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.util.FloatMath;
 
 public class Bullet {	
-	private float d_x;
-	private float d_y;
+	private float d_x1;
+	private float d_y1;
 	
-	private float d_direction;
+	private float d_x2;
+	private float d_y2;
+	
+	//private float d_direction;
 	//private float d_speed;
 	
 	private boolean d_destroyed;
@@ -20,9 +24,11 @@ public class Bullet {
 	
 	public Bullet() {
 		d_transparency = 0;
-		d_x = 0;
-		d_y = 0;
-		d_direction = 0;
+		d_x1 = 0;
+		d_y1 = 0;
+    	d_x2 = 0;
+		d_y2 = 0;
+		
 		//d_speed = 0;
 		d_destroyed = true;		
 
@@ -30,9 +36,18 @@ public class Bullet {
 	}
 	
 	public void instantiate(float x, float y, float direction) {
-		d_x = x;
-		d_y = y;
-		d_direction = direction;
+		d_x1 = x;
+		d_y1 = y;
+    	d_x2 = (float) (d_x1 + Math.sin(direction) * 1000);
+		d_y2 = (float) (d_y1 + Math.cos(direction) * 1000);
+		Point point = GameActivity.getInstance().model().collision(d_x1, d_y1, d_x2, d_y2);
+		
+		if(point != null) {
+			d_x2 = point.x;
+			d_y2 = point.y;
+		}
+		
+		//d_direction = direction;
 		//d_speed = 5;
 		d_destroyed = false;
 		d_transparency = 255;
@@ -40,9 +55,10 @@ public class Bullet {
 	}
 	
 	public void instantiate(Bullet other) {
-		d_x = other.d_x;
-		d_y = other.d_y;
-		d_direction = other.d_direction;
+		d_x1 = other.d_x1;
+		d_y1 = other.d_y1;
+    	d_x2 = other.d_x2;
+		d_y2 = other.d_y2;
 		//d_speed = other.d_speed;
 		d_destroyed = false;
 		d_transparency = 255;
@@ -83,11 +99,11 @@ public class Bullet {
 	}
 
     public void draw(Canvas canvas) {		
-    	float potentialX = d_x + FloatMath.sin(d_direction) * 1000;
-		float potentialY = d_y + FloatMath.cos(d_direction) * 1000;
+    	//float potentialX = d_x + FloatMath.sin(d_direction) * 1000;
+		//float potentialY = d_y + FloatMath.cos(d_direction) * 1000;
     	if(!d_destroyed) {
     		//canvas.drawCircle(d_x, d_y, 1, d_paint);
-    		canvas.drawLine(d_x, d_y, potentialX, potentialY, d_paint);
+    		canvas.drawLine(d_x1, d_y1, d_x2, d_y2, d_paint);
     	}
 	}
 }

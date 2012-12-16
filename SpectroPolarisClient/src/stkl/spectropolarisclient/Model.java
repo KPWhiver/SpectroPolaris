@@ -212,6 +212,17 @@ public class Model {
 		}	
 		return false;
 	}
+	
+	public Point collision(float x1, float y1, float x2, float y2) {
+		Point point = null;
+		for(Block block : d_blocks)
+		{
+			point = block.collision(x1, y1, x2, y2);
+			if(point != null)
+				return point;
+		}	
+		return point;
+	}
 
 	public void receive(ByteBuffer buffer, int numOfCharacters) {
 		if(d_player.id() == -1)

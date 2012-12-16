@@ -10,8 +10,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.PriorityQueue;
+import java.util.Stack;
 
 
 public class Model {
@@ -43,8 +43,6 @@ public class Model {
 
 		d_tileMap = new boolean[d_mapHeight / d_tileSize][d_mapWidth / d_tileSize];
 		d_tmpBlock = null;
-		
-		findPath(5, 5, 100, 5);
 
 		try {		
 			DataInputStream file = new DataInputStream(new FileInputStream("map.dat"));
@@ -193,12 +191,11 @@ public class Model {
 		
 		for(int y = 0; y != d_mapHeight / d_tileSize; ++y) {
 			for(int x = 0; x != d_mapWidth / d_tileSize; ++x) {
-				if(d_tileMap[y][x] == true) {
+				if(d_tileMap[y][x]) {
 					g2d.fillRect(x * d_tileSize, y * d_tileSize, d_tileSize, d_tileSize);
 				}
 			}
-		}
-		
+		}		
 		
 		g2d.fillRect(800, 0, 224, 768);
 		
@@ -226,40 +223,78 @@ public class Model {
 	}
 	
 	
-	public void findPath(int xStart, int yStart, int xEnd, int yEnd) {
-		boolean[][] visited = new boolean[d_mapHeight / d_tileSize][d_mapWidth / d_tileSize];
+	public Stack<Node> findPath(int xStart, int yStart, int xEnd, int yEnd) {
+		int maxY = d_mapHeight / d_tileSize;
+		int maxX = d_mapWidth / d_tileSize;
+		// Used to store which nodes have been visisted
+		boolean[][] visited = new boolean[maxY][maxX];
+		// Used to store references to nodes so they can be updated
+		Node[][] nodes =  new Node[maxY][maxX];
+		// Used to store nodes ordered by cost
 		PriorityQueue<Node> queue = new PriorityQueue<Node>();
-		queue.add(new Node(xStart, yStart, null, xEnd, yEnd, 0));
 		
-		Node current;
+		Node current = new Node(xStart, yStart, null, 0);
+		
+		queue.add(current);
+		nodes[xStart][yStart] = current;
+		
 		
 		while(true) {
 			current = queue.poll();
 			
-			visited[current.x()][current.y()] = true;
+			visited[current.y()][current.x()] = true;
 			
-			if(current.x() == xEnd && current.y() == yEnd)
-				break;
-			
+			if(current.x() == xEnd && current.y() == yEnd) {
+				Stack<Node> path = new Stack<Node>();
+				
+				while(current != null) {
+					path.push(current);
+					current = current.getParent();
+				}
+				
+				return path;
+			}
+				
 			for(int x=-1; x<2; ++x) {
 				for(int y=-1; y<2; ++y) {
-					// Add all neighbours to the PriorityQueue that haven't been visited and aren't blocked
-					int newX = current.x() + x;
-					int newY = current.y() + y;
-					
-					if(!d_tileMap[newX][newY] && !visited[newX][newY])
-						queue.add(new Node(newX, newY, current, xEnd, yEnd, current.getCost()));
+					// Remove diagonal options as temporary solution
+					if(!(x==y) && (x+y) != 0) {
+						// Add all neighbors to the PriorityQueue that haven't been visited and aren't blocked
+						int newX = current.x() + x;
+						int newY = current.y() + y;
+						// Check if the new node is still within the map, is not blocked and not already visited
+						if(newX >= 0 && newX < maxX && newY >= 0 && newY < maxY && !d_tileMap[newY][newX] && !visited[newY][newX]) {
+							int cost = costFunction(newX, newY, current, xEnd, yEnd);
+							
+							if(nodes[newY][newX] == null) {
+								// The node has not been visited yet
+								Node newNode = new Node(newX, newY, current, cost);
+								queue.add(newNode);
+								nodes[newY][newX] =  newNode;
+								
+								
+							} else if(cost < nodes[newY][newX].getCost()) {
+								// The node has been visited but this path is better
+								queue.remove(nodes[newY][newX]);
+								nodes[newY][newX].setParent(current);
+								nodes[newY][newX].setCost(cost);
+								
+							}
+						}
+					}
 				}
 			}
 			
 		}
 		
-		while(current != null) {
-			System.out.println(current.x() + ", " + current.y());
-			current = current.getParent();
-		}
 		
 		
+		
+	}
+	
+	private int costFunction(int newX, int newY, Node current, int xEnd, int yEnd) {
+		// Cost so far + Manhattan distance from current to new position + Manhattan distance from new position to end node
+		return current.getCost() + Math.abs(current.x() - newX) + Math.abs(current.y() - newY) + Math.abs(newX - xEnd) + Math.abs(newY - yEnd);
 	}
 	
 }

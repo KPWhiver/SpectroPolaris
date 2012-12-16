@@ -6,13 +6,10 @@ public class Node implements Comparable<Node> {
 	private Node parent;
 	private int cost;
 		
-	public Node(int x, int y, Node parent, int xEnd, int yEnd, int costSoFar) {
+	public Node(int x, int y, Node parent, int cost) {
 		this.point = new Point(x, y);
 		this.parent = parent;
-		if(parent != null) 
-			this.cost = costSoFar + Math.abs(parent.x() - point.x) + Math.abs(parent.y() - point.y) + Math.abs(point.x - xEnd) + Math.abs(point.y - yEnd);
-		else 
-			this.cost = 0;
+		this.cost = cost;
 	}
 	
 	public int x() {
@@ -33,6 +30,14 @@ public class Node implements Comparable<Node> {
 	
 	public int getCost() {
 		return cost;
+	}
+
+	public void setParent(Node parent) {
+		this.parent = parent;
+	}
+
+	public void setCost(int cost) {
+		this.cost = cost;
 	}
 
 	@Override

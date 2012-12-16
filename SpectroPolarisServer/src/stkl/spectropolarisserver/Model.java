@@ -2,10 +2,16 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.HashMap;
+import java.util.PriorityQueue;
 
 
 public class Model {
@@ -40,6 +46,8 @@ public class Model {
 
 		d_tileMap = new boolean[d_mapHeight / d_tileSize][d_mapWidth / d_tileSize];
 		d_tmpBlock = null;
+		
+		findPath(5, 5, 100, 5);
 
 		try {		
 			DataInputStream file = new DataInputStream(new FileInputStream("map.dat"));
@@ -229,13 +237,40 @@ public class Model {
 	}
 	
 	
-	public Path findPath(int xStart, int yStart, int xEnd, int yEnd) {
-		Path path = new Path();
+	public void findPath(int xStart, int yStart, int xEnd, int yEnd) {
+		boolean[][] visited = new boolean[d_mapHeight / d_tileSize][d_mapWidth / d_tileSize];
+		PriorityQueue<Node> queue = new PriorityQueue<Node>();
+		queue.add(new Node(xStart, yStart, null, xEnd, yEnd, 0));
 		
-		Point start = new Point(xStart, yStart);
+		Node current;
+		
+		while(true) {
+			current = queue.poll();
+			
+			visited[current.x()][current.y()] = true;
+			
+			if(current.x() == xEnd && current.y() == yEnd)
+				break;
+			
+			for(int x=-1; x<2; ++x) {
+				for(int y=-1; y<2; ++y) {
+					// Add all neighbours to the PriorityQueue that haven't been visited and aren't blocked
+					int newX = current.x() + x;
+					int newY = current.y() + y;
+					
+					if(!d_tileMap[newX][newY] && !visited[newX][newY])
+						queue.add(new Node(newX, newY, current, xEnd, yEnd, current.getCost()));
+				}
+			}
+			
+		}
+		
+		while(current != null) {
+			System.out.println(current.x() + ", " + current.y());
+			current = current.getParent();
+		}
 		
 		
-		return path;
 	}
-
+	
 }

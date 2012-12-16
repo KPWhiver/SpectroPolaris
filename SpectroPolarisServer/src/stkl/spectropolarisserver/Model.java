@@ -14,10 +14,22 @@ public class Model {
 	
 	//private ArrayList<Block> d_blocks;
 	
-	private Block[][] d_tileMap;
+	// tileMap with blocks (true means block, false means noblock)
+	private boolean[][] d_tileMap;
+	private final int d_tileSize = 10;
+	
+	// this rectangle is here to temporarily draw a block when creating them
+	private Rectangle d_tmpBlock;
 	
 	private Rectangle d_hill;
 	private int d_points;
+	
+	private final int d_mapWidth = 1024;
+	private final int d_mapHeight = 768;
+	
+	public int tileSize() {
+		return d_tileSize;
+	}
 	
 	public Model() {
 		d_characters = new ArrayList<GameCharacter>();
@@ -26,7 +38,8 @@ public class Model {
 		
 		d_hill = new Rectangle(200, 200, 100, 100);
 		
-		d_tileMap = new[][];
+		d_tileMap = new boolean[d_mapHeight / d_tileSize][d_mapWidth / d_tileSize];
+		d_tmpBlock = null;
 
 		try {		
 			DataInputStream file = new DataInputStream(new FileInputStream("map.dat"));
@@ -39,9 +52,15 @@ public class Model {
 				int width = file.readInt();
 				int height = file.readInt();
 				
-				if(width > 0 || height > 0)
-					addBlock(new Block(x, y, width, height));
+				if(width > 0 && height > 0 && x + width < d_mapWidth && y + height < d_mapHeight)
+					addBlock(x, y, width, height);
 			}
+			
+			//for(int y = 0; y != d_mapHeight / 5; ++y) {
+			//	for(int x = 0; x != d_mapWidth / 5; ++x) {
+			//		d_tileMap[y][x] = file.readBoolean();
+			//	}
+			//}
 			
 			file.close();
 			
@@ -58,14 +77,20 @@ public class Model {
 		try {		
 			DataOutputStream file = new DataOutputStream(new FileOutputStream("map.dat"));
 			
-			file.writeInt(d_blocks.size());
-			
-			for(Block block : d_blocks) {
-				file.writeInt(block.x());
-				file.writeInt(block.y());
-				file.writeInt(block.width());
-				file.writeInt(block.height());
+			for(int y = 0; y != d_mapHeight / d_tileSize; ++y) {
+				for(int x = 0; x != d_mapWidth / d_tileSize; ++x) {
+					file.writeBoolean(d_tileMap[y][x]);
+				}
 			}
+			
+			//file.writeInt(d_blocks.size());
+			
+			//for(Block block : d_blocks) {
+			//	file.writeInt(block.x());
+			//	file.writeInt(block.y());
+			//	file.writeInt(block.width());
+			//	file.writeInt(block.height());
+			//}
 			
 			file.close();
 			
@@ -87,9 +112,21 @@ public class Model {
 			d_players.add(player);
 		}
 	}
+	
+	public Rectangle tmpBlock() {
+		return d_tmpBlock;
+	}
+	
+	public void setTmpBlock(Rectangle rect) {
+		d_tmpBlock = rect;
+	}
 		
-	public void addBlock(Block block) {
-		d_blocks.add(block);
+	public void addBlock(int x, int y, int width, int height) {
+		// add blocks to the effected part of the map
+		for(int yIdx = y / d_tileSize; yIdx != (height + y) / d_tileSize; ++yIdx) {
+			for(int xIdx = x / d_tileSize; xIdx != (width + x) / d_tileSize; ++xIdx)
+				d_tileMap[yIdx][xIdx] = true;
+		}
 	}
 	
 	public void step() {
@@ -145,8 +182,19 @@ public class Model {
 		}
 		
 		g2d.setColor(Color.BLACK);
-		for(Block block : d_blocks)
-			block.draw(g2d);
+		//for(Block block : d_blocks)
+		//	block.draw(g2d);
+		
+		if(d_tmpBlock != null)
+			g2d.fill(d_tmpBlock);
+		
+		for(int y = 0; y != d_mapHeight / d_tileSize; ++y) {
+			for(int x = 0; x != d_mapWidth / d_tileSize; ++x) {
+				if(d_tileMap[y][x] == true) {
+					g2d.fillRect(x * d_tileSize, y * d_tileSize, d_tileSize, d_tileSize);
+				}
+			}
+		}
 		
 		
 		g2d.fillRect(800, 0, 224, 768);
@@ -164,12 +212,13 @@ public class Model {
 	}
 
 	public void removeBlock(int x, int y) {
-		Block remove = null;
-		for(Block block : d_blocks) {
-			if(block.pointCollision(x, y))
-				remove = block;
-		}
-		d_blocks.remove(remove);
+		//Block remove = null;
+		//for(Block block : d_blocks) {
+			//if(block.pointCollision(x, y))
+			//	remove = block;
+		//}
+		//d_blocks.remove(remove);
+		d_tileMap[y / d_tileSize][x / d_tileSize] = false;
 	}
 
 	public void removePlayer(Player player) {

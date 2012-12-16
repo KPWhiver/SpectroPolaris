@@ -1,5 +1,6 @@
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.event.*;
 import java.util.Observable;
 import java.util.Observer;
@@ -19,7 +20,7 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 	
 	private int d_xStart = -1;
 	private int d_yStart = -1;
-	private Block d_edit;
+	//private Block d_edit;
 	
 	private float d_scale;
 	
@@ -71,11 +72,13 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 			return;
 		}
 		
-		d_xStart = (int) (10 * Math.floor(eventX / 10.0));
-		d_yStart = (int) (10 * Math.floor(eventY / 10.0));
+		d_xStart = (int) (d_model.tileSize() * Math.floor(eventX / (float) d_model.tileSize()));
+		d_yStart = (int) (d_model.tileSize() * Math.floor(eventY / (float) d_model.tileSize()));
 		
-		d_edit = new Block(d_xStart, d_yStart, 0, 0);
-		d_model.addBlock(d_edit);
+		d_model.setTmpBlock(new Rectangle(d_xStart, d_yStart, 0, 0));
+		
+		//d_edit = new Block(d_xStart, d_yStart, 0, 0);
+		//d_model.addBlock(d_edit);
 	}
 
 	@Override
@@ -83,10 +86,13 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 		if(d_xStart < 0)
 			return;		
 		
-		if(d_edit.height() <= 0 || d_edit.width() <= 0)
-			d_model.removeBlock(d_xStart, d_yStart);
-			
-		d_edit = null;
+		Rectangle block = d_model.tmpBlock();
+		
+		if(d_model.tmpBlock().height > 0 && d_model.tmpBlock().width > 0)
+			d_model.addBlock(block.x, block.y, block.width, block.height);
+		
+		d_model.setTmpBlock(null);
+		//d_edit = null;
 		d_xStart = -1;
 		d_yStart = -1;
 	}
@@ -99,11 +105,16 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 		if(d_xStart < 0)
 			return;
 		
-		int x = (int) (10 * Math.floor(eventX / 10.0));
-		int y = (int) (10 * Math.floor(eventY / 10.0));
+		int x = (int) (d_model.tileSize() * Math.floor(eventX / (float) d_model.tileSize()));
+		int y = (int) (d_model.tileSize() * Math.floor(eventY / (float) d_model.tileSize()));
 		
-
-	    d_edit.update(d_xStart, d_yStart, x - d_xStart, y - d_yStart);
+		Rectangle block = d_model.tmpBlock();
+		block.x = d_xStart;
+		block.y = d_yStart;
+		block.height = y - d_yStart;
+		block.width = x - d_xStart;
+		
+	    //d_edit.update(d_xStart, d_yStart, , );
 	}
 
 	@Override

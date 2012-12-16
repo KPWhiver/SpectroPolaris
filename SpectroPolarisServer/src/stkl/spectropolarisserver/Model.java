@@ -12,8 +12,6 @@ public class Model {
 	private ArrayList<GameCharacter> d_characters;
 	private ArrayList<Player> d_players;
 	
-	//private ArrayList<Block> d_blocks;
-	
 	// tileMap with blocks (true means block, false means noblock)
 	private boolean[][] d_tileMap;
 	private final int d_tileSize = 10;
@@ -24,7 +22,7 @@ public class Model {
 	private Rectangle d_hill;
 	private int d_points;
 	
-	private final int d_mapWidth = 1024;
+	private final int d_mapWidth = 800;
 	private final int d_mapHeight = 768;
 	
 	public int tileSize() {
@@ -33,7 +31,6 @@ public class Model {
 	
 	public Model() {
 		d_characters = new ArrayList<GameCharacter>();
-		//d_blocks = new ArrayList<Block>();
 		d_players = new ArrayList<Player>();
 		
 		d_hill = new Rectangle(200, 200, 100, 100);
@@ -182,8 +179,6 @@ public class Model {
 		}
 		
 		g2d.setColor(Color.BLACK);
-		//for(Block block : d_blocks)
-		//	block.draw(g2d);
 		
 		if(d_tmpBlock != null)
 			g2d.fill(d_tmpBlock);
@@ -212,12 +207,6 @@ public class Model {
 	}
 
 	public void removeBlock(int x, int y) {
-		//Block remove = null;
-		//for(Block block : d_blocks) {
-			//if(block.pointCollision(x, y))
-			//	remove = block;
-		//}
-		//d_blocks.remove(remove);
 		d_tileMap[y / d_tileSize][x / d_tileSize] = false;
 	}
 

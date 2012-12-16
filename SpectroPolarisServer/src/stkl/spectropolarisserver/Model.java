@@ -2,18 +2,27 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.PriorityQueue;
 import java.util.Random;
-import java.util.Scanner;
+import java.util.Stack;
 
 
 public class Model {
-	private ArrayList<GameCharacter> d_characters;
-	private ArrayList<Player> d_players;
+	// Boolean for enemy testing purposes
+	private boolean spawned;
 	
+	private ArrayList<Enemy> d_enemies;
+	private ArrayList<Player> d_players;
+
 	// tileMap with blocks (true means block, false means noblock)
 	private boolean[][] d_tileMap;
 	private final int d_tileSize = 10;
@@ -39,15 +48,15 @@ public class Model {
 	}
 	
 	public Model() {
-		d_characters = new ArrayList<GameCharacter>();
+		d_enemies = new ArrayList<Enemy>();
 		d_players = new ArrayList<Player>();
 		
 		d_hill = new Rectangle(200, 200, 100, 100);
-		
+
 		d_health = new ArrayList<HealthPickup>();
 		d_timeSinceHealthPlacement = 0;
 		d_randGenerator = new Random();
-		
+
 		d_tileMap = new boolean[d_mapHeight / d_tileSize][d_mapWidth / d_tileSize];
 		d_tmpBlock = null;
 
@@ -113,8 +122,8 @@ public class Model {
 		}
 	}
 	
-	public void addGameCharacter(GameCharacter character) {
-		d_characters.add(character);
+	public void addEnemy(Enemy enemy) {
+		d_enemies.add(enemy);
 	}
 	
 	public void addPlayer(Player player) {
@@ -129,6 +138,18 @@ public class Model {
 	
 	public void setTmpBlock(Rectangle rect) {
 		d_tmpBlock = rect;
+	}
+	
+	public Rectangle hill() {
+		return d_hill;
+	}
+	
+	public int converToTile(float num) {
+		return (int) num/d_tileSize;
+	}
+	
+	public boolean inTile(float x1, float y1, int x2, int y2) {
+		return (Math.floor(x1 / d_tileSize) == x2) && (Math.floor(y1 / d_tileSize) == y2);
 	}
 		
 	public void addBlock(int x, int y, int width, int height) {
@@ -157,6 +178,13 @@ public class Model {
 				}
 			}
 		}
+		
+		// Draw a single enemy for testing purposes.
+		if(!spawned) {
+			d_enemies.add(new Enemy(25, 25, Color.RED));
+			spawned = true;
+		}
+		
 			
 		boolean hillCaptured = false;
 		
@@ -171,18 +199,17 @@ public class Model {
 			}
 		}
 		
-		for(GameCharacter character : d_characters) {
-			character.step();
-			if(d_hill.contains(character.x(), character.y()))
+		for(Enemy enemy : d_enemies) {
+			enemy.step();
+			if(d_hill.contains(enemy.x(), enemy.y()))
 				hillCaptured = false;
 		}
 		
 		if(hillCaptured)
 			d_points += 1;
-		
-		
-		
-		int numOfCharacters = d_players.size() + d_characters.size();
+
+		// send packet
+		int numOfCharacters = d_players.size() + d_enemies.size();
 		int numOfBytes = 4;
 		// characters
 		numOfBytes += 4 + numOfCharacters * GameCharacter.sendSize();
@@ -204,7 +231,7 @@ public class Model {
 		for(Player player : d_players)
 			player.addToBuffer(buffer);
 		
-		for(GameCharacter character : d_characters)
+		for(GameCharacter character : d_enemies)
 			character.addToBuffer(buffer);
 		
 		// pickups
@@ -232,7 +259,7 @@ public class Model {
 		g2d.setColor(Color.YELLOW);
 		g2d.fill(d_hill);
 		
-		for(GameCharacter character : d_characters)
+		for(GameCharacter character : d_enemies)
 			character.draw(g2d);
 		
 		synchronized(d_players) {
@@ -248,12 +275,11 @@ public class Model {
 		
 		for(int y = 0; y != d_mapHeight / d_tileSize; ++y) {
 			for(int x = 0; x != d_mapWidth / d_tileSize; ++x) {
-				if(d_tileMap[y][x] == true) {
+				if(d_tileMap[y][x]) {
 					g2d.fillRect(x * d_tileSize, y * d_tileSize, d_tileSize, d_tileSize);
 				}
 			}
-		}
-		
+		}		
 		
 		g2d.fillRect(800, 0, 224, 768);
 		
@@ -264,9 +290,9 @@ public class Model {
 		g2d.drawString("Points: " + d_points, 805, 730);
 		g2d.drawString("Connect to: " + SpectroPolaris.server().ip(), 805, 750);
 	}
-
+	
 	public void removeGameCharacter(GameCharacter character) {
-		d_characters.remove(character);
+		d_enemies.remove(character);
 	}
 
 	public void removeBlock(int x, int y) {
@@ -279,6 +305,87 @@ public class Model {
 		}
 		
 	}
-
-
+	
+	/*
+	 * Find a path from COORDINATES xStartCoord, yStartCoord to COORDINATES xEndCoord, yEndCoord. If no path could be found, return null.
+	 */
+	public Stack<Node> findPath(float xStartCoord, float yStartCoord, int xEndCoord, int yEndCoord) {
+		int xStart = (int) xStartCoord / d_tileSize;
+		int yStart = (int) yStartCoord / d_tileSize;
+		int xEnd = (int) xEndCoord / d_tileSize;
+		int yEnd = (int) yEndCoord / d_tileSize;
+		
+		int maxY = d_mapHeight / d_tileSize;
+		int maxX = d_mapWidth / d_tileSize;
+		// Used to store which nodes have been visisted
+		boolean[][] visited = new boolean[maxY][maxX];
+		// Used to store references to nodes so they can be updated
+		Node[][] nodes =  new Node[maxY][maxX];
+		// Used to store nodes ordered by cost
+		PriorityQueue<Node> queue = new PriorityQueue<Node>();
+		
+		Node current = new Node(xStart, yStart, null, 0);
+		
+		queue.add(current);
+		nodes[xStart][yStart] = current;
+		
+		
+		while(!queue.isEmpty()) {
+			current = queue.poll();
+			
+			visited[current.y()][current.x()] = true;
+			
+			if(current.x() == xEnd && current.y() == yEnd) {
+				Stack<Node> path = new Stack<Node>();
+				
+				while(current != null) {
+					path.push(current);
+					current = current.getParent();
+				}
+				
+				return path;
+			}
+				
+			for(int x=-1; x<2; ++x) {
+				for(int y=-1; y<2; ++y) {
+					// Remove diagonal options as temporary solution
+					if(!(x==y) && (x+y) != 0) {
+						// Add all neighbors to the PriorityQueue that haven't been visited and aren't blocked
+						int newX = current.x() + x;
+						int newY = current.y() + y;
+						// Check if the new node is still within the map, is not blocked and not already visited
+						if(newX >= 0 && newX < maxX && newY >= 0 && newY < maxY && !d_tileMap[newY][newX] && !visited[newY][newX]) {
+							int cost = costFunction(newX, newY, current, xEnd, yEnd);
+							
+							if(nodes[newY][newX] == null) {
+								// The node has not been visited yet
+								Node newNode = new Node(newX, newY, current, cost);
+								queue.add(newNode);
+								nodes[newY][newX] =  newNode;
+								
+								
+							} else if(cost < nodes[newY][newX].getCost()) {
+								// The node has been visited but this path is better
+								queue.remove(nodes[newY][newX]);
+								nodes[newY][newX].setParent(current);
+								nodes[newY][newX].setCost(cost);
+								
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		
+		// No path could be found
+		return null;
+		
+	}
+	
+	private int costFunction(int newX, int newY, Node current, int xEnd, int yEnd) {
+		// Cost so far + Manhattan distance from current to new position + Manhattan distance from new position to end node
+		return current.getCost() + Math.abs(current.x() - newX) + Math.abs(current.y() - newY) + Math.abs(newX - xEnd) + Math.abs(newY - yEnd);
+	}
+	
 }

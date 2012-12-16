@@ -66,23 +66,23 @@ public class Model {
 			InputStream is = context.getResources().openRawResource(R.raw.map);
 			DataInputStream file = new DataInputStream(is);
 			
-			int numOfBlocks = file.readInt();
+			//int numOfBlocks = file.readInt();
 			
-			for(int idx = 0; idx != numOfBlocks; ++idx) {
-				int x = file.readInt();
-				int y = file.readInt();
-				int width = file.readInt();
-				int height = file.readInt();
+			//for(int idx = 0; idx != numOfBlocks; ++idx) {
+			//	int x = file.readInt();
+			//	int y = file.readInt();
+			//	int width = file.readInt();
+			//	int height = file.readInt();
 				
-				if(width > 0 && height > 0 && x + width < d_mapWidth && y + height < d_mapHeight)
-					addBlock(x, y, width, height);
-			}
-			
-			//for(int y = 0; y != d_mapHeight / 5; ++y) {
-			//	for(int x = 0; x != d_mapWidth / 5; ++x) {
-			//		d_tileMap[y][x] = file.readBoolean();
-			//	}
+			//	if(width > 0 && height > 0 && x + width < d_mapWidth && y + height < d_mapHeight)
+			//		addBlock(x, y, width, height);
 			//}
+			
+			for(int y = 0; y != d_mapHeight / d_tileSize; ++y) {
+				for(int x = 0; x != d_mapWidth / d_tileSize; ++x) {
+					d_tileMap[y][x] = file.readBoolean();
+				}
+			}
 			
 			file.close();
 			

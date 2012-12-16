@@ -9,10 +9,10 @@ public class GameCharacter {
 	 * 
 	 */
 	private static final long serialVersionUID = -3277124878993422994L;
-	private float d_x;
-	private float d_y;
+	protected float d_x;
+	protected float d_y;
 	
-	private float d_direction;
+	protected float d_direction;
 	private float d_speed;
 	
 	protected Color d_color;
@@ -40,7 +40,7 @@ public class GameCharacter {
 		d_x = x;
 		d_y = y;
 		d_direction = direction;
-		d_speed = 0;
+		d_speed = 1;
 		d_color = color;
 		d_id = s_count;
 		++s_count;

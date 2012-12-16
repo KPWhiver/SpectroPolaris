@@ -18,6 +18,8 @@ public class GameCharacter {
 	protected Color d_color;
 	private int d_id;
 	
+	private final int d_radius = 5;
+	
 	private static int s_count = 0;
 	
 	public static int sendSize() {
@@ -59,7 +61,7 @@ public class GameCharacter {
     public void draw(Graphics2D g2d) {
 
 		g2d.setColor(d_color);
-		g2d.fillOval((int) (d_x) - 5, (int) (d_y) - 5, 10, 10);
+		g2d.fillOval((int) (d_x) - d_radius, (int) (d_y) - d_radius, 2 * d_radius, 2 * d_radius);
 		
 		//System.out.println("draw: " + (int) (d_x) + " " + (int) (d_y));
 	}
@@ -70,6 +72,10 @@ public class GameCharacter {
     
     public float y() {
     	return d_y;
+    }
+    
+    public int radius() {
+    	return d_radius;
     }
     
     public int id() {

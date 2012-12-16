@@ -1,6 +1,8 @@
 package stkl.spectropolarisclient;
 
 import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -16,8 +18,16 @@ public class Model {
 	private ArrayList<GameCharacter> d_characters;
 	private ArrayList<Bullet> d_bullets;
 	private int d_numOfBullets;
-	private ArrayList<Block> d_blocks;
+	//private ArrayList<Block> d_blocks;
 	private Player d_player;
+	
+	// tileMap with blocks (true means block, false means noblock)
+	private boolean[][] d_tileMap;
+	private final int d_tileSize = 10;
+	private Paint d_blockPaint;
+	
+	private final int d_mapWidth = 800;
+	private final int d_mapHeight = 768;
 	
 	private GameActivity d_context;
 	private float d_scale;
@@ -28,9 +38,6 @@ public class Model {
 	private Point d_shootOrigin;
 	private float d_shootControlX;
 	private float d_shootControlY;	
-	
-	private int d_mapWidth = 800;
-	private int d_mapHeight = 768;
 	
 	private Paint d_borderPaint;
 	
@@ -43,7 +50,10 @@ public class Model {
 		d_bullets = new ArrayList<Bullet>();
 		d_numOfBullets = 0;
 		
-		d_blocks = new ArrayList<Block>();
+		d_tileMap = new boolean[d_mapHeight / d_tileSize][d_mapWidth / d_tileSize];
+		d_blockPaint = new Paint();
+		
+		//d_blocks = new ArrayList<Block>();
 		d_motionOrigin = new Point(-1, -1);
 		d_shootOrigin = new Point(-1, -1);
 		
@@ -52,26 +62,37 @@ public class Model {
 		
 		d_context = context;
 		
-		InputStream is = context.getResources().openRawResource(R.raw.map);
-		DataInputStream file = new DataInputStream(is);
-		try {
-		int numOfBlocks = file.readInt();
-		
-		for(int idx = 0; idx != numOfBlocks; ++idx) {
-			int x = file.readInt();
-			int y = file.readInt();
-			int blockWidth = file.readInt();
-			int blockHeight = file.readInt();
-
-			addBlock(new Block(x, y, blockWidth, blockHeight));
-		}
+		try {		
+			InputStream is = context.getResources().openRawResource(R.raw.map);
+			DataInputStream file = new DataInputStream(is);
 			
-		file.close();
-		
-		} catch (IOException e) {
-			System.err.println("Error occured reading from file");
+			//int numOfBlocks = file.readInt();
+			
+			//for(int idx = 0; idx != numOfBlocks; ++idx) {
+			//	int x = file.readInt();
+			//	int y = file.readInt();
+			//	int width = file.readInt();
+			//	int height = file.readInt();
+				
+			//	if(width > 0 && height > 0 && x + width < d_mapWidth && y + height < d_mapHeight)
+			//		addBlock(x, y, width, height);
+			//}
+			
+			for(int y = 0; y != d_mapHeight / d_tileSize; ++y) {
+				for(int x = 0; x != d_mapWidth / d_tileSize; ++x) {
+					d_tileMap[y][x] = file.readBoolean();
+				}
+			}
+			
+			file.close();
+			
+		} catch (FileNotFoundException e) {
+			System.out.println(e.getMessage() + ", java... :|");
 			e.printStackTrace();
-		} 
+		} catch (IOException e) {
+			System.out.println(e.getMessage() + ", java... :|");
+			e.printStackTrace();
+		}
 		
 		float numOfPixels = 500;
 		float minScreenDimension = Math.min(d_context.centerHorizontal() * 2, d_context.centerVertical() * 2);
@@ -79,8 +100,12 @@ public class Model {
 		d_scale = minScreenDimension / numOfPixels;
 	}
 	
-	public void addBlock(Block block) {
-		d_blocks.add(block);
+	public void addBlock(int x, int y, int width, int height) {
+		// add blocks to the effected part of the map
+		for(int yIdx = y / d_tileSize; yIdx != (height + y) / d_tileSize; ++yIdx) {
+			for(int xIdx = x / d_tileSize; xIdx != (width + x) / d_tileSize; ++xIdx)
+				d_tileMap[yIdx][xIdx] = true;
+		}
 	}
 	
 	public void setMotionOrigin(float x, float y) {
@@ -176,10 +201,18 @@ public class Model {
 		for(GameCharacter character : d_characters)
 			character.draw(canvas);
 		
-		for(Block block : d_blocks)
-			block.draw(canvas);
+		//for(Block block : d_blocks)
+		//	block.draw(canvas);
 		
-		
+		for(int y = 0; y != d_mapHeight / d_tileSize; ++y) {
+			for(int x = 0; x != d_mapWidth / d_tileSize; ++x) {
+				if(d_tileMap[y][x] == true)
+					canvas.drawRect(x * d_tileSize, y * d_tileSize, 
+							x * d_tileSize + d_tileSize, y * d_tileSize + d_tileSize, 
+							d_blockPaint);
+
+			}
+		}
 		
 		canvas.drawRect(0, 0, d_mapWidth, d_mapHeight, d_borderPaint);
 		
@@ -205,24 +238,77 @@ public class Model {
 			return true;
 		}
 				
-		for(Block block : d_blocks)
-		{
-			if(block.collision(potentialX, potentialY, radius))
-				return true;
-		}	
+		int startX = ((int) potentialX - radius) / d_tileSize;
+		int startY = ((int) potentialY - radius) / d_tileSize;
+		int endX = 1 + ((int) potentialX + radius) / d_tileSize;
+		int endY = 1 + ((int) potentialY + radius) / d_tileSize;
+		
+		for(int yIdx = startY; yIdx != endY; ++yIdx) {
+			for(int xIdx = startX; xIdx != endX; ++xIdx) {
+				if(d_tileMap[yIdx][xIdx] == true)
+					return true;
+			}
+		}
+		
+		
+		//for(Block block : d_blocks)
+		//{
+			//if(block.collision(potentialX, potentialY, radius))
+			//	return true;
+		//}	
 		return false;
 	}
 	
 	public Point collision(float x1, float y1, float x2, float y2) {
-		Point point = null;
-		for(Block block : d_blocks)
-		{
-			point = block.collision(x1, y1, x2, y2);
-			if(point != null)
-				return point;
-		}	
-		System.out.println("No collision");
-		return point;
+		//Point point = null;
+		//for(Block block : d_blocks)
+		//{
+		//	point = block.collision(x1, y1, x2, y2);
+		//	if(point != null)
+		//		return point;
+		//}	
+		
+		/*
+		private float lineXsideCollision(float x1, float y1, float x2, float y2, float x) {
+			return y1 + (y2 - y1) * ((x - x1) / (x2 - x1));
+		}
+		
+		private float lineYsideCollision(float x1, float y1, float x2, float y2, float y) {
+			return x1 + (x2 - x1) * ((y - y1) / (y2 - y1));
+		}
+		
+		public Point collision(float x1, float y1, float x2, float y2) {
+			float minX = Math.min(x1, x2);
+			float maxX = Math.max(x1, x2);
+			float minY = Math.min(y1, y2);
+			float maxY = Math.min(y1, y2);
+			
+			if(minX < rect.left && maxX >= rect.left) {		//does it cross left edge?
+				float intersectionY = lineXsideCollision(x1, y1, x2, y2, rect.left);
+				if(intersectionY >= rect.top && intersectionY <= rect.bottom)
+					return new Point(rect.left, (int) intersectionY);
+			}
+			if(minX > rect.right && maxX <= rect.right) {//does it cross right edge?
+				float intersectionY = lineXsideCollision(x1, y1, x2, y2, rect.right);
+				if(intersectionY >= rect.top && intersectionY <= rect.bottom)
+					return new Point(rect.right, (int) intersectionY);
+			}
+			
+			if(minY < rect.top && maxY >= rect.top) {		//does it cross top edge?
+				float intersectionX = lineYsideCollision(x1, y1, x2, y2, rect.top);
+				if(intersectionX >= rect.left && intersectionX <= rect.right)
+					return new Point((int) intersectionX, rect.top);
+			}
+			if(minY > rect.bottom && maxY <= rect.bottom) {//does it cross bottom edge?
+				float intersectionX = lineYsideCollision(x1, y1, x2, y2, rect.bottom);
+				if(intersectionX >= rect.left && intersectionX <= rect.right)
+					return new Point((int) intersectionX, rect.bottom);
+			}
+			
+			return null;
+		}
+		*/
+		return null;
 	}
 
 	public void receive(ByteBuffer buffer, int numOfCharacters) {

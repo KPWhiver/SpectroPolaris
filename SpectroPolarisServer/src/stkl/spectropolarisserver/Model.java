@@ -17,9 +17,7 @@ import java.util.PriorityQueue;
 public class Model {
 	private ArrayList<GameCharacter> d_characters;
 	private ArrayList<Player> d_players;
-	
-	private ArrayList<Block> d_blocks;
-	
+
 	// tileMap with blocks (true means block, false means noblock)
 	private boolean[][] d_tileMap;
 	private final int d_tileSize = 10;
@@ -30,7 +28,7 @@ public class Model {
 	private Rectangle d_hill;
 	private int d_points;
 	
-	private final int d_mapWidth = 1024;
+	private final int d_mapWidth = 800;
 	private final int d_mapHeight = 768;
 	
 	public int tileSize() {
@@ -39,7 +37,6 @@ public class Model {
 	
 	public Model() {
 		d_characters = new ArrayList<GameCharacter>();
-		d_blocks = new ArrayList<Block>();
 		d_players = new ArrayList<Player>();
 		
 		d_hill = new Rectangle(200, 200, 100, 100);
@@ -52,23 +49,23 @@ public class Model {
 		try {		
 			DataInputStream file = new DataInputStream(new FileInputStream("map.dat"));
 			
-			int numOfBlocks = file.readInt();
+			//int numOfBlocks = file.readInt();
 			
-			for(int idx = 0; idx != numOfBlocks; ++idx) {
-				int x = file.readInt();
-				int y = file.readInt();
-				int width = file.readInt();
-				int height = file.readInt();
+			//for(int idx = 0; idx != numOfBlocks; ++idx) {
+			//	int x = file.readInt();
+			//	int y = file.readInt();
+			//	int width = file.readInt();
+			//	int height = file.readInt();
 				
-				if(width > 0 && height > 0 && x + width < d_mapWidth && y + height < d_mapHeight)
-					addBlock(x, y, width, height);
-			}
-			
-			//for(int y = 0; y != d_mapHeight / 5; ++y) {
-			//	for(int x = 0; x != d_mapWidth / 5; ++x) {
-			//		d_tileMap[y][x] = file.readBoolean();
-			//	}
+			//	if(width > 0 && height > 0 && x + width < d_mapWidth && y + height < d_mapHeight)
+			//		addBlock(x, y, width, height);
 			//}
+			
+			for(int y = 0; y != d_mapHeight / d_tileSize; ++y) {
+				for(int x = 0; x != d_mapWidth / d_tileSize; ++x) {
+					d_tileMap[y][x] = file.readBoolean();
+				}
+			}
 			
 			file.close();
 			
@@ -190,8 +187,6 @@ public class Model {
 		}
 		
 		g2d.setColor(Color.BLACK);
-		//for(Block block : d_blocks)
-		//	block.draw(g2d);
 		
 		if(d_tmpBlock != null)
 			g2d.fill(d_tmpBlock);
@@ -220,12 +215,6 @@ public class Model {
 	}
 
 	public void removeBlock(int x, int y) {
-		//Block remove = null;
-		//for(Block block : d_blocks) {
-			//if(block.pointCollision(x, y))
-			//	remove = block;
-		//}
-		//d_blocks.remove(remove);
 		d_tileMap[y / d_tileSize][x / d_tileSize] = false;
 	}
 

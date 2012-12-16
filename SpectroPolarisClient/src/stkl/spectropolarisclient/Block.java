@@ -53,38 +53,42 @@ public class Block {
 	}
 	
 	private float lineXsideCollision(float x1, float y1, float x2, float y2, float x) {
-		return y1 + (y2 - y1) * ((x - x1) / (x2 - x1));
+		return y1 + Math.abs(y2 - y1) * ((x - x1) / (x2 - x1));
 	}
 	
 	private float lineYsideCollision(float x1, float y1, float x2, float y2, float y) {
-		return x1 + (x2 - x1) * ((y - y1) / (y2 - y1));
+		return x1 + Math.abs(x2 - x1) * ((y - y1) / (y2 - y1));
 	}
 	
 	public Point collision(float x1, float y1, float x2, float y2) {
 		float minX = Math.min(x1, x2);
 		float maxX = Math.max(x1, x2);
 		float minY = Math.min(y1, y2);
-		float maxY = Math.min(y1, y2);
+		float maxY = Math.max(y1, y2);
 		
 		if(minX < rect.left && maxX >= rect.left) {		//does it cross left edge?
 			float intersectionY = lineXsideCollision(x1, y1, x2, y2, rect.left);
 			if(intersectionY >= rect.top && intersectionY <= rect.bottom)
+				System.out.println("Left");
 				return new Point(rect.left, (int) intersectionY);
 		}
 		if(minX > rect.right && maxX <= rect.right) {//does it cross right edge?
 			float intersectionY = lineXsideCollision(x1, y1, x2, y2, rect.right);
 			if(intersectionY >= rect.top && intersectionY <= rect.bottom)
+				System.out.println("Right");
 				return new Point(rect.right, (int) intersectionY);
 		}
 		
 		if(minY < rect.top && maxY >= rect.top) {		//does it cross top edge?
 			float intersectionX = lineYsideCollision(x1, y1, x2, y2, rect.top);
 			if(intersectionX >= rect.left && intersectionX <= rect.right)
+				System.out.println("Top");
 				return new Point((int) intersectionX, rect.top);
 		}
 		if(minY > rect.bottom && maxY <= rect.bottom) {//does it cross bottom edge?
 			float intersectionX = lineYsideCollision(x1, y1, x2, y2, rect.bottom);
 			if(intersectionX >= rect.left && intersectionX <= rect.right)
+				System.out.println("Bottom");
 				return new Point((int) intersectionX, rect.bottom);
 		}
 		

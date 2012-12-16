@@ -221,6 +221,7 @@ public class Model {
 			if(point != null)
 				return point;
 		}	
+		System.out.println("No collision");
 		return point;
 	}
 

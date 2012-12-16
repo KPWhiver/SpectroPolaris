@@ -4,7 +4,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.util.FloatMath;
 
 public class Bullet {	
 	private float d_x1;
@@ -32,7 +31,7 @@ public class Bullet {
 		//d_speed = 0;
 		d_destroyed = true;		
 
-		d_paint.setColor(Color.YELLOW);
+		d_paint.setColor(Color.CYAN);
 	}
 	
 	public void instantiate(float x, float y, float direction) {
@@ -69,7 +68,7 @@ public class Bullet {
 		if(d_destroyed)
 			return false;
 		
-		d_transparency -= 50;
+		d_transparency -= 3000/d_transparency;
 		
 		//if(GameActivity.getInstance().model().collision(potentialX, potentialY, 5) == false)
 		//{

@@ -398,10 +398,10 @@ public class Model {
 	}
 	
 	private float heuristicCost(int newX, int newY, int xEnd, int yEnd) {
-		return (float)  (Math.pow(newX - xEnd, 2) + Math.pow(newY - yEnd, 2));
+		return (float)  Math.sqrt((Math.pow(newX - xEnd, 2) + Math.pow(newY - yEnd, 2)));
 	}
 	
 	private float pathCost(int newX, int newY, Node current) {
-		return (float) (current.getPathCost() + Math.pow(current.x() - newX, 2) + Math.pow(current.y() - newY, 2));
+		return (float) (current.getPathCost() + Math.sqrt(Math.pow(current.x() - newX, 2) + Math.pow(current.y() - newY, 2)));
 	}
 }

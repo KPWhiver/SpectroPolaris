@@ -18,6 +18,8 @@ public class Player {
 	
 	private float d_shootDirection;
 	
+	private int d_health;
+	
 	private Paint d_paint;
 	
 	private int d_id;
@@ -30,6 +32,7 @@ public class Player {
 		d_speed = 0;
 		d_paint = paint;
 		d_id = -1;
+		d_health = 100;
 	}
 	
 	private long d_timeSinceLastBullet = 0;
@@ -58,7 +61,15 @@ public class Player {
 			d_y = potentialY;
 		}
 		
-		Client.getInstance().sent(d_x, d_y, d_direction, d_speed);
+		Client.getInstance().sent(d_x, d_y, d_direction, d_speed, d_health);
+	}
+	
+	public void addHealth() {
+		d_health = Math.min(d_health + 25, 100);
+	}
+	
+	public int health() {
+		return d_health;
 	}
 	
 	public float xOffset() {

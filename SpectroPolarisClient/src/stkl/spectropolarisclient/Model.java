@@ -30,6 +30,7 @@ public class Model {
 	
 	// pickups
 	private ArrayList<HealthPickup> d_health;
+	private int d_lastNumOfPickups;
 	
 	private GameActivity d_context;
 	private float d_scale;
@@ -57,6 +58,7 @@ public class Model {
 		
 		// pickups
 		d_health = new ArrayList<HealthPickup>();
+		d_lastNumOfPickups = 0;
 		
 		//d_blocks = new ArrayList<Block>();
 		d_motionOrigin = new Point(-1, -1);
@@ -205,14 +207,16 @@ public class Model {
 		
 		d_player.draw(canvas, d_context.centerHorizontal(), d_context.centerVertical());
 		
+		Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+		
+
+		
+		
 		canvas.translate(-d_player.xOffset() + d_context.centerHorizontal(),
 				 -d_player.yOffset() + d_context.centerVertical());
 		
 		for(GameCharacter character : d_characters)
 			character.draw(canvas);
-		
-		//for(Block block : d_blocks)
-		//	block.draw(canvas);
 		
 		for(int y = 0; y != d_mapHeight / d_tileSize; ++y) {
 			for(int x = 0; x != d_mapWidth / d_tileSize; ++x) {
@@ -220,19 +224,27 @@ public class Model {
 					canvas.drawRect(x * d_tileSize, y * d_tileSize, 
 							x * d_tileSize + d_tileSize, y * d_tileSize + d_tileSize, 
 							d_blockPaint);
-
 			}
 		}
 		
 		canvas.drawRect(0, 0, d_mapWidth, d_mapHeight, d_borderPaint);
 		
-		canvas.restore();
+		canvas.translate(d_player.xOffset() - d_context.centerHorizontal(),
+				 d_player.yOffset() - d_context.centerVertical());
 		
-		Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+		paint.setColor(Color.GRAY);
+		canvas.drawRect(d_context.centerHorizontal() - 50, d_context.centerVertical() + 50, 
+				d_context.centerHorizontal() + 50, d_context.centerVertical() + 55, paint);
+		paint.setColor(Color.RED);
+		canvas.drawRect(d_context.centerHorizontal() - 50, d_context.centerVertical() + 50, 
+				d_context.centerHorizontal() - 50 + d_player.health(), d_context.centerVertical() + 55, paint);
+		
 		paint.setColor(Color.CYAN);
 		//paint.setTextSize(20);
 		//canvas.drawText("Motion Controls: " + d_motionControlX + ", " + d_motionControlY, 10, 20, paint);
 		//canvas.drawText("Shoot Controls: " + d_shootControlX + ", " + d_shootControlY, 10, 40, paint);
+		
+		canvas.restore();
 		
 		if(!d_motionOrigin.equals(-1, -1)) {
 			canvas.drawCircle(d_motionOrigin.x, d_motionOrigin.y, 5, paint);
@@ -359,8 +371,13 @@ public class Model {
 		synchronized(d_health) {
 			
 			// Check if a pickup has been picked up
-			//if(numOfPickups < d_health.size())
-				//for()
+			if(numOfPickups < d_lastNumOfPickups) {
+				synchronized(d_player) {
+					d_player.addHealth();
+				}
+			}
+			
+			d_lastNumOfPickups = numOfPickups;
 			
 			for(int idx = 0; idx != numOfPickups; ++idx) {
 				int x = buffer.getInt();

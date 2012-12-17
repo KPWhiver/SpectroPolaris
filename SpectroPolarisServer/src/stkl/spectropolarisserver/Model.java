@@ -349,12 +349,16 @@ public class Model {
 			for(int x=-1; x<2; ++x) {
 				for(int y=-1; y<2; ++y) {
 					// Remove diagonal options as temporary solution
-					if(!(x==y) && (x+y) != 0) {
+					//if(!(x==y) && (x+y) != 0) {
 						// Add all neighbors to the PriorityQueue that haven't been visited and aren't blocked
 						int newX = current.x() + x;
 						int newY = current.y() + y;
 						// Check if the new node is still within the map, is not blocked and not already visited
 						if(newX >= 0 && newX < maxX && newY >= 0 && newY < maxY && !d_tileMap[newY][newX] && !visited[newY][newX]) {
+							// If a diagonal movement, check for corners which wouldn't allow this move
+							if((x!=0 && y!=0) && (d_tileMap[newY][current.x()] || d_tileMap[current.y()][newX]))
+								continue;
+							
 							int cost = costFunction(newX, newY, current, xEnd, yEnd);
 							
 							if(nodes[newY][newX] == null) {
@@ -372,7 +376,7 @@ public class Model {
 								
 							}
 						}
-					}
+					//}
 				}
 			}
 		}

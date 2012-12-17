@@ -41,7 +41,7 @@ public class Model {
 	private Random d_randGenerator;
 	
 	// enemy related
-	private final int d_maxNumOfEnemies = 50;
+	private final int d_maxNumOfEnemies = 25;
 	
 	public int tileSize() {
 		return d_tileSize;
@@ -166,8 +166,8 @@ public class Model {
 			
 			// find free spot to place health
 			while(d_timeSinceHealthPlacement > 330) {
-				int x = d_randGenerator.nextInt(d_mapWidth);
-				int y = d_randGenerator.nextInt(d_mapHeight);
+				int x = d_randGenerator.nextInt(d_mapWidth - 10);
+				int y = d_randGenerator.nextInt(d_mapHeight - 10);
 				
 				synchronized(d_health) {
 					if(d_tileMap[y / d_tileSize][x / d_tileSize] == false) {
@@ -179,10 +179,18 @@ public class Model {
 			}
 		}
 		
+		// Place enemy on random location on the edge of the map;
 		if(d_enemies.size() < d_maxNumOfEnemies) {
-			// For now, spawn a enemy on a random free spot
-			int x = d_randGenerator.nextInt(d_mapWidth-10);
-			int y = d_randGenerator.nextInt(d_mapHeight-10);
+			int x = d_randGenerator.nextInt(d_mapWidth - 10);
+			int y = d_randGenerator.nextInt(d_mapHeight - 10);
+			
+			boolean xOrY = d_randGenerator.nextBoolean();
+			int maxOrMin = d_randGenerator.nextInt(2);
+			
+			if(xOrY)
+				x = maxOrMin * (d_mapWidth - 10);
+			else
+				y = maxOrMin * (d_mapHeight - 10);
 					
 			synchronized(d_enemies) {
 				if(d_tileMap[y / d_tileSize][x / d_tileSize] == false) {

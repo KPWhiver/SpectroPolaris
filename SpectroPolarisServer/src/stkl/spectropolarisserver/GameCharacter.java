@@ -13,7 +13,7 @@ public class GameCharacter {
 	protected float d_y;
 	
 	protected float d_direction;
-	private float d_speed;
+	protected float d_speed;
 	
 	protected Color d_color;
 	private int d_id;
@@ -88,6 +88,10 @@ public class GameCharacter {
     
     public int health() {
     	return d_health;
+    }
+    
+    public float distanceFrom(float x, float y) {
+    	return (float) Math.hypot(d_x - x, d_y - y);
     }
     
     public void setColor(int color) {

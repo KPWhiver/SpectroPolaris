@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.io.DataInputStream;
@@ -302,8 +303,16 @@ public class Model {
 				}
 			}
 		}		
-		
+
 		g2d.fillRect(800, 0, 224, 768);
+		
+		/* 
+		g2d.setColor(Color.BLUE);
+		for(Point point: debug) {
+			g2d.drawRect(point.x * d_tileSize, point.y * d_tileSize, d_tileSize, d_tileSize);
+		}
+		g2d.setColor(Color.BLACK);
+		*/ 
 		
 		for(int index = 0; index != d_players.size(); ++index)
 			d_players.get(index).drawUI(g2d, index);
@@ -328,6 +337,9 @@ public class Model {
 		
 	}
 	
+	/*
+	 * Return the closest player within the given range from the given coordinates
+	 */
 	public Player closestPlayer(float x, float y, int range) {
 		Player closestPlayer =  null;
 		float distance = range;
@@ -338,6 +350,44 @@ public class Model {
 		}
 		
 		return closestPlayer;
+	}
+	
+	/*
+	 * Bresenham's Line Algorithm
+	 * Return null if a direct line between x1, y1 and x2, y2 can be drawn. Otherwise, return a Point with the coordinates of the collision.
+	 */
+	public Point visible(float cX1, float cY1, float cX2, float cY2) {
+		int x1 = (int) (cX1 / d_tileSize);
+		int y1 = (int) (cY1 / d_tileSize);
+		int x2 = (int) (cX2 / d_tileSize);
+		int y2 = (int) (cY2 / d_tileSize);
+		
+		int dx = Math.abs(x2-x1);
+		int dy = Math.abs(y2-y1);
+		int sx = x1 < x2 ? 1 : -1;
+		int sy = y1 < y2 ? 1 : -1;
+		
+		int error = dx - dy;
+		
+		while(true) {
+			if(d_tileMap[y1][x1])
+				return new Point(x1, y1);
+			
+			if(x1 == x2 && y1 == y2)
+				return null;
+			
+			int e2 = 2*error;
+			
+			if(e2 > -dy) {
+				error = error - dy;
+				x1 = x1 + sx;
+			}
+			
+			if(e2 < dx) {
+				error = error + dx;
+				y1 = y1 + sy;
+			}
+		}
 	}
 	
 	/*

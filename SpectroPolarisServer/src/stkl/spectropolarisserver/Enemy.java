@@ -20,6 +20,22 @@ public class Enemy extends GameCharacter {
 	public void step() {
 		Model model = SpectroPolaris.frame().gamePanel().model();
 		
+		d_speed = 1;
+		
+		Player player = model.closestPlayer(d_x, d_y, 100);
+		if(player != null && lastPlayerPath < 0) {
+			if(player.distanceFrom(d_x, d_y) < 80 && model.visible(d_x, d_y, player.d_x, player.d_y) == null) {
+				d_speed = 0;
+				return;
+			} 
+			
+			path = model.findPath(d_x, d_y, player.x(), player.y());
+			path.pop();
+			lastPlayerPath = 5;
+		} else {
+			lastPlayerPath--;
+		}
+		
 		if(model.inTile(d_x, d_y, goal.x(), goal.y())) {
 			if(path.isEmpty()) {
 				path = model.findPath(d_x, d_y, model.hill().x, model.hill().y);
@@ -28,15 +44,6 @@ public class Enemy extends GameCharacter {
 			d_direction = (float) Math.atan2(goal.x() * model.tileSize() + 5 - d_x, goal.y() * model.tileSize() + 5 - d_y);
 			// System.out.println("New goal: from " + d_x + ", " + d_y + " to " + goal.x() * 10 + ", " + goal.y() * 10 + ". New direction: " + d_direction);
 		} 
-		
-		Player player = model.closestPlayer(d_x, d_y, 100);
-		if(player != null && lastPlayerPath < 0) {
-			path = model.findPath(d_x, d_y, player.x(), player.y());
-			path.pop();
-			lastPlayerPath = 5;
-		} else {
-			lastPlayerPath--;
-		}
 		
 		super.step();
 	}
@@ -52,5 +59,5 @@ public class Enemy extends GameCharacter {
 		}
 		
 		super.draw(g2d);
-	} */ 
+	} */
 }

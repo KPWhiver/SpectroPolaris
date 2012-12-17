@@ -12,7 +12,6 @@ public class Enemy extends GameCharacter {
 		Model model = SpectroPolaris.frame().gamePanel().model();
 		path = model.findPath(d_x, d_y, model.hill().x, model.hill().y);
 		goal = path.pop();
-		System.out.println(d_x + ", " + d_y + " to " + goal.x() + ", " + goal.y());
 	}
 
 	

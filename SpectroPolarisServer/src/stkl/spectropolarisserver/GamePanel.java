@@ -125,10 +125,14 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 	public void keyPressed(KeyEvent e) {
 		if(e.getKeyCode() == KeyEvent.VK_S)
 			d_model.save();
+		if(e.getKeyCode() == KeyEvent.VK_L)
+			d_model.setDrawPaths(true);
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+		if(e.getKeyCode() == KeyEvent.VK_L)
+			d_model.setDrawPaths(false);
 	}
 
 	@Override

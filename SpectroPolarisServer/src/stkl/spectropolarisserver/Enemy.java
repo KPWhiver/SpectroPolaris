@@ -48,16 +48,17 @@ public class Enemy extends GameCharacter {
 		super.step();
 	}
 	
-	/* @Override
+	@Override
 	public void draw(Graphics2D g2d) {
-		// Debug draw, DNE
-		Node array[] = new Node[path.size()];
-		path.copyInto(array);
-		for(Node node: array) {
+		if(SpectroPolaris.frame().gamePanel().model().isDrawPaths()) {
 			g2d.setColor(Color.GREEN);
-			g2d.drawRect(node.x() * 10, node.y() * 10, 10, 10);
+			Node array[] = new Node[path.size()];
+			path.copyInto(array);
+			for(Node node: array) {
+				g2d.drawRect(node.x() * 10, node.y() * 10, 10, 10);
+			}
 		}
 		
 		super.draw(g2d);
-	} */
+	} 
 }

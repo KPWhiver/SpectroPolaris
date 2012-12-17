@@ -44,11 +44,16 @@ public class Model {
 	// enemy related
 	private final int d_maxNumOfEnemies = 25;
 	
+	// debug
+	private boolean d_drawPaths;
+	
 	public int tileSize() {
 		return d_tileSize;
 	}
 	
 	public Model() {
+		d_drawPaths = false;
+		
 		d_enemies = new ArrayList<Enemy>();
 		d_players = new ArrayList<Player>();
 		
@@ -133,6 +138,14 @@ public class Model {
 		}
 	}
 	
+	public boolean isDrawPaths() {
+		return d_drawPaths;
+	}
+
+	public void setDrawPaths(boolean drawPaths) {
+		this.d_drawPaths = drawPaths;
+	}
+
 	public ArrayList<Player> players() {
 		return d_players;
 	}

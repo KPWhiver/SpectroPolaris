@@ -41,7 +41,7 @@ public class Model {
 	private Random d_randGenerator;
 	
 	// enemy related
-	private final int d_maxNumOfEnemies = 1;
+	private final int d_maxNumOfEnemies = 50;
 	
 	public int tileSize() {
 		return d_tileSize;
@@ -267,8 +267,10 @@ public class Model {
 		g2d.setColor(Color.YELLOW);
 		g2d.fill(d_hill);
 		
-		for(GameCharacter character : d_enemies)
-			character.draw(g2d);
+		synchronized(d_enemies) {
+			for(GameCharacter character : d_enemies)
+				character.draw(g2d);
+		}
 		
 		synchronized(d_players) {
 			
@@ -396,10 +398,10 @@ public class Model {
 	}
 	
 	private float heuristicCost(int newX, int newY, int xEnd, int yEnd) {
-		return (float)  (Math.sqrt(Math.pow(newX - xEnd, 2) + Math.pow(newY - yEnd, 2)));
+		return (float)  (Math.pow(newX - xEnd, 2) + Math.pow(newY - yEnd, 2));
 	}
 	
 	private float pathCost(int newX, int newY, Node current) {
-		return (float) (current.getPathCost() + Math.sqrt(Math.pow(current.x() - newX, 2) + Math.pow(current.y() - newY, 2)));
+		return (float) (current.getPathCost() + Math.pow(current.x() - newX, 2) + Math.pow(current.y() - newY, 2));
 	}
 }

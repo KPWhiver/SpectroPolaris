@@ -262,8 +262,8 @@ public class Model {
 				
 		int startX = ((int) potentialX - radius) / d_tileSize;
 		int startY = ((int) potentialY - radius) / d_tileSize;
-		int endX = 1 + ((int) potentialX + radius) / d_tileSize;
-		int endY = 1 + ((int) potentialY + radius) / d_tileSize;
+		int endX = Math.min(1 + ((int) potentialX + radius) / d_tileSize, d_mapWidth / d_tileSize);
+		int endY = Math.min(1 + ((int) potentialY + radius) / d_tileSize, d_mapHeight / d_tileSize);
 		
 		for(int yIdx = startY; yIdx != endY; ++yIdx) {
 			for(int xIdx = startX; xIdx != endX; ++xIdx) {

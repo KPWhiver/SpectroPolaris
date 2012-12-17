@@ -132,6 +132,10 @@ public class Model {
 		}
 	}
 	
+	public ArrayList<Player> players() {
+		return d_players;
+	}
+	
 	public Rectangle tmpBlock() {
 		return d_tmpBlock;
 	}
@@ -170,7 +174,7 @@ public class Model {
 				int y = d_randGenerator.nextInt(d_mapHeight - 10);
 				
 				synchronized(d_health) {
-					if(d_tileMap[y / d_tileSize][x / d_tileSize] == false) {
+					if(!d_tileMap[y / d_tileSize][x / d_tileSize]) {
 						d_health.add(new HealthPickup(x, y));
 						d_timeSinceHealthPlacement = 0;
 						break;
@@ -193,7 +197,7 @@ public class Model {
 				y = maxOrMin * (d_mapHeight - 10);
 					
 			synchronized(d_enemies) {
-				if(d_tileMap[y / d_tileSize][x / d_tileSize] == false) {
+				if(!d_tileMap[y / d_tileSize][x / d_tileSize]) {
 					d_enemies.add(new Enemy(x, y, Color.RED));
 				}
 			}
@@ -324,10 +328,22 @@ public class Model {
 		
 	}
 	
+	public Player closestPlayer(float x, float y, int range) {
+		Player closestPlayer =  null;
+		float distance = range;
+		
+		for(Player player: d_players) {
+			if(Math.hypot(player.d_x - x, player.d_y - y) < distance)
+				closestPlayer = player;
+		}
+		
+		return closestPlayer;
+	}
+	
 	/*
 	 * Find a path from COORDINATES xStartCoord, yStartCoord to COORDINATES xEndCoord, yEndCoord. If no path could be found, return null.
 	 */
-	public Stack<Node> findPath(float xStartCoord, float yStartCoord, int xEndCoord, int yEndCoord) {
+	public Stack<Node> findPath(float xStartCoord, float yStartCoord, float xEndCoord, float yEndCoord) {
 		int xStart = (int) xStartCoord / d_tileSize;
 		int yStart = (int) yStartCoord / d_tileSize;
 		int xEnd = (int) xEndCoord / d_tileSize;
@@ -406,10 +422,10 @@ public class Model {
 	}
 	
 	private float heuristicCost(int newX, int newY, int xEnd, int yEnd) {
-		return (float)  Math.sqrt((Math.pow(newX - xEnd, 2) + Math.pow(newY - yEnd, 2)));
+		return (float)  Math.hypot(newX - xEnd, newY - yEnd);
 	}
 	
 	private float pathCost(int newX, int newY, Node current) {
-		return (float) (current.getPathCost() + Math.sqrt(Math.pow(current.x() - newX, 2) + Math.pow(current.y() - newY, 2)));
+		return (float) (current.getPathCost() + Math.hypot(current.x() - newX, current.y() - newY));
 	}
 }

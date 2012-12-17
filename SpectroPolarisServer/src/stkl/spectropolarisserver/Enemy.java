@@ -6,12 +6,14 @@ import java.util.Stack;
 public class Enemy extends GameCharacter {
 	private Stack<Node> path;
 	private Node goal;
+	private int lastPlayerPath;
 
 	public Enemy(float x, float y, Color color) {
 		super(x, y, 0, color);
 		Model model = SpectroPolaris.frame().gamePanel().model();
 		path = model.findPath(d_x, d_y, model.hill().x, model.hill().y);
 		goal = path.pop();
+		lastPlayerPath = 0;
 	}
 
 	
@@ -26,6 +28,15 @@ public class Enemy extends GameCharacter {
 			d_direction = (float) Math.atan2(goal.x() * model.tileSize() + 5 - d_x, goal.y() * model.tileSize() + 5 - d_y);
 			// System.out.println("New goal: from " + d_x + ", " + d_y + " to " + goal.x() * 10 + ", " + goal.y() * 10 + ". New direction: " + d_direction);
 		} 
+		
+		Player player = model.closestPlayer(d_x, d_y, 100);
+		if(player != null && lastPlayerPath < 0) {
+			path = model.findPath(d_x, d_y, player.x(), player.y());
+			path.pop();
+			lastPlayerPath = 5;
+		} else {
+			lastPlayerPath--;
+		}
 		
 		super.step();
 	}

@@ -85,9 +85,9 @@ public class Client extends Thread {
 		intByteBuffer.clear();
 		
 		// Read amount of bullets from stream
- 		//in.read(intByteBuffer.array());
- 		//int numOfBullets = intByteBuffer.getInt();
- 		//intByteBuffer.clear();
+ 		in.read(intByteBuffer.array());
+ 		int numOfBullets = intByteBuffer.getInt();
+ 		intByteBuffer.clear();
 		
 		// Read amount of pickups from stream
  		in.read(intByteBuffer.array());
@@ -98,7 +98,7 @@ public class Client extends Thread {
 		// characters
 		numOfBytes += numOfCharacters * GameCharacter.sendSize();
 		// bullets
-		//numOfBytes += 4 + numOfBullets * Bullet.sendSize();
+		numOfBytes += numOfBullets * Bullet.sendSize();
 		// pickups
 		numOfBytes += numOfPickups * HealthPickup.sendSize();
  		
@@ -115,7 +115,7 @@ public class Client extends Thread {
 	        return;
 	    }
 	    
-	    GameActivity.getInstance().model().receive(buffer, numOfCharacters, 0, numOfPickups);
+	    GameActivity.getInstance().model().receive(buffer, numOfCharacters, numOfBullets, numOfPickups);
 	}
 	
 	private void receiveId(ByteBuffer intByteBuffer) throws Exception {

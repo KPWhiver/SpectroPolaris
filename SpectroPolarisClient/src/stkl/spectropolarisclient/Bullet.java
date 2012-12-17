@@ -15,7 +15,7 @@ public class Bullet {
 	//private float d_direction;
 	//private float d_speed;
 	
-	private boolean d_destroyed;
+	private int d_id;
 	
 	private Paint d_paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 	
@@ -28,13 +28,12 @@ public class Bullet {
     	d_x2 = 0;
 		d_y2 = 0;
 		
-		//d_speed = 0;
-		d_destroyed = true;		
+		d_id = -1;		
 
 		d_paint.setColor(Color.CYAN);
 	}
 	
-	public void instantiate(float x, float y, float direction) {
+	public void instantiate(float x, float y, float direction, int id) {
 		d_x1 = x;
 		d_y1 = y;
     	d_x2 = (float) (d_x1 + Math.sin(direction) * 1000);
@@ -46,10 +45,19 @@ public class Bullet {
 			d_y2 = point.y;
 		}
 		
-		//d_direction = direction;
-		//d_speed = 5;
-		d_destroyed = false;
+		d_id = id;
 		d_transparency = 255;
+		d_paint.setAlpha(d_transparency);
+	}
+	
+	public void instantiate(float x1, float y1, float x2, float y2, int id, int transparency) {
+		d_x1 = x1;
+		d_y1 = y1;
+    	d_x2 = x2;
+		d_y2 = y2;
+		
+		d_id = id;
+		d_transparency = transparency;
 		d_paint.setAlpha(d_transparency);
 	}
 	
@@ -59,26 +67,16 @@ public class Bullet {
     	d_x2 = other.d_x2;
 		d_y2 = other.d_y2;
 		//d_speed = other.d_speed;
-		d_destroyed = false;
-		d_transparency = 255;
+		d_id = other.d_id;
+		d_transparency = other.d_transparency;
 		d_paint.setAlpha(d_transparency);
 	}
 	
 	public boolean step() {
-		if(d_destroyed)
+		if(destroyed())
 			return false;
 		
 		d_transparency -= 3000/d_transparency;
-		
-		//if(GameActivity.getInstance().model().collision(potentialX, potentialY, 5) == false)
-		//{
-			//d_x = potentialX;
-			//d_y = potentialY;
-			//return false;
-		//} else {
-	//		destroy();
-			//return true;
-	//	}
 			
 		if(d_transparency < 0) {
 			destroy();
@@ -90,19 +88,23 @@ public class Bullet {
 	}
 	
 	public void destroy() {
-		d_destroyed = true;
+		d_id = -1;
 	}
 	
 	public boolean destroyed() {
-		return d_destroyed;
+		return d_id == -1;
 	}
 
     public void draw(Canvas canvas) {		
     	//float potentialX = d_x + FloatMath.sin(d_direction) * 1000;
 		//float potentialY = d_y + FloatMath.cos(d_direction) * 1000;
-    	if(!d_destroyed) {
+    	if(!destroyed()) {
     		//canvas.drawCircle(d_x, d_y, 1, d_paint);
     		canvas.drawLine(d_x1, d_y1, d_x2, d_y2, d_paint);
     	}
+	}
+
+	public static int sendSize() {
+		return 6 * 4;
 	}
 }

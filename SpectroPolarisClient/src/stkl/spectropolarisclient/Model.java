@@ -281,56 +281,42 @@ public class Model {
 		return false;
 	}
 	
-	public Point collision(float x1, float y1, float x2, float y2) {
-		//Point point = null;
-		//for(Block block : d_blocks)
-		//{
-		//	point = block.collision(x1, y1, x2, y2);
-		//	if(point != null)
-		//		return point;
-		//}	
+	public Point collision(float cX1, float cY1, float cX2, float cY2) {
+		int x1 = (int) (cX1 / d_tileSize);
+		int y1 = (int) (cY1 / d_tileSize);
+		int x2 = (int) (cX2 / d_tileSize);
+		int y2 = (int) (cY2 / d_tileSize);
 		
-		/*
-		private float lineXsideCollision(float x1, float y1, float x2, float y2, float x) {
-			return y1 + (y2 - y1) * ((x - x1) / (x2 - x1));
-		}
+		int dx = Math.abs(x2-x1);
+		int dy = Math.abs(y2-y1);
+		int sx = x1 < x2 ? 1 : -1;
+		int sy = y1 < y2 ? 1 : -1;
 		
-		private float lineYsideCollision(float x1, float y1, float x2, float y2, float y) {
-			return x1 + (x2 - x1) * ((y - y1) / (y2 - y1));
-		}
+		int error = dx - dy;
 		
-		public Point collision(float x1, float y1, float x2, float y2) {
-			float minX = Math.min(x1, x2);
-			float maxX = Math.max(x1, x2);
-			float minY = Math.min(y1, y2);
-			float maxY = Math.min(y1, y2);
+		while(true) {
+			if(d_tileMap[y1][x1])
+				return new Point(x1 * d_tileSize, y1 * d_tileSize);
 			
-			if(minX < rect.left && maxX >= rect.left) {		//does it cross left edge?
-				float intersectionY = lineXsideCollision(x1, y1, x2, y2, rect.left);
-				if(intersectionY >= rect.top && intersectionY <= rect.bottom)
-					return new Point(rect.left, (int) intersectionY);
-			}
-			if(minX > rect.right && maxX <= rect.right) {//does it cross right edge?
-				float intersectionY = lineXsideCollision(x1, y1, x2, y2, rect.right);
-				if(intersectionY >= rect.top && intersectionY <= rect.bottom)
-					return new Point(rect.right, (int) intersectionY);
+			if(x1 == x2 && y1 == y2)
+				return null;
+			
+			int e2 = 2*error;
+			
+			if(e2 > -dy) {
+				error = error - dy;
+				x1 = x1 + sx;
 			}
 			
-			if(minY < rect.top && maxY >= rect.top) {		//does it cross top edge?
-				float intersectionX = lineYsideCollision(x1, y1, x2, y2, rect.top);
-				if(intersectionX >= rect.left && intersectionX <= rect.right)
-					return new Point((int) intersectionX, rect.top);
-			}
-			if(minY > rect.bottom && maxY <= rect.bottom) {//does it cross bottom edge?
-				float intersectionX = lineYsideCollision(x1, y1, x2, y2, rect.bottom);
-				if(intersectionX >= rect.left && intersectionX <= rect.right)
-					return new Point((int) intersectionX, rect.bottom);
+			if(e2 < dx) {
+				error = error + dx;
+				y1 = y1 + sy;
 			}
 			
-			return null;
+			// check if points are outside of map range
+			if(x1 < 0 || y1 < 0 || x1 >= d_mapWidth / d_tileSize || y1 >= d_mapHeight / d_tileSize)
+				return null;
 		}
-		*/
-		return null;
 	}
 
 	public void receive(ByteBuffer buffer, int numOfCharacters, int numOfBullets, int numOfPickups) {
@@ -367,6 +353,31 @@ public class Model {
 			}
 		
 		}
+				
+		synchronized(d_bullets) {
+
+			for(int idx = 0; idx != numOfBullets; ++idx) {
+				float x1 = buffer.getFloat();
+				float y1 = buffer.getFloat();
+				float x2 = buffer.getFloat();
+				float y2 = buffer.getFloat();
+				int id = buffer.getInt();
+				int transparency = buffer.getInt();
+				
+				if(idx < d_bullets.size())
+					d_bullets.get(idx).instantiate(x1, y1, x2, y2, id, transparency);
+				else {
+					Bullet bullet = new Bullet();
+					bullet.instantiate(x1, y1, x2, y2, id, transparency);
+					d_bullets.add(bullet);
+				}
+			}
+			
+			if(numOfCharacters < d_bullets.size()) {
+				for(int idx = numOfBullets; idx != d_bullets.size(); ++idx)
+					d_bullets.get(idx).instantiate(0, 0, 0, 0, -1, 0);
+			}
+		}
 		
 		synchronized(d_health) {
 			
@@ -397,6 +408,8 @@ public class Model {
 					d_health.get(idx).instantiate(-1, -1);
 			}
 		}
+		
+
 	}
 
 	public Player player() {

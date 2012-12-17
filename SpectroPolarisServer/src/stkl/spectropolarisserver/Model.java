@@ -20,6 +20,9 @@ import java.util.Stack;
 public class Model {
 	private ArrayList<Enemy> d_enemies;
 	private ArrayList<Player> d_players;
+	
+	private ArrayList<Bullet> d_bullets;
+	private int d_numOfBullets;
 
 	// tileMap with blocks (true means block, false means noblock)
 	private boolean[][] d_tileMap;
@@ -57,6 +60,9 @@ public class Model {
 		d_enemies = new ArrayList<Enemy>();
 		d_players = new ArrayList<Player>();
 		
+		d_bullets = new ArrayList<Bullet>();
+		d_numOfBullets = 0;
+		
 		d_hill = new Rectangle(200, 200, 100, 100);
 
 		d_health = new ArrayList<HealthPickup>();
@@ -68,18 +74,6 @@ public class Model {
 
 		try {		
 			DataInputStream file = new DataInputStream(new FileInputStream("map.dat"));
-			
-			//int numOfBlocks = file.readInt();
-			
-			//for(int idx = 0; idx != numOfBlocks; ++idx) {
-			//	int x = file.readInt();
-			//	int y = file.readInt();
-			//	int width = file.readInt();
-			//	int height = file.readInt();
-				
-			//	if(width > 0 && height > 0 && x + width < d_mapWidth && y + height < d_mapHeight)
-			//		addBlock(x, y, width, height);
-			//}
 			
 			for(int y = 0; y != d_mapHeight / d_tileSize; ++y) {
 				for(int x = 0; x != d_mapWidth / d_tileSize; ++x) {
@@ -98,6 +92,30 @@ public class Model {
 		}
 	}
 	
+	public Bullet addBullet() {
+		synchronized(d_bullets) {
+			if(d_numOfBullets == d_bullets.size()) {
+				Bullet newBullet = new Bullet();
+				d_bullets.add(newBullet);
+				++d_numOfBullets;
+				return newBullet;
+			}
+			else // d_numOfBullets < d_bullets.size()
+			{
+				++d_numOfBullets;
+				return d_bullets.get(d_numOfBullets - 1);
+			}
+		}
+	}
+	
+	public void removeBullet(Bullet bullet) {
+		synchronized(d_bullets) {
+			--d_numOfBullets;
+			bullet.instantiate(d_bullets.get(d_numOfBullets));
+			d_bullets.get(d_numOfBullets).destroy();
+		}
+	}
+	
 	public void save() {
 		try {		
 			DataOutputStream file = new DataOutputStream(new FileOutputStream("map.dat"));
@@ -107,15 +125,6 @@ public class Model {
 					file.writeBoolean(d_tileMap[y][x]);
 				}
 			}
-			
-			//file.writeInt(d_blocks.size());
-			
-			//for(Block block : d_blocks) {
-			//	file.writeInt(block.x());
-			//	file.writeInt(block.y());
-			//	file.writeInt(block.width());
-			//	file.writeInt(block.height());
-			//}
 			
 			file.close();
 			
@@ -248,7 +257,7 @@ public class Model {
 		// characters
 		numOfBytes += 4 + numOfCharacters * GameCharacter.sendSize();
 		// bullets
-		//numOfBytes += 4 + d_bullets.size() * Bullet.sendSize();
+		numOfBytes += 4 + d_numOfBullets * Bullet.sendSize();
 		// pickups
 		numOfBytes += 4 + d_health.size() * HealthPickup.sendSize();
 		
@@ -258,7 +267,7 @@ public class Model {
 		
 		// number of items
 		buffer.putInt(numOfCharacters);
-		//buffer.putInt(d_bullets.size());
+		buffer.putInt(d_numOfBullets);
 		buffer.putInt(d_health.size());
 		
 		// characters
@@ -267,6 +276,10 @@ public class Model {
 		
 		for(GameCharacter character : d_enemies)
 			character.addToBuffer(buffer);
+		
+		// bullets
+		for(int idx = 0; idx != d_numOfBullets; ++idx)
+			d_bullets.get(idx).addToBuffer(buffer);
 		
 		// pickups
 		for(HealthPickup pickup : d_health)

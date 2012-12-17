@@ -18,6 +18,8 @@ public class GameCharacter {
 	protected Color d_color;
 	private int d_id;
 	
+	private int d_health;
+	
 	private final int d_radius = 5;
 	
 	private static int s_count = 0;
@@ -44,13 +46,15 @@ public class GameCharacter {
 		d_color = color;
 		d_id = s_count;
 		++s_count;
+		d_health = 100;
 	}
 	
-	public void update(float x, float y, float direction, float speed) {
+	public void update(float x, float y, float direction, float speed, int health) {
 		d_x = x;
 		d_y = y;
 		d_direction = direction;
 		d_speed = speed;
+		d_health = health;
 	}
 	
 	public void step() {
@@ -80,6 +84,10 @@ public class GameCharacter {
     
     public int id() {
     	return d_id;
+    }
+    
+    public int health() {
+    	return d_health;
     }
     
     public void setColor(int color) {

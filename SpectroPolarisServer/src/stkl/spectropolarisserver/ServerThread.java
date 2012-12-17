@@ -43,7 +43,7 @@ public class ServerThread extends Thread {
 	}
 	
 	private void receivePlayer() throws Exception {
-		ByteBuffer buffer = ByteBuffer.allocate(16);
+		ByteBuffer buffer = ByteBuffer.allocate(20);
 		
 		int numOfBytes = d_in.read(buffer.array());
 			  			  
@@ -59,25 +59,9 @@ public class ServerThread extends Thread {
 		float y = buffer.getFloat();
 		float direction = buffer.getFloat();
 		float speed = buffer.getFloat();
+		int health = buffer.getInt();
 		
-		d_player.update(x, y, direction, speed);
-	}
-	
-	public void sentInit(String name, int color) {
-		byte[] bName = name.getBytes();
-		
-		ByteBuffer buffer = ByteBuffer.allocate(12 + bName.length);
-		buffer.putInt(Message.NAMECOLOR.value());		
-		buffer.putInt(bName.length);
-		buffer.put(bName);
-		buffer.putInt(color);
-		
-		try {
-			d_out.write(buffer.array());
-		} catch (IOException e) {
-			System.err.println("Error occured while sending player info");
-			e.printStackTrace();
-		}
+		d_player.update(x, y, direction, speed, health);
 	}
 	
 	private void receiveNamecolor(ByteBuffer intByteBuffer) throws Exception {

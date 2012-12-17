@@ -54,18 +54,19 @@ public class Client extends Thread {
 		return instance;
 	}
 	
-	public void sent(float x, float y, float direction, float speed) {
+	public void sent(float x, float y, float direction, float speed, int health) {
 		if(!connected)
 			return;
 		
 		try {
-			ByteBuffer buffer = ByteBuffer.allocate(20);
+			ByteBuffer buffer = ByteBuffer.allocate(24);
 			
 			buffer.putInt(Message.PLAYER.value());
 			buffer.putFloat(x);
 			buffer.putFloat(y);
 			buffer.putFloat(direction);
 			buffer.putFloat(speed);
+			buffer.putInt(health);
 			
 			out.write(buffer.array());
 		} catch (IOException e) {
@@ -158,8 +159,6 @@ public class Client extends Thread {
 					receiveCharacters(intByteBuffer);
 				} else if(messageType == Message.ID.value()) {
 					receiveId(intByteBuffer);
-				} else if(messageType == Message.BULLETS.value()) {
-					//receiveBullets(intByteBuffer);
 				} else {
 					System.err.println("Received message with unknown id: " + messageType);
 				}

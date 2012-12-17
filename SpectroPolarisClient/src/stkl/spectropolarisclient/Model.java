@@ -209,10 +209,7 @@ public class Model {
 		
 		Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		
-		paint.setColor(Color.GRAY);
-		canvas.drawRect(d_context.centerHorizontal() - 50, 290, d_context.centerHorizontal(), 295, paint);
-		paint.setColor(Color.RED);
-		canvas.drawRect(d_context.centerHorizontal() - 50, 290, d_context.centerHorizontal() - 50 + d_player.health(), 295, paint);
+
 		
 		
 		canvas.translate(-d_player.xOffset() + d_context.centerHorizontal(),
@@ -235,6 +232,12 @@ public class Model {
 		canvas.translate(d_player.xOffset() - d_context.centerHorizontal(),
 				 d_player.yOffset() - d_context.centerVertical());
 		
+		paint.setColor(Color.GRAY);
+		canvas.drawRect(d_context.centerHorizontal() - 50, d_context.centerVertical() + 50, 
+				d_context.centerHorizontal() + 50, d_context.centerVertical() + 55, paint);
+		paint.setColor(Color.RED);
+		canvas.drawRect(d_context.centerHorizontal() - 50, d_context.centerVertical() + 50, 
+				d_context.centerHorizontal() - 50 + d_player.health(), d_context.centerVertical() + 55, paint);
 		
 		paint.setColor(Color.CYAN);
 		//paint.setTextSize(20);

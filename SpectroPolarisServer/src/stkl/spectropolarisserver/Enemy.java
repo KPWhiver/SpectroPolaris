@@ -1,5 +1,4 @@
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.util.Stack;
 
 
@@ -30,7 +29,7 @@ public class Enemy extends GameCharacter {
 		super.step();
 	}
 	
-	@Override
+	/*@Override
 	public void draw(Graphics2D g2d) {
 		// Debug draw, DNE
 		Node array[] = new Node[path.size()];
@@ -41,5 +40,5 @@ public class Enemy extends GameCharacter {
 		}
 		
 		super.draw(g2d);
-	}
+	}*/
 }

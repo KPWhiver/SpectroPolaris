@@ -17,9 +17,6 @@ import java.util.Stack;
 
 
 public class Model {
-	// Boolean for enemy testing purposes
-	private boolean spawned;
-	
 	private ArrayList<Enemy> d_enemies;
 	private ArrayList<Player> d_players;
 
@@ -42,6 +39,9 @@ public class Model {
 	private final int d_maxNumOfHealth = 3;
 	private int d_timeSinceHealthPlacement;
 	private Random d_randGenerator;
+	
+	// enemy related
+	private final int d_maxNumOfEnemies = 1;
 	
 	public int tileSize() {
 		return d_tileSize;
@@ -179,11 +179,19 @@ public class Model {
 			}
 		}
 		
-		// Draw a single enemy for testing purposes.
-		if(!spawned) {
-			d_enemies.add(new Enemy(25, 25, Color.RED));
-			spawned = true;
+		if(d_enemies.size() < d_maxNumOfEnemies) {
+			// For now, spawn a enemy on a random free spot
+			int x = d_randGenerator.nextInt(d_mapWidth-10);
+			int y = d_randGenerator.nextInt(d_mapHeight-10);
+					
+			synchronized(d_enemies) {
+				if(d_tileMap[y / d_tileSize][x / d_tileSize] == false) {
+					d_enemies.add(new Enemy(x, y, Color.RED));
+				}
+			}
+			
 		}
+
 		
 			
 		boolean hillCaptured = false;
@@ -317,6 +325,7 @@ public class Model {
 		
 		int maxY = d_mapHeight / d_tileSize;
 		int maxX = d_mapWidth / d_tileSize;
+
 		// Used to store which nodes have been visisted
 		boolean[][] visited = new boolean[maxY][maxX];
 		// Used to store references to nodes so they can be updated
@@ -324,11 +333,10 @@ public class Model {
 		// Used to store nodes ordered by cost
 		PriorityQueue<Node> queue = new PriorityQueue<Node>();
 		
-		Node current = new Node(xStart, yStart, null, 0);
+		Node current = new Node(xStart, yStart, null, 0, heuristicCost(xStart, yStart, xEnd, yEnd));
 		
 		queue.add(current);
-		nodes[xStart][yStart] = current;
-		
+		nodes[yStart][xStart] = current;
 		
 		while(!queue.isEmpty()) {
 			current = queue.poll();
@@ -346,50 +354,52 @@ public class Model {
 				return path;
 			}
 				
-			for(int x=-1; x<2; ++x) {
-				for(int y=-1; y<2; ++y) {
-					// Remove diagonal options as temporary solution
-					//if(!(x==y) && (x+y) != 0) {
-						// Add all neighbors to the PriorityQueue that haven't been visited and aren't blocked
-						int newX = current.x() + x;
-						int newY = current.y() + y;
-						// Check if the new node is still within the map, is not blocked and not already visited
-						if(newX >= 0 && newX < maxX && newY >= 0 && newY < maxY && !d_tileMap[newY][newX] && !visited[newY][newX]) {
-							// If a diagonal movement, check for corners which wouldn't allow this move
-							if((x!=0 && y!=0) && (d_tileMap[newY][current.x()] || d_tileMap[current.y()][newX]))
-								continue;
+			for(int y=-1; y<2; ++y) {
+				for(int x=-1; x<2; ++x) {
+					// Add all neighbors to the PriorityQueue that haven't been visited and aren't blocked
+					int newX = current.x() + x;
+					int newY = current.y() + y;
+					// Check if the new node is still within the map, is not blocked and not already visited
+					if(newX >= 0 && newX < maxX && newY >= 0 && newY < maxY && !d_tileMap[newY][newX] && !visited[newY][newX]) {
+						// If a diagonal movement, check for nearby corners which wouldn't allow this move
+						if((x!=0 && y!=0) && (d_tileMap[newY][current.x()] || d_tileMap[current.y()][newX]))
+							continue;
+						
+						float pathCost = pathCost(newX, newY, current);
+						float heuristicCost = heuristicCost(newX, newY, xEnd, yEnd);
+						
+						if(nodes[newY][newX] == null) {
+							// The node has not been visited yet
+							Node newNode = new Node(newX, newY, current, pathCost, heuristicCost);
+							queue.add(newNode);
+							nodes[newY][newX] = newNode;
 							
-							int cost = costFunction(newX, newY, current, xEnd, yEnd);
 							
-							if(nodes[newY][newX] == null) {
-								// The node has not been visited yet
-								Node newNode = new Node(newX, newY, current, cost);
-								queue.add(newNode);
-								nodes[newY][newX] =  newNode;
-								
-								
-							} else if(cost < nodes[newY][newX].getCost()) {
-								// The node has been visited but this path is better
-								queue.remove(nodes[newY][newX]);
-								nodes[newY][newX].setParent(current);
-								nodes[newY][newX].setCost(cost);
-								
-							}
+						} else if(pathCost < nodes[newY][newX].getPathCost()) {
+							// The node has been visited but this path is better
+							queue.remove(nodes[newY][newX]);
+							nodes[newY][newX].setParent(current);
+							nodes[newY][newX].setPathCost(pathCost);
+							nodes[newY][newX].setHeuristicCost(heuristicCost);
+							queue.add(nodes[newY][newX]);
 						}
-					//}
+					}
 				}
 			}
 		}
 		
 		
 		// No path could be found
+		System.err.println("No path could be found: from " + xStart + ", " + yStart + " to " + xEnd + ", " + yEnd);
 		return null;
 		
 	}
 	
-	private int costFunction(int newX, int newY, Node current, int xEnd, int yEnd) {
-		// Cost so far + Manhattan distance from current to new position + Manhattan distance from new position to end node
-		return current.getCost() + Math.abs(current.x() - newX) + Math.abs(current.y() - newY) + Math.abs(newX - xEnd) + Math.abs(newY - yEnd);
+	private float heuristicCost(int newX, int newY, int xEnd, int yEnd) {
+		return (float)  (Math.sqrt(Math.pow(newX - xEnd, 2) + Math.pow(newY - yEnd, 2)));
 	}
 	
+	private float pathCost(int newX, int newY, Node current) {
+		return (float) (current.getPathCost() + Math.sqrt(Math.pow(current.x() - newX, 2) + Math.pow(current.y() - newY, 2)));
+	}
 }

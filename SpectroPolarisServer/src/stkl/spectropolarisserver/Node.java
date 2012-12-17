@@ -4,12 +4,14 @@ import java.awt.Point;
 public class Node implements Comparable<Node> {
 	private Point point;
 	private Node parent;
-	private int cost;
+	private float pathCost;
+	private float heuristicCost; 
 		
-	public Node(int x, int y, Node parent, int cost) {
+	public Node(int x, int y, Node parent, float pathCost, float heuristicCost) {
 		this.point = new Point(x, y);
 		this.parent = parent;
-		this.cost = cost;
+		this.pathCost = pathCost;
+		this.heuristicCost = heuristicCost;
 	}
 	
 	public int x() {
@@ -28,21 +30,38 @@ public class Node implements Comparable<Node> {
 		return parent;
 	}
 	
-	public int getCost() {
-		return cost;
+	public float getPathCost() {
+		return pathCost;
 	}
 
 	public void setParent(Node parent) {
 		this.parent = parent;
 	}
 
-	public void setCost(int cost) {
-		this.cost = cost;
+	public void setPathCost(float cost) {
+		this.pathCost = cost;
+	}
+	
+	public float getTotalCost() {
+		return pathCost + heuristicCost; 
+	}
+
+	public float getHeuristicCost() {
+		return heuristicCost;
+	}
+
+	public void setHeuristicCost(float heuristicCost) {
+		this.heuristicCost = heuristicCost;
 	}
 
 	@Override
 	public int compareTo(Node arg0) {
-		return cost - arg0.getCost();
+		return Float.compare(getTotalCost(), arg0.getTotalCost());
+	}
+	
+	@Override
+	public String toString() {
+		return "(" + point.x + ", " + point.y + ")";
 	}
 
 }

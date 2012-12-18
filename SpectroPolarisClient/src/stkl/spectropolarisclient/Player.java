@@ -45,7 +45,7 @@ public class Player {
 		
 		if(xShootOffset != 0 && yShootOffset != 0 && System.nanoTime() - d_timeSinceLastBullet > 250000000) {
 			d_shootDirection = (float) Math.atan2(xShootOffset, yShootOffset);
-			GameActivity.getInstance().model().addBullet().instantiate(d_x, d_y, d_shootDirection);
+			GameActivity.getInstance().model().addBullet().instantiate(d_x, d_y, d_shootDirection, d_id);
 			d_timeSinceLastBullet = System.nanoTime();
 		}
 		

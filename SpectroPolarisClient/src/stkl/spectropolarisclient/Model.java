@@ -1,7 +1,7 @@
 package stkl.spectropolarisclient;
 
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,7 +12,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.support.v4.app.NotificationCompat.Style;
 
 public class Model {
 	private ArrayList<GameCharacter> d_characters;
@@ -318,20 +317,26 @@ public class Model {
 				return null;
 		}
 	}
-
-	public void receive(ByteBuffer buffer, int numOfCharacters, int numOfBullets, int numOfPickups) {
+	
+	public void receive(BufferedInputStream in, int numOfCharacters, int numOfBullets, int numOfPickups) throws Exception {
 		if(d_player.id() == -1)
 			return;
 				
+		ByteBuffer buffer = ByteBuffer.allocate(24);
+		
 		synchronized(d_player) {
 		
 			for(int idx = 0; idx != numOfCharacters; ++idx) {
+				in.read(buffer.array(), 0, 24);
+				
 				float x = buffer.getFloat();
 				float y = buffer.getFloat();
 				float direction = buffer.getFloat();
 				float speed = buffer.getFloat();
 				int color = buffer.getInt();
 				int id = buffer.getInt();
+				
+				buffer.clear();
 				
 				if(id == d_player.id()) {
 					--idx;
@@ -353,10 +358,12 @@ public class Model {
 			}
 		
 		}
-				
+		
 		synchronized(d_bullets) {
-
+			
 			for(int idx = 0; idx != numOfBullets; ++idx) {
+				in.read(buffer.array(), 0, 24);
+				
 				float x1 = buffer.getFloat();
 				float y1 = buffer.getFloat();
 				float x2 = buffer.getFloat();
@@ -364,19 +371,22 @@ public class Model {
 				int id = buffer.getInt();
 				int transparency = buffer.getInt();
 				
-				if(idx < d_bullets.size())
-					d_bullets.get(idx).instantiate(x1, y1, x2, y2, id, transparency);
-				else {
-					Bullet bullet = new Bullet();
-					bullet.instantiate(x1, y1, x2, y2, id, transparency);
-					d_bullets.add(bullet);
-				}
+				buffer.clear();
+				
+				addBullet().instantiate(x1, y1, x2, y2, id, transparency);
+				//if(idx < d_bullets.size())
+				//	d_bullets.get(idx).
+				//else {
+				//	Bullet bullet = new Bullet();
+				//	bullet.instantiate(x1, y1, x2, y2, id, transparency);
+				//	d_bullets.add(bullet);
+				//}
 			}
 			
-			if(numOfCharacters < d_bullets.size()) {
-				for(int idx = numOfBullets; idx != d_bullets.size(); ++idx)
+			/*if(d_numOfBullets < d_bullets.size()) {
+				for(int idx = d_numOfBullets; idx != d_bullets.size(); ++idx)
 					d_bullets.get(idx).instantiate(0, 0, 0, 0, -1, 0);
-			}
+			}*/
 		}
 		
 		synchronized(d_health) {
@@ -391,8 +401,12 @@ public class Model {
 			d_lastNumOfPickups = numOfPickups;
 			
 			for(int idx = 0; idx != numOfPickups; ++idx) {
+				in.read(buffer.array(), 0, 8);
+				
 				int x = buffer.getInt();
 				int y = buffer.getInt();
+				
+				buffer.clear();
 				
 				if(idx < d_health.size())
 					d_health.get(idx).instantiate(x, y);

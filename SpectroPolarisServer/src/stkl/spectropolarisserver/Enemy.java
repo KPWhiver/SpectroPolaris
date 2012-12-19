@@ -7,6 +7,8 @@ public class Enemy extends GameCharacter {
 	private Stack<Node> path;
 	private Node goal;
 	private int lastPlayerPath;
+	private int lastShotFired;
+	private long d_timeSinceLastBullet = 0;
 
 	public Enemy(float x, float y, Color color) {
 		super(x, y, 0, color);
@@ -14,6 +16,7 @@ public class Enemy extends GameCharacter {
 		path = model.findPath(d_x, d_y, model.hill().x, model.hill().y);
 		goal = path.pop();
 		lastPlayerPath = 0;
+		lastShotFired = 0;
 	}
 
 	
@@ -24,10 +27,13 @@ public class Enemy extends GameCharacter {
 		
 		Player player = model.closestPlayer(d_x, d_y, 100);
 		if(player != null && lastPlayerPath < 0) {
-			if(player.distanceFrom(d_x, d_y) < 80 && model.visible(d_x, d_y, player.d_x, player.d_y) == null) {
+			if(System.nanoTime() - d_timeSinceLastBullet > 250000000 && player.distanceFrom(d_x, d_y) < 80 && model.visible(d_x, d_y, player.d_x, player.d_y) == null) {
 				d_speed = 0;
+				model.addBullet().instantiate(d_x, d_y, (float) Math.atan2(player.d_x - d_x, player.d_y - d_y), id());
+				d_timeSinceLastBullet = System.nanoTime();
 				return;
 			} 
+			lastShotFired++;
 			
 			path = model.findPath(d_x, d_y, player.x(), player.y());
 			path.pop();

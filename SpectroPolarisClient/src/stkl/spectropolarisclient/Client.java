@@ -1,5 +1,6 @@
 package stkl.spectropolarisclient;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -16,7 +17,7 @@ public class Client extends Thread {
 	private Socket skt;
 	private boolean connected;
 	private OutputStream out;
-	private InputStream in;
+	private BufferedInputStream in;
 	
 	public Client(String ip, String name, int color) throws UnknownHostException, IOException {
 		skt = new Socket();
@@ -27,7 +28,7 @@ public class Client extends Thread {
 		instance = this;
 		
 		out = skt.getOutputStream();
-		in = skt.getInputStream();
+		in = new BufferedInputStream(skt.getInputStream());
 		
 		sentInit(name, color);
 	}
@@ -90,32 +91,32 @@ public class Client extends Thread {
  		intByteBuffer.clear();
 		
 		// Read amount of pickups from stream
- 		in.read(intByteBuffer.array());
+ 		int numOfBytes = in.read(intByteBuffer.array());
  		int numOfPickups = intByteBuffer.getInt();
  		intByteBuffer.clear();
 		
-		int numOfBytes = 0;
+		//int numOfBytes = 0;
 		// characters
-		numOfBytes += numOfCharacters * GameCharacter.sendSize();
+		//numOfBytes += numOfCharacters * GameCharacter.sendSize();
 		// bullets
-		numOfBytes += numOfBullets * Bullet.sendSize();
+		//numOfBytes += numOfBullets * Bullet.sendSize();
 		// pickups
-		numOfBytes += numOfPickups * HealthPickup.sendSize();
+		//numOfBytes += numOfPickups * HealthPickup.sendSize();
  		
 		// Prepare byte buffer
-		ByteBuffer buffer = ByteBuffer.allocate(numOfBytes);	 
+		//ByteBuffer buffer = ByteBuffer.allocate(numOfBytes);	 
 		
-		numOfBytes = in.read(buffer.array());
+		//numOfBytes = in.read(buffer.array());
 	    
 	    if(numOfBytes < 0)
 	        throw new Exception(new String("Connection to server lost"));
 	    
-	    if(numOfBytes < buffer.capacity()) {
-	        System.err.println("Received only " + numOfBytes + " bytes in receiveCharacters");
-	        return;
-	    }
+	    //if(numOfBytes < buffer.capacity()) {
+	    //    System.err.println("Received only " + numOfBytes + " bytes in receiveCharacters");
+	    //    return;
+	    //}
 	    
-	    GameActivity.getInstance().model().receive(buffer, numOfCharacters, numOfBullets, numOfPickups);
+	    GameActivity.getInstance().model().receive(in, numOfCharacters, numOfBullets, numOfPickups);
 	}
 	
 	private void receiveId(ByteBuffer intByteBuffer) throws Exception {

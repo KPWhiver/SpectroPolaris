@@ -227,8 +227,6 @@ public class Model {
 			
 		}
 
-		
-			
 		boolean hillCaptured = false;
 		
 		for(Player player : d_players) {
@@ -248,45 +246,60 @@ public class Model {
 				hillCaptured = false;
 		}
 		
+		/*for(int index = 0; index != d_numOfBullets; ++index) {
+			Bullet bullet = d_bullets.get(index);
+		    if(bullet.step())
+			{
+				removeBullet(bullet);
+				--index;
+			}
+		}*/
+		
 		if(hillCaptured)
 			d_points += 1;
-
-		// send packet
-		int numOfCharacters = d_players.size() + d_enemies.size();
-		int numOfBytes = 4;
-		// characters
-		numOfBytes += 4 + numOfCharacters * GameCharacter.sendSize();
-		// bullets
-		numOfBytes += 4 + d_numOfBullets * Bullet.sendSize();
-		// pickups
-		numOfBytes += 4 + d_health.size() * HealthPickup.sendSize();
 		
-		// message type
-		ByteBuffer buffer = ByteBuffer.allocate(numOfBytes);
-		buffer.putInt(Message.CHARACTERS.value());
-		
-		// number of items
-		buffer.putInt(numOfCharacters);
-		buffer.putInt(d_numOfBullets);
-		buffer.putInt(d_health.size());
-		
-		// characters
-		for(Player player : d_players)
-			player.addToBuffer(buffer);
-		
-		for(GameCharacter character : d_enemies)
-			character.addToBuffer(buffer);
-		
-		// bullets
-		for(int idx = 0; idx != d_numOfBullets; ++idx)
-			d_bullets.get(idx).addToBuffer(buffer);
-		
-		// pickups
-		for(HealthPickup pickup : d_health)
-			pickup.addToBuffer(buffer);
-				
-		// send the buffer
-		SpectroPolaris.server().send(buffer.array());
+		synchronized(d_bullets) {
+			// send packet
+			int numOfCharacters = d_players.size() + d_enemies.size();
+			int numOfBytes = 4;
+			// characters
+			numOfBytes += 4 + numOfCharacters * GameCharacter.sendSize();
+			// bullets
+			numOfBytes += 4 + d_numOfBullets * Bullet.sendSize();
+			// pickups
+			numOfBytes += 4 + d_health.size() * HealthPickup.sendSize();
+			
+			// message type
+			ByteBuffer buffer = ByteBuffer.allocate(numOfBytes);
+			buffer.putInt(Message.CHARACTERS.value());
+			
+			// number of items
+			buffer.putInt(numOfCharacters);
+			buffer.putInt(d_numOfBullets);
+			buffer.putInt(d_health.size());
+			
+			// characters
+			for(Player player : d_players)
+				player.addToBuffer(buffer);
+			
+			for(GameCharacter character : d_enemies)
+				character.addToBuffer(buffer);
+			
+			// bullets
+			for(int idx = 0; idx != d_numOfBullets; ++idx)
+				d_bullets.get(idx).addToBuffer(buffer);
+			
+			// pickups
+			for(HealthPickup pickup : d_health)
+				pickup.addToBuffer(buffer);
+					
+			// send the buffer	
+			SpectroPolaris.server().send(buffer.array());
+					
+			d_numOfBullets = 0;
+			for(Bullet bullet : d_bullets)
+				bullet.destroy();
+		}
 	}
 	
 	//private static long time = 0;
@@ -397,7 +410,7 @@ public class Model {
 		
 		while(true) {
 			if(d_tileMap[y1][x1])
-				return new Point(x1, y1);
+				return new Point(x1 * d_tileSize, y1 * d_tileSize);
 			
 			if(x1 == x2 && y1 == y2)
 				return null;
@@ -413,6 +426,10 @@ public class Model {
 				error = error + dx;
 				y1 = y1 + sy;
 			}
+			
+			// check if points are outside of map range
+			if(x1 < 0 || y1 < 0 || x1 >= d_mapWidth / d_tileSize || y1 >= d_mapHeight / d_tileSize)
+				return null;
 		}
 	}
 	

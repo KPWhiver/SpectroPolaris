@@ -104,7 +104,6 @@ public class JoinActivity extends Activity {
     		color = data.getIntExtra("color", 0xff000000);
     		((LinearLayout)findViewById(R.id.join_pickColorBar)).setBackgroundColor(color);
     	} else if(requestCode == 2) { // GameActivity has ended, stop the Client if needed
-    		System.out.println("Result code GameActivity: " + resultCode);
     		if(client.isAlive()) {
     			client.close();
     		}
@@ -117,7 +116,7 @@ public class JoinActivity extends Activity {
      */
     public void joinGame(View view) {
     	EditText ipAdressEdit = (EditText)findViewById(R.id.join_ip);
-    	String ipAdress = ipAdressEdit.getText().toString();
+    	final String ipAdress = ipAdressEdit.getText().toString();
     	Matcher matcher = Patterns.IP_ADDRESS.matcher(ipAdress);
     	
     	EditText nameEdit = (EditText)findViewById(R.id.username);
@@ -137,8 +136,20 @@ public class JoinActivity extends Activity {
     		
     		try {     			
     			// Start the GameActivity
-    			client = new Client(ipAdress, username, color);
-    			client.start();
+    			Runnable runnable = new Runnable() {
+    				public void run() {
+    					try {
+							client = new Client(ipAdress, username, color);
+						} catch (IOException e) {
+							System.err.println("Failed to setup connection to host " + ipAdress);
+							e.printStackTrace();
+						}
+    	    			client.start();
+    				};
+    			};
+    			Thread connector = new Thread(runnable);
+    			connector.start();
+    			connector.join();
     			
     			Intent intent = new Intent(this, GameActivity.class);
     			intent.putExtra("stkl.spectropolarisclient.color", color);
@@ -154,8 +165,8 @@ public class JoinActivity extends Activity {
     			
     			
     			// Show toaster to tell user connection could not be setup.
-        		CharSequence text = "Connection failed!";
-        		int duration = Toast.LENGTH_SHORT;
+        		CharSequence text = "Connection failed!\n" + e.toString();
+        		int duration = Toast.LENGTH_LONG;
 
         		Toast toast = Toast.makeText(this, text, duration);
         		toast.show();

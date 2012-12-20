@@ -214,8 +214,10 @@ public class Model {
 		canvas.translate(-d_player.xOffset() + d_context.centerHorizontal(),
 				 -d_player.yOffset() + d_context.centerVertical());
 		
-		for(GameCharacter character : d_characters)
-			character.draw(canvas);
+		synchronized(d_characters) {
+			for(GameCharacter character : d_characters)
+				character.draw(canvas);
+		}
 		
 		for(int y = 0; y != d_mapHeight / d_tileSize; ++y) {
 			for(int x = 0; x != d_mapWidth / d_tileSize; ++x) {
@@ -324,7 +326,7 @@ public class Model {
 				
 		ByteBuffer buffer = ByteBuffer.allocate(24);
 		
-		synchronized(d_player) {
+		synchronized(d_characters) {
 		
 			for(int idx = 0; idx != numOfCharacters; ++idx) {
 				in.read(buffer.array(), 0, 24);
@@ -338,10 +340,14 @@ public class Model {
 				
 				buffer.clear();
 				
-				if(id == d_player.id()) {
-					--idx;
-					--numOfCharacters;
-					continue;
+				synchronized(d_player) {
+				
+					if(id == d_player.id()) {
+						--idx;
+						--numOfCharacters;
+						continue;
+					}
+				
 				}
 				
 				if(idx < d_characters.size())

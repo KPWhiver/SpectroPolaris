@@ -81,17 +81,17 @@ public class Client extends Thread {
 	private void receiveCharacters(ByteBuffer intByteBuffer) throws Exception {
 		
 		// Read amount of characters from stream
-		in.read(intByteBuffer.array());
+		in.read(intByteBuffer.array(), 0, 4);
 		int numOfCharacters = intByteBuffer.getInt();
 		intByteBuffer.clear();
 		
 		// Read amount of bullets from stream
- 		in.read(intByteBuffer.array());
+ 		in.read(intByteBuffer.array(), 0, 4);
  		int numOfBullets = intByteBuffer.getInt();
  		intByteBuffer.clear();
 		
 		// Read amount of pickups from stream
- 		int numOfBytes = in.read(intByteBuffer.array());
+ 		int numOfBytes = in.read(intByteBuffer.array(), 0, 4);
  		int numOfPickups = intByteBuffer.getInt();
  		intByteBuffer.clear();
 		
@@ -122,7 +122,7 @@ public class Client extends Thread {
 	private void receiveId(ByteBuffer intByteBuffer) throws Exception {
 		
 		// Read next 4 bytes (int, id) from stream
-		int numOfBytes = in.read(intByteBuffer.array());
+		int numOfBytes = in.read(intByteBuffer.array(), 0, 4);
 		int id = intByteBuffer.getInt();
 		intByteBuffer.clear();
 		
@@ -151,7 +151,7 @@ public class Client extends Thread {
 			
 			try {
 				// Read first 4 bytes (int, messageType) from stream
-				in.read(bytes);
+				in.read(bytes, 0, 4);
 				int messageType = intByteBuffer.getInt();
 				intByteBuffer.clear(); // Clear buffer so we can read from it again
 				

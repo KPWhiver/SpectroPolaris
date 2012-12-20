@@ -5,6 +5,8 @@ public class SpectroPolaris
 	private static Frame s_frame;
 	private static Server s_server;
 	
+	private static boolean s_paused;
+	
 	public SpectroPolaris() {
 		
 	}
@@ -17,6 +19,10 @@ public class SpectroPolaris
 		return s_server;
 	}
 	
+	public static void setPaused(boolean paused) {
+		s_paused = paused;
+	}
+	
 	/**
 	 * @param args
 	 */
@@ -26,11 +32,15 @@ public class SpectroPolaris
 		s_server = new Server(1337);
 		s_server.start();
 		
+		s_paused = true;
+		
 		while(s_frame.isVisible())
 		{			
-			s_frame.gamePanel().model().step();
+			if(s_paused == false) {
+				s_frame.gamePanel().model().step();
 			
-			s_frame.gamePanel().repaint();
+				s_frame.gamePanel().repaint();
+			}
 			
 			try {
 				Thread.sleep(33);
@@ -38,6 +48,10 @@ public class SpectroPolaris
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public static boolean paused() {
+		return s_paused;
 	}
 
 }

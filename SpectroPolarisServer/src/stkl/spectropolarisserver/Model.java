@@ -357,6 +357,9 @@ public class Model {
 			d_players.get(index).drawUI(g2d, index);
 		
 		g2d.setColor(Color.WHITE);
+		if(SpectroPolaris.paused())
+			g2d.drawString("waiting for players", 805, 20);
+		
 		g2d.drawString("Points: " + d_points, 805, 730);
 		g2d.drawString("Connect to: " + SpectroPolaris.server().ip(), 805, 750);
 	}

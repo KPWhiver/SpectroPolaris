@@ -138,18 +138,22 @@ public class JoinActivity extends Activity {
     			// Start the GameActivity
     			Runnable runnable = new Runnable() {
     				public void run() {
+    					client = null;
     					try {
 							client = new Client(ipAdress, username, color);
+							client.start();
 						} catch (IOException e) {
 							System.err.println("Failed to setup connection to host " + ipAdress);
 							e.printStackTrace();
 						}
-    	    			client.start();
     				};
     			};
     			Thread connector = new Thread(runnable);
     			connector.start();
     			connector.join();
+    			
+    			if(client == null)
+    				return;
     			
     			Intent intent = new Intent(this, GameActivity.class);
     			intent.putExtra("stkl.spectropolarisclient.color", color);

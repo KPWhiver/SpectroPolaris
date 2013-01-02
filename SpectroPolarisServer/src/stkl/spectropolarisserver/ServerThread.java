@@ -43,7 +43,7 @@ public class ServerThread extends Thread {
 	}
 	
 	private void receivePlayer() throws Exception {
-		ByteBuffer buffer = ByteBuffer.allocate(20);
+		ByteBuffer buffer = ByteBuffer.allocate(20 + Bullet.sendSize());
 		
 		int numOfBytes = d_in.read(buffer.array());
 			  			  
@@ -55,13 +55,15 @@ public class ServerThread extends Thread {
 	        return;
 	    }
 	  
-		float x = buffer.getFloat();
-		float y = buffer.getFloat();
-		float direction = buffer.getFloat();
-		float speed = buffer.getFloat();
-		int health = buffer.getInt();
+		//float x = buffer.getFloat();
+		//float y = buffer.getFloat();
+		//float direction = buffer.getFloat();
+		//float speed = buffer.getFloat();
+		//int health = buffer.getInt();
 		
-		d_player.update(x, y, direction, speed, health);
+		d_player.update(buffer);//x, y, direction, speed, health);
+		
+		SpectroPolaris.frame().gamePanel().model().addBullet().instantiate(buffer);
 	}
 	
 	private void receiveNamecolor(ByteBuffer intByteBuffer) throws Exception {

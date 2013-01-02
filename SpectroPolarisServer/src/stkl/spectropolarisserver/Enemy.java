@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.Random;
 import java.util.Stack;
 
 
@@ -8,11 +9,14 @@ public class Enemy extends GameCharacter {
 	private Node goal;
 	private int lastPlayerPath;
 	private long d_timeSinceLastBullet = 0;
+	private static Random random = new Random();
 
 	public Enemy(float x, float y, Color color) {
 		super(x, y, 0, color);
 		Model model = SpectroPolaris.frame().gamePanel().model();
-		path = model.findPath(d_x, d_y, model.hill().x, model.hill().y);
+		// Go to random point with x is between: hill.left - 50, hill.right + 50 and y between: hill.top - 50, hill.bottom + 50
+		path = model.findPath(d_x, d_y, model.hill().x + (random.nextInt(model.hill().width + 100)) - 50,
+							  model.hill().y + (random.nextInt(model.hill().height + 100)) - 50);
 		goal = path.pop();
 		lastPlayerPath = 0;
 	}
@@ -47,7 +51,9 @@ public class Enemy extends GameCharacter {
 		
 		if(model.inTile(d_x, d_y, goal.x(), goal.y())) {
 			if(path.isEmpty()) {
-				path = model.findPath(d_x, d_y, model.hill().x, model.hill().y);
+				// Go to random point with x is between: hill.left - 50, hill.right + 50 and y between: hill.top - 50, hill.bottom + 50
+				path = model.findPath(d_x, d_y, model.hill().x + (random.nextInt(model.hill().width + 100)) - 50,
+						  			  model.hill().y + (random.nextInt(model.hill().height + 100)) - 50);
 			}
 			goal = path.pop();
 			d_direction = (float) Math.atan2(goal.x() * model.tileSize() + 5 - d_x, goal.y() * model.tileSize() + 5 - d_y);

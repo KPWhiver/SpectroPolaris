@@ -324,23 +324,23 @@ public class Model {
 		if(d_player.id() == -1)
 			return;
 				
-		ByteBuffer buffer = ByteBuffer.allocate(24);
+		//ByteBuffer buffer = ByteBuffer.allocate(24);
 		
 		synchronized(d_characters) {
 		
 			for(int idx = 0; idx != numOfCharacters; ++idx) {
-				in.readFully(buffer.array(), 0, 24);
+				//in.readFully(buffer.array(), 0, 24);
 				
 				//assert numOfBytes == 24 || numOfBytes < 0;
 				
-				float x = buffer.getFloat();
-				float y = buffer.getFloat();
-				float direction = buffer.getFloat();
-				float speed = buffer.getFloat();
-				int color = buffer.getInt();
-				int id = buffer.getInt();
+				float x = in.readFloat();
+				float y = in.readFloat();
+				float direction = in.readFloat();
+				float speed = in.readFloat();
+				int color = in.readInt();
+				int id = in.readInt();
 				
-				buffer.clear();
+				//buffer.clear();
 				
 				synchronized(d_player) {
 				
@@ -370,13 +370,13 @@ public class Model {
 		synchronized(d_bullets) {
 			
 			for(int idx = 0; idx != numOfBullets; ++idx) {
-				in.readFully(buffer.array(), 0, Bullet.sendSize());
+				//in.readFully(buffer.array(), 0, Bullet.sendSize());
 				
 				//assert numOfBytes == Bullet.sendSize() || numOfBytes < 0;
 				
-				addBullet().instantiate(buffer);
+				addBullet().instantiate(in);
 				
-				buffer.clear();
+				//buffer.clear();
 			}
 		}
 		
@@ -392,14 +392,14 @@ public class Model {
 			d_lastNumOfPickups = numOfPickups;
 			
 			for(int idx = 0; idx != numOfPickups; ++idx) {
-				in.readFully(buffer.array(), 0, 8);
+				//in.readFully(buffer.array(), 0, 8);
 				
 				//assert numOfBytes == 8 || numOfBytes < 0;
 				
-				int x = buffer.getInt();
-				int y = buffer.getInt();
+				int x = in.readInt();
+				int y = in.readInt();
 				
-				buffer.clear();
+				//buffer.clear();
 				
 				if(idx < d_health.size())
 					d_health.get(idx).instantiate(x, y);

@@ -1,5 +1,6 @@
 package stkl.spectropolarisclient;
 
+import java.io.DataInputStream;
 import java.nio.ByteBuffer;
 
 import android.graphics.Canvas;
@@ -75,14 +76,14 @@ public class Bullet {
 		d_paint.setAlpha(d_transparency);
 	}
 	
-	public void instantiate(ByteBuffer buffer) {
-		d_x1 = buffer.getFloat();
-		d_y1 = buffer.getFloat();
-		d_x2 = buffer.getFloat();
-		d_y2 = buffer.getFloat();
+	public void instantiate(DataInputStream in) throws Exception {
+		d_x1 = in.readFloat();
+		d_y1 = in.readFloat();
+		d_x2 = in.readFloat();
+		d_y2 = in.readFloat();
 		
-		d_id = buffer.getInt();
-		d_transparency = buffer.getInt();
+		d_id = in.readInt();
+		d_transparency = in.readInt();
 		d_paint.setAlpha(d_transparency);
 	}
 	

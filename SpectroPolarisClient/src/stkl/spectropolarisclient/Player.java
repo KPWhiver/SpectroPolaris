@@ -24,6 +24,8 @@ public class Player {
 	
 	private int d_id;
 	
+	private Bullet d_lastBullet;
+	
 	public Player(int x, int y, Paint paint) {
 		d_x = x;
 		d_y = y;
@@ -33,6 +35,7 @@ public class Player {
 		d_paint = paint;
 		d_id = -1;
 		d_health = 100;
+		d_lastBullet = null;
 	}
 	
 	private long d_timeSinceLastBullet = 0;
@@ -45,7 +48,9 @@ public class Player {
 		
 		if(xShootOffset != 0 && yShootOffset != 0 && System.nanoTime() - d_timeSinceLastBullet > 250000000) {
 			d_shootDirection = (float) Math.atan2(xShootOffset, yShootOffset);
-			GameActivity.getInstance().model().addBullet().instantiate(d_x, d_y, d_shootDirection, d_id);
+			d_lastBullet = GameActivity.getInstance().model().addBullet();
+			
+			d_lastBullet.instantiate(d_x, d_y, d_shootDirection, d_id);
 			d_timeSinceLastBullet = System.nanoTime();
 		}
 		
@@ -61,7 +66,16 @@ public class Player {
 			d_y = potentialY;
 		}
 		
-		Client.getInstance().sent(d_x, d_y, d_direction, d_speed, d_health);
+		Bullet bullet;
+		if(d_lastBullet == null) {
+			bullet = GameActivity.getInstance().model().addBullet();
+			bullet.destroy();
+		} else {
+			bullet = d_lastBullet;
+		}
+			
+		Client.getInstance().sent(d_x, d_y, d_direction, d_speed, d_health, bullet);
+		d_lastBullet = null;
 	}
 	
 	public void addHealth() {

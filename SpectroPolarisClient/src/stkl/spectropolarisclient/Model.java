@@ -368,31 +368,12 @@ public class Model {
 		synchronized(d_bullets) {
 			
 			for(int idx = 0; idx != numOfBullets; ++idx) {
-				in.read(buffer.array(), 0, 24);
+				in.read(buffer.array(), 0, Bullet.sendSize());
 				
-				float x1 = buffer.getFloat();
-				float y1 = buffer.getFloat();
-				float x2 = buffer.getFloat();
-				float y2 = buffer.getFloat();
-				int id = buffer.getInt();
-				int transparency = buffer.getInt();
+				addBullet().instantiate(buffer);
 				
 				buffer.clear();
-				
-				addBullet().instantiate(x1, y1, x2, y2, id, transparency);
-				//if(idx < d_bullets.size())
-				//	d_bullets.get(idx).
-				//else {
-				//	Bullet bullet = new Bullet();
-				//	bullet.instantiate(x1, y1, x2, y2, id, transparency);
-				//	d_bullets.add(bullet);
-				//}
 			}
-			
-			/*if(d_numOfBullets < d_bullets.size()) {
-				for(int idx = d_numOfBullets; idx != d_bullets.size(); ++idx)
-					d_bullets.get(idx).instantiate(0, 0, 0, 0, -1, 0);
-			}*/
 		}
 		
 		synchronized(d_health) {

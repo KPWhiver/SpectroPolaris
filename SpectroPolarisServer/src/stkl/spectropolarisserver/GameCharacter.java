@@ -57,6 +57,14 @@ public class GameCharacter {
 		d_health = health;
 	}
 	
+	public void update(ByteBuffer buffer) {
+		d_x = buffer.getFloat();
+		d_y = buffer.getFloat();
+		d_direction = buffer.getFloat();
+		d_speed = buffer.getFloat();
+		d_health = buffer.getInt();
+	}
+	
 	public void step() {
 		d_x += Math.sin(d_direction) * d_speed;
 		d_y += Math.cos(d_direction) * d_speed;

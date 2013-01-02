@@ -67,12 +67,12 @@ public class Client extends Thread {
 		return instance;
 	}
 	
-	public void sent(float x, float y, float direction, float speed, int health) {
+	public void sent(float x, float y, float direction, float speed, int health, Bullet bullet) {
 		if(!connected)
 			return;
 		
 		try {
-			ByteBuffer buffer = ByteBuffer.allocate(24);
+			ByteBuffer buffer = ByteBuffer.allocate(24 + Bullet.sendSize());
 			
 			buffer.putInt(Message.PLAYER.value());
 			buffer.putFloat(x);
@@ -80,6 +80,7 @@ public class Client extends Thread {
 			buffer.putFloat(direction);
 			buffer.putFloat(speed);
 			buffer.putInt(health);
+			bullet.addToBuffer(buffer);
 			
 			out.write(buffer.array());
 		} catch (IOException e) {

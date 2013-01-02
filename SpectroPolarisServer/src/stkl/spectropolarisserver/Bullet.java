@@ -24,6 +24,7 @@ public class Bullet {
 		buffer.putFloat(d_y1);
 		buffer.putFloat(d_x2);
 		buffer.putFloat(d_y2);
+		
 		buffer.putInt(d_id);
 		buffer.putInt(d_transparency);
 	}
@@ -64,6 +65,16 @@ public class Bullet {
 		d_transparency = 255;
 	}
 	
+	public void instantiate(ByteBuffer buffer) {
+		d_x1 = buffer.getFloat();
+		d_y1 = buffer.getFloat();
+		d_x2 = buffer.getFloat();
+		d_y2 = buffer.getFloat();
+		
+		d_id = buffer.getInt();
+		d_transparency = buffer.getInt();
+	}
+	
 	public boolean step() {
 		if(destroyed())
 			return false;
@@ -85,4 +96,5 @@ public class Bullet {
 	public boolean destroyed() {
 		return d_id == -1;
 	}
+
 }

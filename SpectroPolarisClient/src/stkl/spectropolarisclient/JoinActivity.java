@@ -116,7 +116,7 @@ public class JoinActivity extends Activity {
      */
     public void joinGame(View view) {
     	EditText ipAdressEdit = (EditText)findViewById(R.id.join_ip);
-    	final String ipAdress = ipAdressEdit.getText().toString();
+    	String ipAdress = ipAdressEdit.getText().toString();
     	Matcher matcher = Patterns.IP_ADDRESS.matcher(ipAdress);
     	
     	EditText nameEdit = (EditText)findViewById(R.id.username);
@@ -133,49 +133,13 @@ public class JoinActivity extends Activity {
     	username = nameEdit.getText().toString();
     	
     	if(matcher.matches()) {
-    		
-    		try {     			
-    			// Start the GameActivity
-    			Runnable runnable = new Runnable() {
-    				public void run() {
-    					client = null;
-    					try {
-							client = new Client(ipAdress, username, color);
-							client.start();
-						} catch (IOException e) {
-							System.err.println("Failed to setup connection to host " + ipAdress);
-							e.printStackTrace();
-						}
-    				};
-    			};
-    			Thread connector = new Thread(runnable);
-    			connector.start();
-    			connector.join();
-    			
-    			if(client == null)
-    				return;
-    			
-    			Intent intent = new Intent(this, GameActivity.class);
-    			intent.putExtra("stkl.spectropolarisclient.color", color);
-    	    	startActivityForResult(intent, 2);
-    			
-    			if(!adresses.contains(ipAdress)) {
-    				adresses.add(ipAdress);
-    			}    			
+    					
+			// Attempt to connect to the server
+			client = new Client(ipAdress, username, color);
+			
+			new Connector(this).execute(client);
     			
 
-    		} catch(Exception e) {
-    			e.printStackTrace();
-    			
-    			
-    			// Show toaster to tell user connection could not be setup.
-        		CharSequence text = "Connection failed!\n" + e.toString();
-        		int duration = Toast.LENGTH_LONG;
-
-        		Toast toast = Toast.makeText(this, text, duration);
-        		toast.show();
-    		}
-    		
     	} else {
     		// Show toaster to tell user IP is invalid.
     		CharSequence text = "Invalid IP!";
@@ -184,6 +148,29 @@ public class JoinActivity extends Activity {
     		Toast toast = Toast.makeText(this, text, duration);
     		toast.show();
     	}
+    }
+    
+    /*
+     * Starts the game after the connection has been set up. Called from a Connector.
+     */
+    public void startGame() {
+    	if(client == null)
+			return;
+    	
+    	client.start();
+		
+    	// Start the GameActivity
+		Intent intent = new Intent(this, GameActivity.class);
+		intent.putExtra("stkl.spectropolarisclient.color", color);
+    	startActivityForResult(intent, 2);
+    	
+    	// Store the servers ip adress
+    	EditText ipAdressEdit = (EditText)findViewById(R.id.join_ip);
+    	String ipAdress = ipAdressEdit.getText().toString();
+		
+		if(!adresses.contains(ipAdress)) {
+			adresses.add(ipAdress);
+		}
     }
     
 }

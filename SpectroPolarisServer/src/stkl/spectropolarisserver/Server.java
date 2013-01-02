@@ -63,6 +63,8 @@ public class Server extends Thread {
 				// if no more players pause game
 				if(d_threads.size() == 0)
 					SpectroPolaris.setPaused(true);
+			} else {
+				System.out.println("Messsage send");
 			}
 				
 		}

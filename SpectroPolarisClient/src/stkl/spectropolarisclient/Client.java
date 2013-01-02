@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
@@ -13,16 +14,27 @@ public class Client extends Thread {
 	private final int SERVER_PORT = 1337;
 	private final int TIMEOUT = 10000;
 	
+	private String d_ip;
+	private String d_name;
+	private int d_color;
+	
 	private static Client instance;
 	private Socket skt;
 	private boolean connected;
 	private OutputStream out;
 	private BufferedInputStream in;
 	
-	public Client(String ip, String name, int color) throws UnknownHostException, IOException {
+	public Client(String ip, String name, int color) {
 		skt = new Socket();
+		
+		d_ip = ip;
+		d_name = name;
+		d_color = color;
+	}
+	
+	public void connect() throws IOException {
 		skt.setTcpNoDelay(true);
-		skt.connect(new InetSocketAddress(ip, SERVER_PORT), TIMEOUT);
+		skt.connect(new InetSocketAddress(d_ip, SERVER_PORT), TIMEOUT);
 		skt.setSoTimeout(TIMEOUT);
 		connected = true;
 		instance = this;
@@ -30,7 +42,7 @@ public class Client extends Thread {
 		out = skt.getOutputStream();
 		in = new BufferedInputStream(skt.getInputStream());
 		
-		sentInit(name, color);
+		sentInit(d_name, d_color);
 	}
 	
 	public void sentInit(String name, int color) {

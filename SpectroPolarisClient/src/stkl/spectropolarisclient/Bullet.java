@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.util.FloatMath;
 
 public class Bullet {	
 	private float d_x1;
@@ -38,8 +39,8 @@ public class Bullet {
 	public void instantiate(float x, float y, float direction, int id) {
 		d_x1 = x;
 		d_y1 = y;
-    	d_x2 = (float) (d_x1 + Math.sin(direction) * 1000);
-		d_y2 = (float) (d_y1 + Math.cos(direction) * 1000);
+    	d_x2 = d_x1 + FloatMath.sin(direction) * 1000;
+		d_y2 = d_y1 + FloatMath.cos(direction) * 1000;
 		Point point = GameActivity.getInstance().model().collision(d_x1, d_y1, d_x2, d_y2);
 		
 		if(point != null) {
@@ -99,11 +100,12 @@ public class Bullet {
 		if(destroyed())
 			return false;
 		
-		d_transparency -= 3000/d_transparency;
 			
-		if(d_transparency < 0) {
+		if(d_transparency <= 0) {
 			destroy();
 			return true;
+		} else {
+			d_transparency -= 3000/d_transparency;
 		}
 		d_paint.setAlpha(d_transparency);
 		

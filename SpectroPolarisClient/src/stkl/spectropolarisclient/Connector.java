@@ -3,8 +3,6 @@ package stkl.spectropolarisclient;
 import java.io.IOException;
 
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.widget.Toast;
 

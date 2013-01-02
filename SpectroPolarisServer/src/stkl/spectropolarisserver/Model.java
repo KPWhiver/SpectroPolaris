@@ -333,13 +333,13 @@ public class Model {
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 			RenderingHints.VALUE_ANTIALIAS_ON);
 		
+		g2d.setColor(Color.YELLOW);
+		g2d.fill(d_hill);
+		
 		synchronized(d_health) {
 			for(HealthPickup health : d_health)
 				health.draw(g2d);
 		}
-		
-		g2d.setColor(Color.YELLOW);
-		g2d.fill(d_hill);
 		
 		synchronized(d_enemies) {
 			for(GameCharacter character : d_enemies)
@@ -479,6 +479,13 @@ public class Model {
 		
 		Node current = new Node(xStart, yStart, null, 0, heuristicCost(xStart, yStart, xEnd, yEnd));
 		
+		if(d_tileMap[yEnd][xEnd] || d_tileMap[yStart][xStart] || xEnd < 0 || xEnd > maxX || yEnd < 0 || yEnd > maxY ||
+				xStart < 0 || xStart > maxX || yStart < 0 || yStart > maxY) {
+			Stack<Node> path = new Stack<Node>();
+			path.push(current);
+			return path;
+		}
+		
 		queue.add(current);
 		nodes[yStart][xStart] = current;
 		
@@ -535,8 +542,9 @@ public class Model {
 		
 		// No path could be found
 		System.err.println("No path could be found: from " + xStart + ", " + yStart + " to " + xEnd + ", " + yEnd);
-		return null;
-		
+		Stack<Node> path = new Stack<Node>();
+		path.push(nodes[yStart][xStart]);
+		return path;		
 	}
 	
 	private float heuristicCost(int newX, int newY, int xEnd, int yEnd) {

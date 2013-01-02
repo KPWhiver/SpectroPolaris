@@ -41,7 +41,7 @@ public class Client extends Thread {
 		instance = this;
 		
 		out = skt.getOutputStream();
-		in = new DataInputStream(skt.getInputStream());
+		in = new DataInputStream(new BufferedInputStream(skt.getInputStream()));
 		
 		sentInit(d_name, d_color);
 	}
@@ -92,26 +92,26 @@ public class Client extends Thread {
 		}
 	}
 	
-	private void receiveCharacters(ByteBuffer intByteBuffer) throws Exception {
+	private void receiveCharacters() throws Exception {
 		
 		// Read amount of characters from stream
-		in.readFully(intByteBuffer.array(), 0, 4);
-		int numOfCharacters = intByteBuffer.getInt();
-		intByteBuffer.clear();
+		//in.readFully(intByteBuffer.array(), 0, 4);
+		int numOfCharacters = in.readInt();
+		//intByteBuffer.clear();
 		
 		//assert numOfBytes == 4 || numOfBytes < 0;
 		
 		// Read amount of bullets from stream
- 		in.readFully(intByteBuffer.array(), 0, 4);
- 		int numOfBullets = intByteBuffer.getInt();
- 		intByteBuffer.clear();
+ 		//in.readFully(intByteBuffer.array(), 0, 4);
+ 		int numOfBullets = in.readInt();
+ 		//intByteBuffer.clear();
  		
  		//assert numOfBytes == 4 || numOfBytes < 0;
 		
 		// Read amount of pickups from stream
- 		in.readFully(intByteBuffer.array(), 0, 4);
- 		int numOfPickups = intByteBuffer.getInt();
- 		intByteBuffer.clear();
+ 		//in.readFully(intByteBuffer.array(), 0, 4);
+ 		int numOfPickups = in.readInt();
+ 		//intByteBuffer.clear();
  		
  		//assert numOfBytes == 4 || numOfBytes < 0;
 		
@@ -139,20 +139,20 @@ public class Client extends Thread {
 	    GameActivity.getInstance().model().receive(in, numOfCharacters, numOfBullets, numOfPickups);
 	}
 	
-	private void receiveId(ByteBuffer intByteBuffer) throws Exception {
+	private void receiveId() throws Exception {
 		
 		// Read next 4 bytes (int, id) from stream
-		int numOfBytes = in.read(intByteBuffer.array(), 0, 4);
-		int id = intByteBuffer.getInt();
-		intByteBuffer.clear();
+		//int numOfBytes = in.read(intByteBuffer.array(), 0, 4);
+		int id = in.readInt();
+		//intByteBuffer.clear();
 		
-	    if(numOfBytes < 0)
-	        throw new Exception("Connection to server lost");
+	    //if(numOfBytes < 0)
+	    //    throw new Exception("Connection to server lost");
 	    
-	    if(numOfBytes < 4) {
-	        System.err.println("Received only " + numOfBytes + " bytes in receiveId");
-	        return;
-	    }
+	    //if(numOfBytes < 4) {
+	    //    System.err.println("Received only " + numOfBytes + " bytes in receiveId");
+	    //    return;
+	    //}
 	    
 	    GameActivity.getInstance().model().player().setId(id);
 	    
@@ -162,8 +162,8 @@ public class Client extends Thread {
 	@Override
 	public void run() {
 		
-		byte[] bytes = new byte[4];
-		ByteBuffer intByteBuffer = ByteBuffer.wrap(bytes);
+		//byte[] bytes = new byte[4];
+		//ByteBuffer intByteBuffer = ByteBuffer.wrap(bytes);
 		
 		while(connected) {
 			if(GameActivity.getInstance() == null)
@@ -171,15 +171,15 @@ public class Client extends Thread {
 			
 			try {
 				// Read first 4 bytes (int, messageType) from stream
-				in.read(bytes, 0, 4);
-				int messageType = intByteBuffer.getInt();
-				intByteBuffer.clear(); // Clear buffer so we can read from it again
+				//in.read(bytes, 0, 4);
+				int messageType = in.readInt();
+				//intByteBuffer.clear(); // Clear buffer so we can read from it again
 				
 				// Receive appropriate message based on received messageType
 			    if(messageType == Message.CHARACTERS.value()) {
-					receiveCharacters(intByteBuffer);
+					receiveCharacters();
 				} else if(messageType == Message.ID.value()) {
-					receiveId(intByteBuffer);
+					receiveId();
 				} else {
 					System.err.println("Received message with unknown id: " + messageType);
 				}

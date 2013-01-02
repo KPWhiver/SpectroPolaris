@@ -1,14 +1,11 @@
 import java.awt.Point;
+import java.awt.geom.Line2D;
 import java.nio.ByteBuffer;
 
 
 
 public class Bullet {	
-	private float d_x1;
-	private float d_y1;
-	
-	private float d_x2;
-	private float d_y2;
+	private Line2D.Float d_line;
 	
 	private int d_id;
 	
@@ -20,10 +17,10 @@ public class Bullet {
 	}
 	
 	public void addToBuffer(ByteBuffer buffer) {
-		buffer.putFloat(d_x1);
-		buffer.putFloat(d_y1);
-		buffer.putFloat(d_x2);
-		buffer.putFloat(d_y2);
+		buffer.putFloat(d_line.x1);
+		buffer.putFloat(d_line.y1);
+		buffer.putFloat(d_line.x2);
+		buffer.putFloat(d_line.y2);
 		
 		buffer.putInt(d_id);
 		buffer.putInt(d_transparency);
@@ -31,23 +28,23 @@ public class Bullet {
 	
 	public Bullet() {
 		d_transparency = 0;
-		d_x1 = 0;
-		d_y1 = 0;
-    	d_x2 = 0;
-		d_y2 = 0;
+		d_line.x1 = 0;
+		d_line.y1 = 0;
+    	d_line.x2 = 0;
+		d_line.y2 = 0;
 		d_id = -1;
 	}
 	
 	public void instantiate(float x, float y, float direction, int id) {
-		d_x1 = x;
-		d_y1 = y;
-    	d_x2 = (float) (d_x1 + Math.sin(direction) * 1000);
-		d_y2 = (float) (d_y1 + Math.cos(direction) * 1000);
-		Point point = SpectroPolaris.frame().gamePanel().model().visible(d_x1, d_y1, d_x2, d_y2);
+		d_line.x1 = x;
+		d_line.y1 = y;
+    	d_line.x2 = (float) (d_line.x1 + Math.sin(direction) * 1000);
+		d_line.y2 = (float) (d_line.y1 + Math.cos(direction) * 1000);
+		Point point = SpectroPolaris.frame().gamePanel().model().visible(d_line.x1, d_line.y1, d_line.x2, d_line.y2);
 		
 		if(point != null) {
-			d_x2 = point.x;
-			d_y2 = point.y;
+			d_line.x2 = point.x;
+			d_line.y2 = point.y;
 		}
 		
 		d_id = id;
@@ -55,10 +52,10 @@ public class Bullet {
 	}
 	
 	public void instantiate(Bullet other) {
-		d_x1 = other.d_x1;
-		d_y1 = other.d_y1;
-    	d_x2 = other.d_x2;
-		d_y2 = other.d_y2;
+		d_line.x1 = other.d_line.x1;
+		d_line.y1 = other.d_line.y1;
+    	d_line.x2 = other.d_line.x2;
+		d_line.y2 = other.d_line.y2;
 		
 		
 		d_id = other.d_id;
@@ -66,13 +63,17 @@ public class Bullet {
 	}
 	
 	public void instantiate(ByteBuffer buffer) {
-		d_x1 = buffer.getFloat();
-		d_y1 = buffer.getFloat();
-		d_x2 = buffer.getFloat();
-		d_y2 = buffer.getFloat();
+		d_line.x1 = buffer.getFloat();
+		d_line.y1 = buffer.getFloat();
+		d_line.x2 = buffer.getFloat();
+		d_line.y2 = buffer.getFloat();
 		
 		d_id = buffer.getInt();
 		d_transparency = buffer.getInt();
+	}
+	
+	public Line2D.Float line() {
+		return d_line;
 	}
 	
 	public boolean step() {
@@ -95,6 +96,10 @@ public class Bullet {
 	
 	public boolean destroyed() {
 		return d_id == -1;
+	}
+
+	public int id() {
+		return d_id;
 	}
 
 }

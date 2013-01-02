@@ -259,6 +259,28 @@ public class Model {
 			d_points += 1;
 		
 		synchronized(d_bullets) {
+			// check if an enemy got shot
+			for(Bullet bullet : d_bullets) {
+				boolean testThisBullet = false;
+				// check if this bullet exists
+				if(bullet.destroyed())
+					continue;
+				
+				// check if this bullet is shot by a player
+				for(Player player : d_players) {
+					if(bullet.id() == player.id()) {
+						testThisBullet = true;
+						break;
+					}
+				}
+				
+				if(testThisBullet == false)
+					continue;
+				
+				for(Enemy enemy : d_enemies)
+					enemy.checkIfShot(bullet);
+			}
+			
 			// send packet
 			int numOfCharacters = d_players.size() + d_enemies.size();
 			int numOfBytes = 4;
@@ -387,7 +409,7 @@ public class Model {
 		float distance = range;
 		
 		for(Player player: d_players) {
-			if(Math.hypot(player.d_x - x, player.d_y - y) < distance)
+			if(Math.hypot(player.x() - x, player.y() - y) < distance)
 				closestPlayer = player;
 		}
 		

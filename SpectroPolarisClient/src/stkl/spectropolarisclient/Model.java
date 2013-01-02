@@ -329,7 +329,9 @@ public class Model {
 		synchronized(d_characters) {
 		
 			for(int idx = 0; idx != numOfCharacters; ++idx) {
-				in.read(buffer.array(), 0, 24);
+				int numOfBytes = in.read(buffer.array(), 0, 24);
+				
+				assert numOfBytes == 24 || numOfBytes < 0;
 				
 				float x = buffer.getFloat();
 				float y = buffer.getFloat();
@@ -368,7 +370,9 @@ public class Model {
 		synchronized(d_bullets) {
 			
 			for(int idx = 0; idx != numOfBullets; ++idx) {
-				in.read(buffer.array(), 0, Bullet.sendSize());
+				int numOfBytes = in.read(buffer.array(), 0, Bullet.sendSize());
+				
+				assert numOfBytes == Bullet.sendSize() || numOfBytes < 0;
 				
 				addBullet().instantiate(buffer);
 				
@@ -388,7 +392,9 @@ public class Model {
 			d_lastNumOfPickups = numOfPickups;
 			
 			for(int idx = 0; idx != numOfPickups; ++idx) {
-				in.read(buffer.array(), 0, 8);
+				int numOfBytes = in.read(buffer.array(), 0, 8);
+				
+				assert numOfBytes == 8 || numOfBytes < 0;
 				
 				int x = buffer.getInt();
 				int y = buffer.getInt();

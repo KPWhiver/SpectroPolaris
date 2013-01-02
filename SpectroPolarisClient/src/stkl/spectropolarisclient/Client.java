@@ -94,19 +94,25 @@ public class Client extends Thread {
 	private void receiveCharacters(ByteBuffer intByteBuffer) throws Exception {
 		
 		// Read amount of characters from stream
-		in.read(intByteBuffer.array(), 0, 4);
+		int numOfBytes = in.read(intByteBuffer.array(), 0, 4);
 		int numOfCharacters = intByteBuffer.getInt();
 		intByteBuffer.clear();
 		
+		assert numOfBytes == 4 || numOfBytes < 0;
+		
 		// Read amount of bullets from stream
- 		in.read(intByteBuffer.array(), 0, 4);
+ 		numOfBytes = in.read(intByteBuffer.array(), 0, 4);
  		int numOfBullets = intByteBuffer.getInt();
  		intByteBuffer.clear();
+ 		
+ 		assert numOfBytes == 4 || numOfBytes < 0;
 		
 		// Read amount of pickups from stream
- 		int numOfBytes = in.read(intByteBuffer.array(), 0, 4);
+ 		numOfBytes = in.read(intByteBuffer.array(), 0, 4);
  		int numOfPickups = intByteBuffer.getInt();
  		intByteBuffer.clear();
+ 		
+ 		assert numOfBytes == 4 || numOfBytes < 0;
 		
 		//int numOfBytes = 0;
 		// characters

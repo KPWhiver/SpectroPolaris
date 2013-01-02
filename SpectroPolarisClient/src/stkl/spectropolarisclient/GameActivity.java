@@ -17,8 +17,8 @@ public class GameActivity extends Activity {
 	private int d_centerVertical;
 	private int d_motionPointerId = -2;
 	private int d_shootPointerId = -2;
-	private float[] d_originX = new float[2];
-	private float[] d_originY = new float[2];
+	private float[] d_originX = new float[10];
+	private float[] d_originY = new float[10];
 
 
     @Override

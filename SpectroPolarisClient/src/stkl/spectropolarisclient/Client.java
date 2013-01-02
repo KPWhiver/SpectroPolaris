@@ -1,6 +1,7 @@
 package stkl.spectropolarisclient;
 
 import java.io.BufferedInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -22,7 +23,7 @@ public class Client extends Thread {
 	private Socket skt;
 	private boolean connected;
 	private OutputStream out;
-	private BufferedInputStream in;
+	private DataInputStream in;
 	
 	public Client(String ip, String name, int color) {
 		skt = new Socket();
@@ -40,7 +41,7 @@ public class Client extends Thread {
 		instance = this;
 		
 		out = skt.getOutputStream();
-		in = new BufferedInputStream(skt.getInputStream());
+		in = new DataInputStream(skt.getInputStream());
 		
 		sentInit(d_name, d_color);
 	}
@@ -94,25 +95,25 @@ public class Client extends Thread {
 	private void receiveCharacters(ByteBuffer intByteBuffer) throws Exception {
 		
 		// Read amount of characters from stream
-		int numOfBytes = in.read(intByteBuffer.array(), 0, 4);
+		in.readFully(intByteBuffer.array(), 0, 4);
 		int numOfCharacters = intByteBuffer.getInt();
 		intByteBuffer.clear();
 		
-		assert numOfBytes == 4 || numOfBytes < 0;
+		//assert numOfBytes == 4 || numOfBytes < 0;
 		
 		// Read amount of bullets from stream
- 		numOfBytes = in.read(intByteBuffer.array(), 0, 4);
+ 		in.readFully(intByteBuffer.array(), 0, 4);
  		int numOfBullets = intByteBuffer.getInt();
  		intByteBuffer.clear();
  		
- 		assert numOfBytes == 4 || numOfBytes < 0;
+ 		//assert numOfBytes == 4 || numOfBytes < 0;
 		
 		// Read amount of pickups from stream
- 		numOfBytes = in.read(intByteBuffer.array(), 0, 4);
+ 		in.readFully(intByteBuffer.array(), 0, 4);
  		int numOfPickups = intByteBuffer.getInt();
  		intByteBuffer.clear();
  		
- 		assert numOfBytes == 4 || numOfBytes < 0;
+ 		//assert numOfBytes == 4 || numOfBytes < 0;
 		
 		//int numOfBytes = 0;
 		// characters
@@ -127,8 +128,8 @@ public class Client extends Thread {
 		
 		//numOfBytes = in.read(buffer.array());
 	    
-	    if(numOfBytes < 0)
-	        throw new Exception(new String("Connection to server lost"));
+	    //if(numOfBytes < 0)
+	    //    throw new Exception(new String("Connection to server lost"));
 	    
 	    //if(numOfBytes < buffer.capacity()) {
 	    //    System.err.println("Received only " + numOfBytes + " bytes in receiveCharacters");

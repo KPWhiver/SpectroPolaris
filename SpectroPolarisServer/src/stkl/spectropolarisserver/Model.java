@@ -277,8 +277,13 @@ public class Model {
 				if(testThisBullet == false)
 					continue;
 				
-				for(Enemy enemy : d_enemies)
-					enemy.checkIfShot(bullet);
+				synchronized(d_enemies) {
+					Iterator<Enemy> iter = d_enemies.iterator();
+					while(iter.hasNext()) {
+						if(iter.next().checkIfShot(bullet))
+							iter.remove();
+					}
+				}
 			}
 			
 			// send packet

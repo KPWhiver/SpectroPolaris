@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.io.DataInputStream;
 import java.nio.ByteBuffer;
 
 import javax.swing.*;
@@ -39,14 +40,13 @@ public class GameCharacter {
 	}
 	
 	public GameCharacter(float x, float y, float direction, Color color) {
-		d_coor.x = x;
-		d_coor.y = y;
 		d_direction = direction;
 		d_speed = 1;
 		d_color = color;
 		d_id = s_count;
 		++s_count;
 		d_health = 100;
+		d_coor = new Point2D.Float(x, y);
 	}
 	
 	public void update(float x, float y, float direction, float speed, int health) {
@@ -57,12 +57,12 @@ public class GameCharacter {
 		d_health = health;
 	}
 	
-	public void update(ByteBuffer buffer) {
-		d_coor.x = buffer.getFloat();
-		d_coor.y = buffer.getFloat();
-		d_direction = buffer.getFloat();
-		d_speed = buffer.getFloat();
-		d_health = buffer.getInt();
+	public void update(DataInputStream in) throws Exception {
+		d_coor.x = in.readFloat();
+		d_coor.y = in.readFloat();
+		d_direction = in.readFloat();
+		d_speed = in.readFloat();
+		d_health = in.readInt();
 	}
 	
 	public void step() {
@@ -110,12 +110,14 @@ public class GameCharacter {
     	return (float) Math.hypot(d_coor.x - x, d_coor.y - y);
     }
     
-    public void changeHealth(int change) {
+    public boolean changeHealth(int change) {
     	d_health += change;
     	if(d_health <= 0) {
     		d_health = 0;
-    		SpectroPolaris.frame().gamePanel().model().removeGameCharacter(this);
+    		return true;
     	}
+    	
+    	return false;
     }
     
     public void setSpeed(float speed) {

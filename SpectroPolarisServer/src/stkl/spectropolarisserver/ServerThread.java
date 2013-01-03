@@ -10,13 +10,13 @@ public class ServerThread extends Thread {
 	
 	Player d_player = null;
 	
-	BufferedInputStream d_in;
+	DataInputStream d_in;
 	OutputStream d_out;
 	
 	public ServerThread(Socket socket) {
 		d_socket = socket;
 		try {
-			d_in = new BufferedInputStream(d_socket.getInputStream());
+			d_in = new DataInputStream(new BufferedInputStream(d_socket.getInputStream()));
 			d_out = d_socket.getOutputStream();
 		} catch (Exception e) {
 			System.out.println(e.getMessage() + ", java... :|");
@@ -43,17 +43,17 @@ public class ServerThread extends Thread {
 	}
 	
 	private void receivePlayer() throws Exception {
-		ByteBuffer buffer = ByteBuffer.allocate(20 + Bullet.sendSize());
+		//ByteBuffer buffer = ByteBuffer.allocate(20 + Bullet.sendSize());
 		
-		int numOfBytes = d_in.read(buffer.array());
+		//int numOfBytes = d_in.read(buffer.array());
 			  			  
-		if(numOfBytes < 0)
-			throw new Exception("Connection to client lost");
+		//if(numOfBytes < 0)
+		//	throw new Exception("Connection to client lost");
 			    
-	    if(numOfBytes < 16) {
-	        System.out.println("Received only " + numOfBytes + " bytes in receivePlayer");
-	        return;
-	    }
+	    //if(numOfBytes < 16) {
+	    //    System.out.println("Received only " + numOfBytes + " bytes in receivePlayer");
+	    //    return;
+	    //}
 	  
 		//float x = buffer.getFloat();
 		//float y = buffer.getFloat();
@@ -61,36 +61,36 @@ public class ServerThread extends Thread {
 		//float speed = buffer.getFloat();
 		//int health = buffer.getInt();
 		
-		d_player.update(buffer);//x, y, direction, speed, health);
+		d_player.update(d_in);//x, y, direction, speed, health);
 		
-		SpectroPolaris.frame().gamePanel().model().addBullet().instantiate(buffer);
+		SpectroPolaris.frame().gamePanel().model().addBullet().instantiate(d_in);
 	}
 	
-	private void receiveNamecolor(ByteBuffer intByteBuffer) throws Exception {
+	private void receiveNamecolor() throws Exception {
 		// Read next 4 bytes (int, lengthOfString) from stream
-		d_in.read(intByteBuffer.array());
-		int stringLength = intByteBuffer.getInt();
-		intByteBuffer.clear();
+		//d_in.read(intByteBuffer.array());
+		int stringLength = d_in.readInt();
+		//intByteBuffer.clear();
 		
 		// Prepare to read string
 		ByteBuffer buffer = ByteBuffer.allocate(stringLength);
 		
-		int numOfBytes = d_in.read(buffer.array());
+		d_in.readFully(buffer.array());
 	  			  
-		if(numOfBytes < 0)
-			throw new Exception("Connection to client lost");
+		//if(numOfBytes < 0)
+		//	throw new Exception("Connection to client lost");
 			    
-	    if(numOfBytes < stringLength) {
-	        System.out.println("Received only " + numOfBytes + " bytes in receiveNamecolor");
-	        return;
-	    }
+	    //if(numOfBytes < stringLength) {
+	    //    System.out.println("Received only " + numOfBytes + " bytes in receiveNamecolor");
+	    //    return;
+	    //}
 	  
 	    String name = new String(buffer.array());
 	    
 		// Read next 4 bytes (int, lengthOfString) from stream
-		d_in.read(intByteBuffer.array());
-		int color = intByteBuffer.getInt();
-		intByteBuffer.clear();
+		//d_in.read(intByteBuffer.array());
+		int color = d_in.readInt();
+		//intByteBuffer.clear();
 		
 		d_player.setName(name);
 		d_player.setColor(color);
@@ -103,21 +103,21 @@ public class ServerThread extends Thread {
 		if(d_player == null)
 			return;
 		
-		byte[] bytes = new byte[4];
-		ByteBuffer intByteBuffer = ByteBuffer.wrap(bytes);
+		//byte[] bytes = new byte[4];
+		//ByteBuffer intByteBuffer = ByteBuffer.wrap(bytes);
 		
 		while(true) {
 			try {
 				// Read first 4 bytes (int, messageType) from stream
-				d_in.read(bytes);
-				int messageType = intByteBuffer.getInt();
-				intByteBuffer.clear(); // Clear buffer so we can read from it again
+				//d_in.read(bytes);
+				int messageType = d_in.readInt();
+				//intByteBuffer.clear(); // Clear buffer so we can read from it again
 				
 				// Receive appropriate message based on received messageType
 			    if(messageType == Message.PLAYER.value()) {
 					receivePlayer();
 				} else if(messageType == Message.NAMECOLOR.value()) {
-					receiveNamecolor(intByteBuffer);
+					receiveNamecolor();
 				} else {
 					System.err.println("Received message with unkown id: " + messageType);
 				}

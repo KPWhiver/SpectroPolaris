@@ -1,5 +1,6 @@
 import java.awt.Point;
 import java.awt.geom.Line2D;
+import java.io.DataInputStream;
 import java.nio.ByteBuffer;
 
 
@@ -27,11 +28,8 @@ public class Bullet {
 	}
 	
 	public Bullet() {
+		d_line = new Line2D.Float(0, 0, 0, 0);
 		d_transparency = 0;
-		d_line.x1 = 0;
-		d_line.y1 = 0;
-    	d_line.x2 = 0;
-		d_line.y2 = 0;
 		d_id = -1;
 	}
 	
@@ -62,14 +60,14 @@ public class Bullet {
 		d_transparency = 255;
 	}
 	
-	public void instantiate(ByteBuffer buffer) {
-		d_line.x1 = buffer.getFloat();
-		d_line.y1 = buffer.getFloat();
-		d_line.x2 = buffer.getFloat();
-		d_line.y2 = buffer.getFloat();
+	public void instantiate(DataInputStream in) throws Exception {
+		d_line.x1 = in.readFloat();
+		d_line.y1 = in.readFloat();
+		d_line.x2 = in.readFloat();
+		d_line.y2 = in.readFloat();
 		
-		d_id = buffer.getInt();
-		d_transparency = buffer.getInt();
+		d_id = in.readInt();
+		d_transparency = in.readInt();
 	}
 	
 	public Line2D.Float line() {

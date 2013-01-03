@@ -63,7 +63,9 @@ public class ServerThread extends Thread {
 		
 		d_player.update(d_in);//x, y, direction, speed, health);
 		
-		SpectroPolaris.frame().gamePanel().model().addBullet().instantiate(d_in);
+		int bulletPresent = d_in.readInt();
+		if(bulletPresent == 1)
+			SpectroPolaris.frame().gamePanel().model().addBullet().instantiate(d_in);
 	}
 	
 	private void receiveNamecolor() throws Exception {

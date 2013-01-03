@@ -73,7 +73,11 @@ public class Client extends Thread {
 			return;
 		
 		try {
-			ByteBuffer buffer = ByteBuffer.allocate(24 + Bullet.sendSize());
+			int allocSize = 28;
+			if(bullet != null)
+				allocSize += Bullet.sendSize();
+			
+			ByteBuffer buffer = ByteBuffer.allocate(allocSize);
 			
 			buffer.putInt(Message.PLAYER.value());
 			buffer.putFloat(x);
@@ -81,8 +85,15 @@ public class Client extends Thread {
 			buffer.putFloat(direction);
 			buffer.putFloat(speed);
 			buffer.putInt(health);
-			bullet.addToBuffer(buffer);
 			
+			// send a "boolean" telling us if a bullet is being sent
+			if(bullet == null)
+				buffer.putInt(0);
+			else {
+				buffer.putInt(1);
+				bullet.addToBuffer(buffer);
+			}
+				
 			out.write(buffer.array());
 		} catch (IOException e) {
 			System.out.println("Connection to server lost");

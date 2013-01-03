@@ -63,6 +63,8 @@ public class Bullet {
 		d_id = id;
 		d_transparency = transparency;
 		d_paint.setAlpha(d_transparency);
+		
+		
 	}
 	
 	public void instantiate(Bullet other) {
@@ -83,7 +85,14 @@ public class Bullet {
 		d_y2 = in.readFloat();
 		
 		d_id = in.readInt();
-		d_transparency = in.readInt();
+		
+		if(d_id == GameActivity.getInstance().model().player().id()) {
+			d_transparency = 0;
+		} else {
+			d_transparency = in.readInt();
+			GameActivity.getInstance().model().player().checkIfShot(d_x1, d_y1, d_x2, d_y2, d_id);
+		}
+			
 		d_paint.setAlpha(d_transparency);
 	}
 	
@@ -100,8 +109,7 @@ public class Bullet {
 	public boolean step() {
 		if(destroyed())
 			return false;
-		
-			
+				
 		if(d_transparency <= 0) {
 			destroy();
 			return true;

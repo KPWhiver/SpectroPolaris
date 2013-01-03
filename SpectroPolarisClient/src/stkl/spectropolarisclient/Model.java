@@ -163,6 +163,8 @@ public class Model {
 				character.step();
 		}
 		
+		System.err.println(d_numOfBullets);
+		
 		for(int index = 0; index != d_numOfBullets; ++index) {
 			Bullet bullet = d_bullets.get(index);
 			if(bullet.step())
@@ -385,7 +387,7 @@ public class Model {
 			// Check if a pickup has been picked up
 			if(numOfPickups < d_lastNumOfPickups) {
 				synchronized(d_player) {
-					d_player.addHealth();
+					d_player.changeHealth(25);
 				}
 			}
 			

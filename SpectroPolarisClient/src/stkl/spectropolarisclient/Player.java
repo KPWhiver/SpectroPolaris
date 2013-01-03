@@ -65,21 +65,18 @@ public class Player {
 			d_x = potentialX;
 			d_y = potentialY;
 		}
-		
-		Bullet bullet;
-		if(d_lastBullet == null) {
-			bullet = GameActivity.getInstance().model().addBullet();
-			bullet.destroy();
-		} else {
-			bullet = d_lastBullet;
-		}
 			
-		Client.getInstance().sent(d_x, d_y, d_direction, d_speed, d_health, bullet);
+		Client.getInstance().sent(d_x, d_y, d_direction, d_speed, d_health, d_lastBullet);
 		d_lastBullet = null;
 	}
 	
-	public void addHealth() {
-		d_health = Math.min(d_health + 25, 100);
+	public boolean changeHealth(int change) {
+		d_health = Math.max(Math.min(d_health + change, 100), 0);
+		
+		if(d_health == 0)
+			return true;
+		
+		return false;
 	}
 	
 	public int health() {
@@ -104,5 +101,37 @@ public class Player {
 	
 	public void setId(int id) {
 		d_id = id;
+	}
+
+	public void checkIfShot(float x1, float y1, float x2, float y2, int id) {
+		if(id == d_id)
+			return;
+		
+		System.err.println("checkIfShot");
+		
+		if(sqrDistanceToLine(x1, y1, x2, y2) < 5 * 5)
+			changeHealth(-1);
+	}
+	
+	private float sqrDistanceToLine(float x1, float y1, float x2, float y2) {
+		float sqrLength = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+		
+		if(sqrLength == 0)
+			return (x1 - d_x) * (x1 - d_x) + (y1 - d_y) * (y1 - d_y);
+			
+		float t = dot(d_x - x1, d_y - y1, x2 - x1, y2 - y1) / sqrLength;
+		if(t < 0)
+			return (x1 - d_x) * (x1 - d_x) + (y1 - d_y) * (y1 - d_y);
+		if(t > 1)
+			return (x2 - d_x) * (x2 - d_x) + (y2 - d_y) * (y2 - d_y);
+		
+		float xProj = x1 + t * (x2 - x1);
+		float yProj = y1 + t * (y2 - y1);
+		
+		return (xProj - d_x) * (xProj - d_x) + (yProj - d_y) * (yProj - d_y);
+	}
+
+	private float dot(float x1, float y1, float x2, float y2) {
+		return x1 * x2 + y1 * y2;
 	}
 }

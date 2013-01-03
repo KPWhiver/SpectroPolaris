@@ -110,15 +110,14 @@ public class GameCharacter {
     	return (float) Math.hypot(d_coor.x - x, d_coor.y - y);
     }
     
-    public boolean changeHealth(int change) {
-    	d_health += change;
-    	if(d_health <= 0) {
-    		d_health = 0;
-    		return true;
-    	}
-    	
-    	return false;
-    }
+	public boolean changeHealth(int change) {
+		d_health = Math.max(Math.min(d_health + change, 100), 0);
+		
+		if(d_health == 0)
+			return true;
+		
+		return false;
+	}
     
     public void setSpeed(float speed) {
     	d_speed = speed;

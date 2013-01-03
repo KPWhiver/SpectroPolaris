@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.Line2D;
 import java.util.Random;
 import java.util.Stack;
 
@@ -14,9 +15,11 @@ public class Enemy extends GameCharacter {
 	public Enemy(float x, float y, Color color) {
 		super(x, y, 0, color);
 		Model model = SpectroPolaris.frame().gamePanel().model();
+		
 		// Go to random point with x is between: hill.left - 50, hill.right + 50 and y between: hill.top - 50, hill.bottom + 50
-		path = model.findPath(d_x, d_y, model.hill().x + (random.nextInt(model.hill().width + 100)) - 50,
+		path = model.findPath(coor().x, coor().y, model.hill().x + (random.nextInt(model.hill().width + 100)) - 50,
 							  model.hill().y + (random.nextInt(model.hill().height + 100)) - 50);
+
 		goal = path.pop();
 		lastPlayerPath = 0;
 	}
@@ -25,38 +28,38 @@ public class Enemy extends GameCharacter {
 	public void step() {
 		Model model = SpectroPolaris.frame().gamePanel().model();
 		
-		d_speed = 1;
+		setSpeed(1);
 		
-		Player player = model.closestPlayer(d_x, d_y, 100);
+		Player player = model.closestPlayer(coor().x, coor().y, 100);
 		if(player != null && lastPlayerPath < 0) {			
 			
-			if(player.distanceFrom(d_x, d_y) < 80 && model.visible(d_x, d_y, player.d_x, player.d_y) == null) {				
+			if(player.distanceFrom(coor().x, coor().y) < 80 && model.visible(coor().x, coor().y, player.coor().x, player.coor().y) == null) {				
 				if(System.nanoTime() - d_timeSinceLastBullet > 250000000) {
-					model.addBullet().instantiate(d_x, d_y, (float) Math.atan2(player.d_x - d_x, player.d_y - d_y), id());
+					model.addBullet().instantiate(coor().x, coor().y, (float) Math.atan2(player.coor().x - coor().x, player.coor().y - coor().y), id());
 					d_timeSinceLastBullet = System.nanoTime();
 				}
 
-				d_speed = 0;
+				setSpeed(0);
 				return;
 			}
 			
 
 			
-			path = model.findPath(d_x, d_y, player.x(), player.y());
+			path = model.findPath(coor().x, coor().y, player.x(), player.y());
 			path.pop();
 			lastPlayerPath = 5;
 		} else {
 			lastPlayerPath--;
 		}
 		
-		if(model.inTile(d_x, d_y, goal.x(), goal.y())) {
+		if(model.inTile(coor().x, coor().y, goal.x(), goal.y())) {
 			if(path.isEmpty()) {
 				// Go to random point with x is between: hill.left - 50, hill.right + 50 and y between: hill.top - 50, hill.bottom + 50
-				path = model.findPath(d_x, d_y, model.hill().x + (random.nextInt(model.hill().width + 100)) - 50,
+				path = model.findPath(coor().x, coor().y, model.hill().x + (random.nextInt(model.hill().width + 100)) - 50,
 						  			  model.hill().y + (random.nextInt(model.hill().height + 100)) - 50);
 			}
 			goal = path.pop();
-			d_direction = (float) Math.atan2(goal.x() * model.tileSize() + 5 - d_x, goal.y() * model.tileSize() + 5 - d_y);
+			setDirection((float) Math.atan2(goal.x() * model.tileSize() + 5 - coor().x, goal.y() * model.tileSize() + 5 - coor().y));
 			// System.out.println("New goal: from " + d_x + ", " + d_y + " to " + goal.x() * 10 + ", " + goal.y() * 10 + ". New direction: " + d_direction);
 		} 
 		
@@ -75,5 +78,13 @@ public class Enemy extends GameCharacter {
 		}
 		
 		super.draw(g2d);
+	}
+
+
+	public boolean checkIfShot(Bullet bullet) {
+		if(bullet.line().ptSegDistSq(coor()) < radius() * radius())
+			return changeHealth(-50);
+		
+		return false;
 	} 
 }

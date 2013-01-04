@@ -1,8 +1,10 @@
 package stkl.spectropolarisclient;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Vibrator;
 import android.util.FloatMath;
 
 public class Player {
@@ -26,6 +28,8 @@ public class Player {
 	
 	private Bullet d_lastBullet;
 	
+	private Vibrator d_vibrator;
+	
 	public Player(int x, int y, Paint paint) {
 		d_x = x;
 		d_y = y;
@@ -36,6 +40,7 @@ public class Player {
 		d_id = -1;
 		d_health = 100;
 		d_lastBullet = null;
+		d_vibrator = null;
 	}
 	
 	private long d_timeSinceLastBullet = 0;
@@ -75,6 +80,13 @@ public class Player {
 		
 		if(d_health == 0)
 			return true;
+		
+		if(change < 0) {
+			if(d_vibrator == null)
+				d_vibrator = (Vibrator) GameActivity.getInstance().getSystemService(Context.VIBRATOR_SERVICE);
+			
+			d_vibrator.vibrate(100);
+		}
 		
 		return false;
 	}

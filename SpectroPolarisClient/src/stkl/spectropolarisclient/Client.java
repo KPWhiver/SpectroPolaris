@@ -121,7 +121,9 @@ public class Client extends Thread {
 		
 		// Read amount of pickups from stream
  		//in.readFully(intByteBuffer.array(), 0, 4);
- 		int numOfPickups = in.readInt();
+ 		int numOfHealthPickups = in.readInt();
+ 		
+ 		int numOfAmmoPickups = in.readInt();
  		//intByteBuffer.clear();
  		
  		//assert numOfBytes == 4 || numOfBytes < 0;
@@ -147,7 +149,7 @@ public class Client extends Thread {
 	    //    return;
 	    //}
 	    
-	    GameActivity.getInstance().model().receive(in, numOfCharacters, numOfBullets, numOfPickups);
+	    GameActivity.getInstance().model().receive(in, numOfCharacters, numOfBullets, numOfHealthPickups, numOfAmmoPickups);
 	}
 	
 	private void receiveId() throws Exception {

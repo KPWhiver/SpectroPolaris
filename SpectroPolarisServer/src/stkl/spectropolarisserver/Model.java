@@ -42,6 +42,11 @@ public class Model {
 	private ArrayList<HealthPickup> d_health;
 	private final int d_maxNumOfHealth = 3;
 	private int d_timeSinceHealthPlacement;
+	
+	private ArrayList<AmmoPickup> d_ammo;
+	private final int d_maxNumOfAmmo = 3;
+	private int d_timeSinceAmmoPlacement;
+	
 	private Random d_randGenerator;
 	
 	// enemy related
@@ -67,6 +72,8 @@ public class Model {
 
 		d_health = new ArrayList<HealthPickup>();
 		d_timeSinceHealthPlacement = 0;
+		d_ammo = new ArrayList<AmmoPickup>();
+		d_timeSinceAmmoPlacement = 1000000;
 		d_randGenerator = new Random();
 
 		d_tileMap = new boolean[d_mapHeight / d_tileSize][d_mapWidth / d_tileSize];
@@ -206,6 +213,25 @@ public class Model {
 			}
 		}
 		
+		// Place ammo pickups
+		if(d_ammo.size() < d_maxNumOfAmmo) {
+			++d_timeSinceAmmoPlacement;
+			
+			// find free spot to place ammo
+			while(d_timeSinceAmmoPlacement > 330) {
+				int x = d_randGenerator.nextInt(d_mapWidth - 10);
+				int y = d_randGenerator.nextInt(d_mapHeight - 10);
+				
+				synchronized(d_ammo) {
+					if(!d_tileMap[y / d_tileSize][x / d_tileSize]) {
+						d_ammo.add(new AmmoPickup(x, y));
+						d_timeSinceAmmoPlacement = 0;
+						break;
+					}
+				}
+			}
+		}
+		
 		// Place enemy on random location on the edge of the map;
 		if(d_enemies.size() < d_maxNumOfEnemies) {
 			int x = d_randGenerator.nextInt(d_mapWidth - 10);
@@ -233,10 +259,16 @@ public class Model {
 			if(d_hill.contains(player.x(), player.y()))
 				hillCaptured = true;
 			
-			Iterator<HealthPickup> iter = d_health.iterator();
-			while(iter.hasNext()) {
-				if(iter.next().collision(player))
-					iter.remove();
+			Iterator<HealthPickup> healthIter = d_health.iterator();
+			while(healthIter.hasNext()) {
+				if(healthIter.next().collision(player))
+					healthIter.remove();
+			}
+			
+			Iterator<AmmoPickup> ammoIter = d_ammo.iterator();
+			while(ammoIter.hasNext()) {
+				if(ammoIter.next().collision(player))
+					ammoIter.remove();
 			}
 		}
 		
@@ -295,6 +327,8 @@ public class Model {
 			numOfBytes += 4 + d_numOfBullets * Bullet.sendSize();
 			// pickups
 			numOfBytes += 4 + d_health.size() * HealthPickup.sendSize();
+			numOfBytes += 4 + d_ammo.size() * AmmoPickup.sendSize();
+			
 			
 			// message type
 			ByteBuffer buffer = ByteBuffer.allocate(numOfBytes);
@@ -304,6 +338,7 @@ public class Model {
 			buffer.putInt(numOfCharacters);
 			buffer.putInt(d_numOfBullets);
 			buffer.putInt(d_health.size());
+			buffer.putInt(d_ammo.size());
 			
 			// characters
 			for(Player player : d_players)
@@ -319,6 +354,9 @@ public class Model {
 			// pickups
 			for(HealthPickup pickup : d_health)
 				pickup.addToBuffer(buffer);
+			
+			for(AmmoPickup ammo : d_ammo)
+				ammo.addToBuffer(buffer);
 					
 			// send the buffer	
 			SpectroPolaris.server().send(buffer.array());
@@ -344,6 +382,11 @@ public class Model {
 		synchronized(d_health) {
 			for(HealthPickup health : d_health)
 				health.draw(g2d);
+		}
+		
+		synchronized(d_ammo) {
+			for(AmmoPickup ammo : d_ammo)
+				ammo.draw(g2d);
 		}
 		
 		synchronized(d_enemies) {

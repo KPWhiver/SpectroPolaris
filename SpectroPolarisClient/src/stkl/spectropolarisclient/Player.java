@@ -12,6 +12,8 @@ public class Player {
 	private final int MIN_OFFSET = -MAX_OFFSET;
 	private final double SPEED_MOD = 0.05;
 	
+	private final int MAX_AMMO = 100;
+	
 	private float d_x;
 	private float d_y;
 	
@@ -21,6 +23,7 @@ public class Player {
 	private float d_shootDirection;
 	
 	private int d_health;
+	private int d_ammo;
 	
 	private Paint d_paint;
 	
@@ -41,6 +44,7 @@ public class Player {
 		d_health = 100;
 		d_lastBullet = null;
 		d_vibrator = null;
+		d_ammo = MAX_AMMO;
 	}
 	
 	private long d_timeSinceLastBullet = 0;
@@ -51,11 +55,12 @@ public class Player {
 		float distance = (float) Math.hypot(xMoveOffset, yMoveOffset);
 		d_speed = (float) (Math.max(Math.min(distance, MAX_OFFSET), MIN_OFFSET) * SPEED_MOD);
 		
-		if(xShootOffset != 0 && yShootOffset != 0 && System.nanoTime() - d_timeSinceLastBullet > 250000000) {
+		if(d_ammo > 0 && xShootOffset != 0 && yShootOffset != 0 && System.nanoTime() - d_timeSinceLastBullet > 250000000) {
 			d_shootDirection = (float) Math.atan2(xShootOffset, yShootOffset);
 			d_lastBullet = GameActivity.getInstance().model().addBullet();
 			
 			d_lastBullet.instantiate(d_x, d_y, d_shootDirection, d_id);
+			d_ammo--;
 			d_timeSinceLastBullet = System.nanoTime();
 		}
 		
@@ -93,6 +98,14 @@ public class Player {
 	
 	public int health() {
 		return d_health;
+	}
+	
+	public void incAmmo(int change) {
+		d_ammo = Math.max(Math.min(d_ammo + change, MAX_AMMO), 0);
+	}
+	
+	public int ammo() {
+		return d_ammo;
 	}
 	
 	public float xOffset() {

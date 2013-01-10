@@ -27,7 +27,10 @@ public class Model {
 	
 	// pickups
 	private ArrayList<HealthPickup> d_health;
-	private int d_lastNumOfPickups;
+	private int d_lastNumOfHealthPickups;
+	
+	private ArrayList<AmmoPickup> d_ammo;
+	private int d_lastNumOfAmmoPickups;
 	
 	private GameActivity d_context;
 	private float d_scale;
@@ -55,7 +58,10 @@ public class Model {
 		
 		// pickups
 		d_health = new ArrayList<HealthPickup>();
-		d_lastNumOfPickups = 0;
+		d_lastNumOfHealthPickups = 0;
+		
+		d_ammo = new ArrayList<AmmoPickup>();
+		d_lastNumOfAmmoPickups = 0;
 		
 		//d_blocks = new ArrayList<Block>();
 		d_motionOrigin = new Point(-1, -1);
@@ -196,6 +202,11 @@ public class Model {
 				pickup.draw(canvas);
 		}
 		
+		synchronized(d_ammo) {
+			for(AmmoPickup pickup : d_ammo)
+				pickup.draw(canvas);
+		}
+		
 		synchronized(d_bullets) {
 			for(Bullet bullet : d_bullets)
 				bullet.draw(canvas);
@@ -239,6 +250,13 @@ public class Model {
 		paint.setColor(Color.RED);
 		canvas.drawRect(d_context.centerHorizontal() - 50, d_context.centerVertical() + 50, 
 				d_context.centerHorizontal() - 50 + d_player.health(), d_context.centerVertical() + 55, paint);
+		
+		paint.setColor(Color.GRAY);
+		canvas.drawRect(d_context.centerHorizontal() - 50, d_context.centerVertical() + 56, 
+				d_context.centerHorizontal() + 50, d_context.centerVertical() + 61, paint);
+		paint.setColor(Color.YELLOW);
+		canvas.drawRect(d_context.centerHorizontal() - 50, d_context.centerVertical() + 56, 
+				d_context.centerHorizontal() - 50 + d_player.ammo(), d_context.centerVertical() + 61, paint);
 		
 		paint.setColor(Color.CYAN);
 		//paint.setTextSize(20);
@@ -328,7 +346,7 @@ public class Model {
 		}
 	}
 	
-	public void receive(DataInputStream in, int numOfCharacters, int numOfBullets, int numOfPickups) throws Exception {
+	public void receive(DataInputStream in, int numOfCharacters, int numOfBullets, int numOfHealthPickups, int numOfAmmoPickups) throws Exception {
 		if(d_player.id() == -1)
 			return;
 				
@@ -390,16 +408,16 @@ public class Model {
 		
 		synchronized(d_health) {
 			
-			// Check if a pickup has been picked up
-			if(numOfPickups < d_lastNumOfPickups) {
+			// Check if a health pickup has been picked up
+			if(numOfHealthPickups < d_lastNumOfHealthPickups) {
 				synchronized(d_player) {
 					d_player.changeHealth(25);
 				}
 			}
 			
-			d_lastNumOfPickups = numOfPickups;
+			d_lastNumOfHealthPickups = numOfHealthPickups;
 			
-			for(int idx = 0; idx != numOfPickups; ++idx) {
+			for(int idx = 0; idx != numOfHealthPickups; ++idx) {
 				//in.readFully(buffer.array(), 0, 8);
 				
 				//assert numOfBytes == 8 || numOfBytes < 0;
@@ -418,9 +436,39 @@ public class Model {
 				}
 			}
 			
-			if(numOfPickups < d_health.size()) {
-				for(int idx = numOfPickups; idx != d_health.size(); ++idx)
+			if(numOfHealthPickups < d_health.size()) {
+				for(int idx = numOfHealthPickups; idx != d_health.size(); ++idx)
 					d_health.get(idx).instantiate(-1, -1);
+			}
+		}
+		
+		synchronized(d_ammo) {
+			
+			// Check if a ammo pickup has been picked up
+			if(numOfAmmoPickups < d_lastNumOfAmmoPickups) {
+				synchronized(d_player) {
+					d_player.incAmmo(50);
+				}
+			}
+			
+			d_lastNumOfAmmoPickups = numOfAmmoPickups;
+			
+			for(int idx = 0; idx != numOfAmmoPickups; ++idx) {
+				int x = in.readInt();
+				int y = in.readInt();
+				
+				if(idx < d_ammo.size())
+					d_ammo.get(idx).instantiate(x, y);
+				else {
+					System.err.println("Alloc");
+					AmmoPickup pickup = new AmmoPickup(x, y);
+					d_ammo.add(pickup);
+				}
+			}
+			
+			if(numOfAmmoPickups < d_ammo.size()) {
+				for(int idx = numOfAmmoPickups; idx != d_ammo.size(); ++idx)
+					d_ammo.get(idx).instantiate(-1, -1);
 			}
 		}
 		

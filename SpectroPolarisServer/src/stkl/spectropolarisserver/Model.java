@@ -35,13 +35,21 @@ public class Model {
 	private Rectangle d_tmpBlock;
 	
 	// hill related
+	private final int HILL_WIDTH = 100;
 	private Rectangle d_hill;
 	private int d_points;
+	private int d_timeSinceLastHillMove;
+	private boolean d_hillTouched;
 	
 	// pickup related
 	private ArrayList<HealthPickup> d_health;
 	private final int d_maxNumOfHealth = 3;
 	private int d_timeSinceHealthPlacement;
+	
+	private ArrayList<AmmoPickup> d_ammo;
+	private final int d_maxNumOfAmmo = 3;
+	private int d_timeSinceAmmoPlacement;
+	
 	private Random d_randGenerator;
 	
 	// enemy related
@@ -62,12 +70,18 @@ public class Model {
 		
 		d_bullets = new ArrayList<Bullet>();
 		d_numOfBullets = 0;
-		
-		d_hill = new Rectangle(200, 200, 100, 100);
 
-		d_health = new ArrayList<HealthPickup>();
-		d_timeSinceHealthPlacement = 0;
 		d_randGenerator = new Random();
+		d_health = new ArrayList<HealthPickup>();
+		d_timeSinceHealthPlacement = d_randGenerator.nextInt(330);
+		d_ammo = new ArrayList<AmmoPickup>();
+		d_timeSinceAmmoPlacement = d_randGenerator.nextInt(330);
+		
+		int hillX = d_randGenerator.nextInt(d_mapWidth-HILL_WIDTH);
+		int hillY = d_randGenerator.nextInt(d_mapHeight-HILL_WIDTH);
+		d_hill = new Rectangle(hillX, hillY, HILL_WIDTH, HILL_WIDTH);
+		d_timeSinceLastHillMove = 0;
+		d_hillTouched = false;
 
 		d_tileMap = new boolean[d_mapHeight / d_tileSize][d_mapWidth / d_tileSize];
 		d_tmpBlock = null;
@@ -206,6 +220,25 @@ public class Model {
 			}
 		}
 		
+		// Place ammo pickups
+		if(d_ammo.size() < d_maxNumOfAmmo) {
+			++d_timeSinceAmmoPlacement;
+			
+			// find free spot to place ammo
+			while(d_timeSinceAmmoPlacement > 330) {
+				int x = d_randGenerator.nextInt(d_mapWidth - 10);
+				int y = d_randGenerator.nextInt(d_mapHeight - 10);
+				
+				synchronized(d_ammo) {
+					if(!d_tileMap[y / d_tileSize][x / d_tileSize]) {
+						d_ammo.add(new AmmoPickup(x, y));
+						d_timeSinceAmmoPlacement = 0;
+						break;
+					}
+				}
+			}
+		}
+		
 		// Place enemy on random location on the edge of the map;
 		if(d_enemies.size() < d_maxNumOfEnemies) {
 			int x = d_randGenerator.nextInt(d_mapWidth - 10);
@@ -226,6 +259,23 @@ public class Model {
 			}
 			
 		}
+		
+		// Move hill if needed, 1800 steps ~ 60 seconds
+		if(d_timeSinceLastHillMove > 1800) {
+			d_hill.x = d_randGenerator.nextInt(d_mapWidth-HILL_WIDTH);
+			d_hill.y = d_randGenerator.nextInt(d_mapHeight-HILL_WIDTH);
+			d_timeSinceLastHillMove = 0;
+			// Tell enemies the hill moved
+			synchronized(d_enemies) {
+				for(Enemy enemy: d_enemies) {
+					enemy.forceNewPath();
+				}
+			}
+			
+			d_hillTouched = false;
+		}
+		if(d_hillTouched)
+			d_timeSinceLastHillMove++;
 
 		boolean hillCaptured = false;
 		
@@ -233,10 +283,16 @@ public class Model {
 			if(d_hill.contains(player.x(), player.y()))
 				hillCaptured = true;
 			
-			Iterator<HealthPickup> iter = d_health.iterator();
-			while(iter.hasNext()) {
-				if(iter.next().collision(player))
-					iter.remove();
+			Iterator<HealthPickup> healthIter = d_health.iterator();
+			while(healthIter.hasNext()) {
+				if(healthIter.next().collision(player))
+					healthIter.remove();
+			}
+			
+			Iterator<AmmoPickup> ammoIter = d_ammo.iterator();
+			while(ammoIter.hasNext()) {
+				if(ammoIter.next().collision(player))
+					ammoIter.remove();
 			}
 		}
 		
@@ -255,8 +311,10 @@ public class Model {
 			}
 		}*/
 		
-		if(hillCaptured)
+		if(hillCaptured) {
+			d_hillTouched = true;
 			d_points += 1;
+		}
 		
 		synchronized(d_bullets) {
 			// check if an enemy got shot
@@ -295,6 +353,8 @@ public class Model {
 			numOfBytes += 4 + d_numOfBullets * Bullet.sendSize();
 			// pickups
 			numOfBytes += 4 + d_health.size() * HealthPickup.sendSize();
+			numOfBytes += 4 + d_ammo.size() * AmmoPickup.sendSize();
+			
 			
 			// message type
 			ByteBuffer buffer = ByteBuffer.allocate(numOfBytes);
@@ -304,6 +364,7 @@ public class Model {
 			buffer.putInt(numOfCharacters);
 			buffer.putInt(d_numOfBullets);
 			buffer.putInt(d_health.size());
+			buffer.putInt(d_ammo.size());
 			
 			// characters
 			for(Player player : d_players)
@@ -319,6 +380,9 @@ public class Model {
 			// pickups
 			for(HealthPickup pickup : d_health)
 				pickup.addToBuffer(buffer);
+			
+			for(AmmoPickup ammo : d_ammo)
+				ammo.addToBuffer(buffer);
 					
 			// send the buffer	
 			SpectroPolaris.server().send(buffer.array());
@@ -344,6 +408,11 @@ public class Model {
 		synchronized(d_health) {
 			for(HealthPickup health : d_health)
 				health.draw(g2d);
+		}
+		
+		synchronized(d_ammo) {
+			for(AmmoPickup ammo : d_ammo)
+				ammo.draw(g2d);
 		}
 		
 		synchronized(d_enemies) {
@@ -479,8 +548,9 @@ public class Model {
 	public Stack<Node> findPath(float xStartCoord, float yStartCoord, float xEndCoord, float yEndCoord) {
 		int xStart = (int) xStartCoord / d_tileSize;
 		int yStart = (int) yStartCoord / d_tileSize;
-		int xEnd = (int) xEndCoord / d_tileSize;
-		int yEnd = (int) yEndCoord / d_tileSize;
+		int xEnd = (int) (xEndCoord / d_tileSize) - 1;
+		int yEnd = (int) (yEndCoord / d_tileSize) - 1;
+		// Grid is [EndCoord/d_tileSize], so max value is EndCoord/d_tileSize - 1
 		
 		int maxY = d_mapHeight / d_tileSize;
 		int maxX = d_mapWidth / d_tileSize;
@@ -494,8 +564,8 @@ public class Model {
 		
 		Node current = new Node(xStart, yStart, null, 0, heuristicCost(xStart, yStart, xEnd, yEnd));
 		
-		if(d_tileMap[yEnd][xEnd] || d_tileMap[yStart][xStart] || xEnd < 0 || xEnd > maxX || yEnd < 0 || yEnd > maxY ||
-				xStart < 0 || xStart > maxX || yStart < 0 || yStart > maxY) {
+		if(xEnd < 0 || xEnd > maxX || yEnd < 0 || yEnd > maxY || xStart < 0 || xStart > maxX || yStart < 0 || yStart > maxY ||
+				d_tileMap[yEnd][xEnd] || d_tileMap[yStart][xStart] ) {
 			Stack<Node> path = new Stack<Node>();
 			path.push(current);
 			return path;

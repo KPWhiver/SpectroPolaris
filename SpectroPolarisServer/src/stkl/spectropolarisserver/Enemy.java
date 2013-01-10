@@ -16,9 +16,9 @@ public class Enemy extends GameCharacter {
 		super(x, y, 0, color);
 		Model model = SpectroPolaris.frame().gamePanel().model();
 		
-		// Go to random point with x is between: hill.left - 50, hill.right + 50 and y between: hill.top - 50, hill.bottom + 50
-		path = model.findPath(coor().x, coor().y, model.hill().x + (random.nextInt(model.hill().width + 100)) - 50,
-							  model.hill().y + (random.nextInt(model.hill().height + 100)) - 50);
+		// Go to random point with x is between: hill.left - 100, hill.right + 100 and y between: hill.top - 100, hill.bottom + 100
+		path = model.findPath(coor().x, coor().y, model.hill().x + (random.nextInt(model.hill().width + 200)) - 100,
+							  model.hill().y + (random.nextInt(model.hill().height + 200)) - 100);
 
 		goal = path.pop();
 		lastPlayerPath = 0;
@@ -44,23 +44,28 @@ public class Enemy extends GameCharacter {
 			}
 			
 
-			
-			path = model.findPath(coor().x, coor().y, player.x(), player.y());
-			path.pop();
+			synchronized(path) {
+				path = model.findPath(coor().x, coor().y, player.x(), player.y());
+				path.pop();
+			}
 			lastPlayerPath = 5;
 		} else {
 			lastPlayerPath--;
 		}
 		
 		if(model.inTile(coor().x, coor().y, goal.x(), goal.y())) {
-			if(path.isEmpty()) {
-				// Go to random point with x is between: hill.left - 50, hill.right + 50 and y between: hill.top - 50, hill.bottom + 50
-				path = model.findPath(coor().x, coor().y, model.hill().x + (random.nextInt(model.hill().width + 100)) - 50,
-						  			  model.hill().y + (random.nextInt(model.hill().height + 100)) - 50);
+			synchronized(path) {
+				if(path.isEmpty()) {
+					// Go to random point with x is between: hill.left - 50, hill.right + 50 and y between: hill.top - 50, hill.bottom + 50
+					path = model.findPath(coor().x, coor().y, model.hill().x + (random.nextInt(model.hill().width + 100)) - 50,
+							  			  model.hill().y + (random.nextInt(model.hill().height + 100)) - 50);
+				}
+				
+				goal = path.pop();
+				
+				setDirection((float) Math.atan2(goal.x() * model.tileSize() + 5 - coor().x, goal.y() * model.tileSize() + 5 - coor().y));
+				// System.out.println("New goal: from " + d_x + ", " + d_y + " to " + goal.x() * 10 + ", " + goal.y() * 10 + ". New direction: " + d_direction);
 			}
-			goal = path.pop();
-			setDirection((float) Math.atan2(goal.x() * model.tileSize() + 5 - coor().x, goal.y() * model.tileSize() + 5 - coor().y));
-			// System.out.println("New goal: from " + d_x + ", " + d_y + " to " + goal.x() * 10 + ", " + goal.y() * 10 + ". New direction: " + d_direction);
 		} 
 		
 		super.step();
@@ -78,6 +83,12 @@ public class Enemy extends GameCharacter {
 		}
 		
 		super.draw(g2d);
+	}
+	
+	public void forceNewPath() {
+		synchronized(path) {
+			path.clear();
+		}
 	}
 
 

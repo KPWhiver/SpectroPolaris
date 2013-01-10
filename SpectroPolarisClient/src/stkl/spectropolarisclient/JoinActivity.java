@@ -21,6 +21,8 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 public class JoinActivity extends Activity {
+	private boolean startingGame;
+	
 	private ArrayList<String> adresses;
 	private Client client;
 	
@@ -31,6 +33,9 @@ public class JoinActivity extends Activity {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        startingGame =  false;
+        
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_join);
@@ -108,6 +113,9 @@ public class JoinActivity extends Activity {
     			client.close();
     		}
     	}
+    	
+    	startingGame = false;
+    	
     	super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -115,6 +123,11 @@ public class JoinActivity extends Activity {
      * Join game button has been pressed. Get server ip from EditText, verify correctness and connect to server.
      */
     public void joinGame(View view) {
+    	if(startingGame)
+    		return;
+    	else
+    		startingGame = true;
+    	
     	EditText ipAdressEdit = (EditText)findViewById(R.id.join_ip);
     	String ipAdress = ipAdressEdit.getText().toString();
     	Matcher matcher = Patterns.IP_ADDRESS.matcher(ipAdress);
@@ -171,6 +184,10 @@ public class JoinActivity extends Activity {
 		if(!adresses.contains(ipAdress)) {
 			adresses.add(ipAdress);
 		}
+    }
+    
+    public void stopStartingGame() {
+    	startingGame = false;
     }
     
 }

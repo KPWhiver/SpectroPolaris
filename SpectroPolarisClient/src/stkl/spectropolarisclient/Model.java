@@ -1,11 +1,9 @@
 package stkl.spectropolarisclient;
 
-import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import android.graphics.Canvas;
@@ -29,7 +27,10 @@ public class Model {
 	
 	// pickups
 	private ArrayList<HealthPickup> d_health;
-	private int d_lastNumOfPickups;
+	private int d_lastNumOfHealthPickups;
+	
+	private ArrayList<AmmoPickup> d_ammo;
+	private int d_lastNumOfAmmoPickups;
 	
 	private GameActivity d_context;
 	private float d_scale;
@@ -57,7 +58,10 @@ public class Model {
 		
 		// pickups
 		d_health = new ArrayList<HealthPickup>();
-		d_lastNumOfPickups = 0;
+		d_lastNumOfHealthPickups = 0;
+		
+		d_ammo = new ArrayList<AmmoPickup>();
+		d_lastNumOfAmmoPickups = 0;
 		
 		//d_blocks = new ArrayList<Block>();
 		d_motionOrigin = new Point(-1, -1);
@@ -198,6 +202,11 @@ public class Model {
 				pickup.draw(canvas);
 		}
 		
+		synchronized(d_ammo) {
+			for(AmmoPickup pickup : d_ammo)
+				pickup.draw(canvas);
+		}
+		
 		synchronized(d_bullets) {
 			for(Bullet bullet : d_bullets)
 				bullet.draw(canvas);
@@ -242,6 +251,13 @@ public class Model {
 		canvas.drawRect(d_context.centerHorizontal() - 50, d_context.centerVertical() + 50, 
 				d_context.centerHorizontal() - 50 + d_player.health(), d_context.centerVertical() + 55, paint);
 		
+		paint.setColor(Color.GRAY);
+		canvas.drawRect(d_context.centerHorizontal() - 50, d_context.centerVertical() + 56, 
+				d_context.centerHorizontal() + 50, d_context.centerVertical() + 61, paint);
+		paint.setColor(Color.YELLOW);
+		canvas.drawRect(d_context.centerHorizontal() - 50, d_context.centerVertical() + 56, 
+				d_context.centerHorizontal() - 50 + d_player.ammo(), d_context.centerVertical() + 61, paint);
+		
 		paint.setColor(Color.CYAN);
 		//paint.setTextSize(20);
 		//canvas.drawText("Motion Controls: " + d_motionControlX + ", " + d_motionControlY, 10, 20, paint);
@@ -285,6 +301,7 @@ public class Model {
 	}
 	
 	public Point collision(float cX1, float cY1, float cX2, float cY2) {
+		boolean xLast = true;
 		int x1 = (int) (cX1 / d_tileSize);
 		int y1 = (int) (cY1 / d_tileSize);
 		int x2 = (int) (cX2 / d_tileSize);
@@ -298,8 +315,13 @@ public class Model {
 		int error = dx - dy;
 		
 		while(true) {
-			if(d_tileMap[y1][x1])
-				return new Point(x1 * d_tileSize, y1 * d_tileSize);
+			if(d_tileMap[y1][x1]) {
+				if(xLast) {
+					return new Point(x1 * d_tileSize, (int)(Math.abs((cX1 - (x1 * d_tileSize)) / (dx * d_tileSize)) * dy * sy * d_tileSize + cY1));
+				} else {
+					return new Point((int)(Math.abs((cY1 - (y1 * d_tileSize)) / (dy * d_tileSize)) * dx * sx * d_tileSize + cX1), y1 * d_tileSize);
+				}
+			}
 			
 			if(x1 == x2 && y1 == y2)
 				return null;
@@ -309,11 +331,13 @@ public class Model {
 			if(e2 > -dy) {
 				error = error - dy;
 				x1 = x1 + sx;
+				xLast = true;
 			}
 			
 			if(e2 < dx) {
 				error = error + dx;
 				y1 = y1 + sy;
+				xLast = false;
 			}
 			
 			// check if points are outside of map range
@@ -322,7 +346,7 @@ public class Model {
 		}
 	}
 	
-	public void receive(DataInputStream in, int numOfCharacters, int numOfBullets, int numOfPickups) throws Exception {
+	public void receive(DataInputStream in, int numOfCharacters, int numOfBullets, int numOfHealthPickups, int numOfAmmoPickups) throws Exception {
 		if(d_player.id() == -1)
 			return;
 				
@@ -384,16 +408,16 @@ public class Model {
 		
 		synchronized(d_health) {
 			
-			// Check if a pickup has been picked up
-			if(numOfPickups < d_lastNumOfPickups) {
+			// Check if a health pickup has been picked up
+			if(numOfHealthPickups < d_lastNumOfHealthPickups) {
 				synchronized(d_player) {
 					d_player.changeHealth(25);
 				}
 			}
 			
-			d_lastNumOfPickups = numOfPickups;
+			d_lastNumOfHealthPickups = numOfHealthPickups;
 			
-			for(int idx = 0; idx != numOfPickups; ++idx) {
+			for(int idx = 0; idx != numOfHealthPickups; ++idx) {
 				//in.readFully(buffer.array(), 0, 8);
 				
 				//assert numOfBytes == 8 || numOfBytes < 0;
@@ -412,9 +436,39 @@ public class Model {
 				}
 			}
 			
-			if(numOfPickups < d_health.size()) {
-				for(int idx = numOfPickups; idx != d_health.size(); ++idx)
+			if(numOfHealthPickups < d_health.size()) {
+				for(int idx = numOfHealthPickups; idx != d_health.size(); ++idx)
 					d_health.get(idx).instantiate(-1, -1);
+			}
+		}
+		
+		synchronized(d_ammo) {
+			
+			// Check if a ammo pickup has been picked up
+			if(numOfAmmoPickups < d_lastNumOfAmmoPickups) {
+				synchronized(d_player) {
+					d_player.incAmmo(50);
+				}
+			}
+			
+			d_lastNumOfAmmoPickups = numOfAmmoPickups;
+			
+			for(int idx = 0; idx != numOfAmmoPickups; ++idx) {
+				int x = in.readInt();
+				int y = in.readInt();
+				
+				if(idx < d_ammo.size())
+					d_ammo.get(idx).instantiate(x, y);
+				else {
+					System.err.println("Alloc");
+					AmmoPickup pickup = new AmmoPickup(x, y);
+					d_ammo.add(pickup);
+				}
+			}
+			
+			if(numOfAmmoPickups < d_ammo.size()) {
+				for(int idx = numOfAmmoPickups; idx != d_ammo.size(); ++idx)
+					d_ammo.get(idx).instantiate(-1, -1);
 			}
 		}
 		

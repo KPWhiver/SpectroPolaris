@@ -67,8 +67,11 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 		int eventX = (int) (e.getX() / d_scale);
 		int eventY = (int) (e.getY() / d_scale);
 		
+		
+		
 		if(e.isShiftDown()) {
 			d_model.removeBlock(eventX, eventY);
+			repaint();
 			return;
 		}
 		
@@ -79,6 +82,7 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 		
 		//d_edit = new Block(d_xStart, d_yStart, 0, 0);
 		//d_model.addBlock(d_edit);
+		repaint();
 	}
 
 	@Override
@@ -95,6 +99,8 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 		//d_edit = null;
 		d_xStart = -1;
 		d_yStart = -1;
+		
+		repaint();
 	}
 
 	@Override
@@ -114,6 +120,7 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 		block.height = y - d_yStart;
 		block.width = x - d_xStart;
 		
+		repaint();
 	    //d_edit.update(d_xStart, d_yStart, , );
 	}
 

@@ -186,7 +186,7 @@ public class Model {
 	public void draw(Canvas canvas) {
 		canvas.save();
 		
-		canvas.scale(4 * d_scale, 4 * d_scale, d_context.centerHorizontal(), d_context.centerVertical());
+		canvas.scale(6 * d_scale, 6 * d_scale, d_context.centerHorizontal(), d_context.centerVertical());
 		
 		
 		
@@ -257,16 +257,16 @@ public class Model {
 		}
 	}
 
-	public boolean collision(float potentialX, float potentialY, int radius) {
-		if(potentialX < radius || potentialX + radius > d_mapWidth 
-				|| potentialY < radius || potentialY + radius > d_mapHeight) {
+	public boolean collision(float potentialX, float potentialY, float d_radius) {
+		if(potentialX < d_radius || potentialX + d_radius > d_mapWidth 
+				|| potentialY < d_radius || potentialY + d_radius > d_mapHeight) {
 			return true;
 		}
 				
-		int startX = ((int) potentialX - radius) / d_tileSize;
-		int startY = ((int) potentialY - radius) / d_tileSize;
-		int endX = Math.min(1 + ((int) potentialX + radius) / d_tileSize, d_mapWidth / d_tileSize);
-		int endY = Math.min(1 + ((int) potentialY + radius) / d_tileSize, d_mapHeight / d_tileSize);
+		int startX = ((int) (potentialX - d_radius)) / d_tileSize;
+		int startY = ((int) (potentialY - d_radius)) / d_tileSize;
+		int endX = Math.min(1 + ((int) (potentialX + d_radius)) / d_tileSize, d_mapWidth / d_tileSize);
+		int endY = Math.min(1 + ((int) (potentialY + d_radius)) / d_tileSize, d_mapHeight / d_tileSize);
 		
 		for(int yIdx = startY; yIdx != endY; ++yIdx) {
 			for(int xIdx = startX; xIdx != endX; ++xIdx) {

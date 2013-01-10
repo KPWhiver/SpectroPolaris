@@ -39,7 +39,7 @@ public class GameCharacter {
 
     public void draw(Canvas canvas) {
     	if(d_id != -1)
-    		canvas.drawCircle(d_x, d_y, 5, d_paint);
+    		canvas.drawCircle(d_x, d_y, 2.5f, d_paint);
 	}
 
 	public void instantiate(float x, float y, float direction, float speed, int color, int id) {

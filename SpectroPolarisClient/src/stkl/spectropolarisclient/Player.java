@@ -30,6 +30,8 @@ public class Player {
 	
 	private Vibrator d_vibrator;
 	
+	private float d_radius = 2.5f;
+	
 	public Player(int x, int y, Paint paint) {
 		d_x = x;
 		d_y = y;
@@ -65,7 +67,7 @@ public class Player {
 		float potentialX = d_x + FloatMath.sin(d_direction) * d_speed;
 		float potentialY = d_y + FloatMath.cos(d_direction) * d_speed;
 		
-		if(GameActivity.getInstance().model().collision(potentialX, potentialY, 5) == false)
+		if(GameActivity.getInstance().model().collision(potentialX, potentialY, d_radius) == false)
 		{
 			d_x = potentialX;
 			d_y = potentialY;
@@ -104,7 +106,7 @@ public class Player {
 	}
 
     public void draw(Canvas canvas, int centerHorizontal, int centerVertical) {
-    	canvas.drawCircle(centerHorizontal, centerVertical, 5, d_paint);
+    	canvas.drawCircle(centerHorizontal, centerVertical, d_radius, d_paint);
 	}
 
 	public int id() {
@@ -121,7 +123,7 @@ public class Player {
 		
 		System.err.println("checkIfShot");
 		
-		if(sqrDistanceToLine(x1, y1, x2, y2) < 5 * 5)
+		if(sqrDistanceToLine(x1, y1, x2, y2) < d_radius * d_radius)
 			changeHealth(-1);
 	}
 	

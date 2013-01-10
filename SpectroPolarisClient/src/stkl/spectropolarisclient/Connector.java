@@ -47,6 +47,8 @@ public class Connector extends AsyncTask<Client, Void, Exception>{
 	protected void onPostExecute(Exception result) {
 		dialog.dismiss();
 		if(result != null) {
+			joinActivity.stopStartingGame();
+			
 			// Show toaster to tell user connection could not be setup.
 			CharSequence text = "Connection failed!\n" + result.toString();
     		int duration = Toast.LENGTH_LONG;

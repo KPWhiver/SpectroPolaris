@@ -35,8 +35,11 @@ public class Model {
 	private Rectangle d_tmpBlock;
 	
 	// hill related
+	private final int HILL_WIDTH = 100;
 	private Rectangle d_hill;
 	private int d_points;
+	private int d_timeSinceLastHillMove;
+	private boolean d_hillTouched;
 	
 	// pickup related
 	private ArrayList<HealthPickup> d_health;
@@ -67,14 +70,18 @@ public class Model {
 		
 		d_bullets = new ArrayList<Bullet>();
 		d_numOfBullets = 0;
-		
-		d_hill = new Rectangle(200, 200, 100, 100);
 
-		d_health = new ArrayList<HealthPickup>();
-		d_timeSinceHealthPlacement = 0;
-		d_ammo = new ArrayList<AmmoPickup>();
-		d_timeSinceAmmoPlacement = 1000000;
 		d_randGenerator = new Random();
+		d_health = new ArrayList<HealthPickup>();
+		d_timeSinceHealthPlacement = d_randGenerator.nextInt(330);
+		d_ammo = new ArrayList<AmmoPickup>();
+		d_timeSinceAmmoPlacement = d_randGenerator.nextInt(330);
+		
+		int hillX = d_randGenerator.nextInt(d_mapWidth-HILL_WIDTH);
+		int hillY = d_randGenerator.nextInt(d_mapHeight-HILL_WIDTH);
+		d_hill = new Rectangle(hillX, hillY, HILL_WIDTH, HILL_WIDTH);
+		d_timeSinceLastHillMove = 0;
+		d_hillTouched = false;
 
 		d_tileMap = new boolean[d_mapHeight / d_tileSize][d_mapWidth / d_tileSize];
 		d_tmpBlock = null;
@@ -252,6 +259,23 @@ public class Model {
 			}
 			
 		}
+		
+		// Move hill if needed, 1800 steps ~ 60 seconds
+		if(d_timeSinceLastHillMove > 1800) {
+			d_hill.x = d_randGenerator.nextInt(d_mapWidth-HILL_WIDTH);
+			d_hill.y = d_randGenerator.nextInt(d_mapHeight-HILL_WIDTH);
+			d_timeSinceLastHillMove = 0;
+			// Tell enemies the hill moved
+			synchronized(d_enemies) {
+				for(Enemy enemy: d_enemies) {
+					enemy.forceNewPath();
+				}
+			}
+			
+			d_hillTouched = false;
+		}
+		if(d_hillTouched)
+			d_timeSinceLastHillMove++;
 
 		boolean hillCaptured = false;
 		
@@ -287,8 +311,10 @@ public class Model {
 			}
 		}*/
 		
-		if(hillCaptured)
+		if(hillCaptured) {
+			d_hillTouched = true;
 			d_points += 1;
+		}
 		
 		synchronized(d_bullets) {
 			// check if an enemy got shot
@@ -522,8 +548,9 @@ public class Model {
 	public Stack<Node> findPath(float xStartCoord, float yStartCoord, float xEndCoord, float yEndCoord) {
 		int xStart = (int) xStartCoord / d_tileSize;
 		int yStart = (int) yStartCoord / d_tileSize;
-		int xEnd = (int) xEndCoord / d_tileSize;
-		int yEnd = (int) yEndCoord / d_tileSize;
+		int xEnd = (int) (xEndCoord / d_tileSize) - 1;
+		int yEnd = (int) (yEndCoord / d_tileSize) - 1;
+		// Grid is [EndCoord/d_tileSize], so max value is EndCoord/d_tileSize - 1
 		
 		int maxY = d_mapHeight / d_tileSize;
 		int maxX = d_mapWidth / d_tileSize;
@@ -537,8 +564,8 @@ public class Model {
 		
 		Node current = new Node(xStart, yStart, null, 0, heuristicCost(xStart, yStart, xEnd, yEnd));
 		
-		if(d_tileMap[yEnd][xEnd] || d_tileMap[yStart][xStart] || xEnd < 0 || xEnd > maxX || yEnd < 0 || yEnd > maxY ||
-				xStart < 0 || xStart > maxX || yStart < 0 || yStart > maxY) {
+		if(xEnd < 0 || xEnd > maxX || yEnd < 0 || yEnd > maxY || xStart < 0 || xStart > maxX || yStart < 0 || yStart > maxY ||
+				d_tileMap[yEnd][xEnd] || d_tileMap[yStart][xStart] ) {
 			Stack<Node> path = new Stack<Node>();
 			path.push(current);
 			return path;

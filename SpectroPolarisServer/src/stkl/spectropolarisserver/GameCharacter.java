@@ -21,6 +21,8 @@ public class GameCharacter {
 	
 	private int d_health;
 	private int d_ammo;
+	private static Image s_cross;
+	private static boolean s_initialized = false;
 	
 	private final int d_radius = 5;
 	
@@ -41,6 +43,11 @@ public class GameCharacter {
 	}
 	
 	public GameCharacter(float x, float y, float direction, Color color) {
+		if(s_initialized == false) {
+			s_cross = Toolkit.getDefaultToolkit().getImage("cross.png");
+			s_initialized = true;
+		}
+		
 		d_direction = direction;
 		d_speed = 1;
 		d_color = color;
@@ -76,7 +83,10 @@ public class GameCharacter {
     public void draw(Graphics2D g2d) {
 
 		g2d.setColor(d_color);
-		g2d.fillOval((int) (d_coor.x) - d_radius, (int) (d_coor.y) - d_radius, 2 * d_radius, 2 * d_radius);
+		if(d_health > 0)
+			g2d.fillOval((int) (d_coor.x) - d_radius, (int) (d_coor.y) - d_radius, 2 * d_radius, 2 * d_radius);
+		else
+			g2d.drawImage(s_cross, (int) (d_coor.x) - d_radius, (int) (d_coor.y) - d_radius, 2 * d_radius, 2 * d_radius, null);
 		
 		//System.out.println("draw: " + (int) (d_x) + " " + (int) (d_y));
 	}

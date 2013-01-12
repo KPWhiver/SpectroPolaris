@@ -85,22 +85,21 @@ public class Player {
 			switch(d_weaponIndex) {
 			case 0:
 				bullet = GameActivity.getInstance().model().addBullet();
+				bullet.instantiate(d_x, d_y, d_shootDirection, d_id);
 				synchronized(d_lastBullets) {
 					d_lastBullets.add(bullet);
 				}
-				bullet.instantiate(d_x, d_y, d_shootDirection, d_id);
 				d_ammo--;
 				break;
 			case 1:
 				if(d_ammo > NUM_BULLETS_CONSUMED_SHOTGUN) {
 					for(int idx = 0; idx < NUM_BULLETS_FIRED_SHOTGUN; ++idx) {
 						bullet = GameActivity.getInstance().model().addBullet();
+						float direction = d_shootDirection + ((d_random.nextFloat()-0.5f) * SHOTGUN_MAX_SPREAD_MOD);
+						bullet.instantiate(d_x, d_y, direction, d_id);
 						synchronized(d_lastBullets) {
 							d_lastBullets.add(bullet);
 						}
-						float direction = d_shootDirection + ((d_random.nextFloat()-0.5f) * SHOTGUN_MAX_SPREAD_MOD);
-						
-						bullet.instantiate(d_x, d_y, direction, d_id);
 					}
 					d_ammo -= NUM_BULLETS_CONSUMED_SHOTGUN;
 				}

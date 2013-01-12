@@ -19,7 +19,10 @@ public class Player extends GameCharacter {
     	g2d.fillRect(805, 5 + index * 50, 214, 40);
     	g2d.setColor(Color.BLACK);
     	
-    	g2d.drawString(d_name, 820, 15 + index * 50 + 10);
+    	if(health() > 0)
+    		g2d.drawString(d_name, 820, 15 + index * 50 + 10);
+    	else
+    		g2d.drawString("Dead: " + d_name, 820, 15 + index * 50 + 10);
 		
     	g2d.setColor(Color.GRAY);
     	g2d.fillRect(810, 35 + index * 50, 200, 5);

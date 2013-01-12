@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.Vibrator;
 import android.util.FloatMath;
 
@@ -47,6 +50,11 @@ public class Player {
 	private Random d_random;
 	
 	public Player(int x, int y, Paint paint) {
+
+	private static Bitmap s_bitmap;
+	private static boolean s_initialized = false;
+	
+	public Player(int x, int y, Paint paint) {		
 		d_x = x;
 		d_y = y;
 		d_direction = 0;
@@ -103,6 +111,9 @@ public class Player {
 	}
 	
 	public void step() {
+		if(d_health == 0)
+			return;
+		
 		float potentialX = d_x + FloatMath.sin(d_direction) * d_speed;
 		float potentialY = d_y + FloatMath.cos(d_direction) * d_speed;
 		
@@ -153,9 +164,25 @@ public class Player {
 	public float yOffset() {
 		return d_y;
 	}
+	
+	private Rect d_rect = new Rect(0, 0, 0, 0);
 
     public void draw(Canvas canvas, int centerHorizontal, int centerVertical) {
-    	canvas.drawCircle(centerHorizontal, centerVertical, d_radius, d_paint);
+		if(s_initialized == false) {
+			s_bitmap = BitmapFactory.decodeResource(GameActivity.getInstance().getResources(), R.drawable.cross);
+			s_initialized = true;
+		}
+    	
+    	if(d_health > 0)
+    		canvas.drawCircle(centerHorizontal, centerVertical, d_radius, d_paint);
+    	else {
+    		d_rect.bottom = (int) (centerVertical + d_radius);
+    		d_rect.left = (int) (centerHorizontal - d_radius);
+    		d_rect.right = (int) (centerHorizontal + d_radius);
+    		d_rect.top = (int) (centerVertical - d_radius);
+    		
+    		canvas.drawBitmap(s_bitmap, null, d_rect, null);
+    	}
 	}
 
 	public int id() {
@@ -169,8 +196,6 @@ public class Player {
 	public void checkIfShot(float x1, float y1, float x2, float y2, int id) {
 		if(id == d_id)
 			return;
-		
-		System.err.println("checkIfShot");
 		
 		if(sqrDistanceToLine(x1, y1, x2, y2) < d_radius * d_radius)
 			changeHealth(-1);

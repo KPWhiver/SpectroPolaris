@@ -167,8 +167,6 @@ public class Model {
 				character.step();
 		}
 		
-		System.err.println(d_numOfBullets);
-		
 		for(int index = 0; index != d_numOfBullets; ++index) {
 			Bullet bullet = d_bullets.get(index);
 			if(bullet.step())
@@ -433,7 +431,6 @@ public class Model {
 				if(idx < d_health.size())
 					d_health.get(idx).instantiate(x, y);
 				else {
-					System.err.println("Alloc");
 					HealthPickup pickup = new HealthPickup(x, y);
 					d_health.add(pickup);
 				}
@@ -463,7 +460,6 @@ public class Model {
 				if(idx < d_ammo.size())
 					d_ammo.get(idx).instantiate(x, y);
 				else {
-					System.err.println("Alloc");
 					AmmoPickup pickup = new AmmoPickup(x, y);
 					d_ammo.add(pickup);
 				}

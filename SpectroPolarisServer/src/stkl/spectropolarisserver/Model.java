@@ -555,12 +555,12 @@ public class Model {
 	public Stack<Node> findPath(float xStartCoord, float yStartCoord, float xEndCoord, float yEndCoord) {
 		int xStart = (int) xStartCoord / d_tileSize;
 		int yStart = (int) yStartCoord / d_tileSize;
-		int xEnd = (int) (xEndCoord / d_tileSize) - 1;
-		int yEnd = (int) (yEndCoord / d_tileSize) - 1;
-		// Grid is [EndCoord/d_tileSize], so max value is EndCoord/d_tileSize - 1
+		int xEnd = (int) (xEndCoord / d_tileSize);
+		int yEnd = (int) (yEndCoord / d_tileSize);
 		
-		int maxY = d_mapHeight / d_tileSize;
-		int maxX = d_mapWidth / d_tileSize;
+		// Grid is [EndCoord/d_tileSize], so max value is EndCoord/d_tileSize - 1
+		int maxY = d_mapHeight / d_tileSize - 1;
+		int maxX = d_mapWidth / d_tileSize - 1;
 
 		// Used to store which nodes have been visisted
 		boolean[][] visited = new boolean[maxY][maxX];
@@ -571,7 +571,6 @@ public class Model {
 		
 		Node current = new Node(xStart, yStart, null, 0, heuristicCost(xStart, yStart, xEnd, yEnd));
 		
-		// TODO fix arrayoutofboundexception
 		if(xEnd < 0 || xEnd > maxX || yEnd < 0 || yEnd > maxY || xStart < 0 || xStart > maxX || yStart < 0 || yStart > maxY ||
 				d_tileMap[yEnd][xEnd] || d_tileMap[yStart][xStart] ) {
 			Stack<Node> path = new Stack<Node>();

@@ -3,13 +3,11 @@ package stkl.spectropolarisclient;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
 public class Client extends Thread {
 	private final int SERVER_PORT = 1337;
@@ -68,14 +66,13 @@ public class Client extends Thread {
 		return instance;
 	}
 	
-	public void sent(float x, float y, float direction, float speed, int health, int ammo, Bullet bullet) {
+	public void sent(float x, float y, float direction, float speed, int health, int ammo, ArrayList<Bullet> bullets) {
 		if(!connected)
 			return;
 		
 		try {
 			int allocSize = 32;
-			if(bullet != null)
-				allocSize += Bullet.sendSize();
+			allocSize += Bullet.sendSize() * bullets.size();
 			
 			ByteBuffer buffer = ByteBuffer.allocate(allocSize);
 			
@@ -88,12 +85,17 @@ public class Client extends Thread {
 			buffer.putInt(ammo);
 			
 			// send a "boolean" telling us if a bullet is being sent
-			if(bullet == null)
+			/*if(bullet == null)
 				buffer.putInt(0);
 			else {
 				buffer.putInt(1);
 				bullet.addToBuffer(buffer);
-			}
+			}*/
+			
+			buffer.putInt(bullets.size());
+			for(Bullet bullet: bullets) 
+				bullet.addToBuffer(buffer);
+			
 				
 			out.write(buffer.array());
 		} catch (IOException e) {

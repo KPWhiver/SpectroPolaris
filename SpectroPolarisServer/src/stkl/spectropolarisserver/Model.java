@@ -405,6 +405,7 @@ public class Model {
 		g2d.setColor(Color.YELLOW);
 		g2d.fill(d_hill);
 		
+		// draw pickups
 		synchronized(d_health) {
 			for(HealthPickup health : d_health)
 				health.draw(g2d);
@@ -415,11 +416,13 @@ public class Model {
 				ammo.draw(g2d);
 		}
 		
+		// draw enemies
 		synchronized(d_enemies) {
 			for(GameCharacter character : d_enemies)
 				character.draw(g2d);
 		}
 		
+		// draw players
 		synchronized(d_players) {
 			
 			for(Player player : d_players)
@@ -428,9 +431,11 @@ public class Model {
 		
 		g2d.setColor(Color.BLACK);
 		
+		// draw a block if we are creating one through dragging
 		if(d_tmpBlock != null)
 			g2d.fill(d_tmpBlock);
 		
+		// draw map
 		for(int y = 0; y != d_mapHeight / d_tileSize; ++y) {
 			for(int x = 0; x != d_mapWidth / d_tileSize; ++x) {
 				if(d_tileMap[y][x]) {
@@ -439,6 +444,7 @@ public class Model {
 			}
 		}		
 
+		// draw right most block
 		g2d.fillRect(800, 0, 224, 768);
 		
 		/* 
@@ -449,6 +455,7 @@ public class Model {
 		g2d.setColor(Color.BLACK);
 		*/ 
 		
+		// draw players health etc...
 		for(int index = 0; index != d_players.size(); ++index)
 			d_players.get(index).drawUI(g2d, index);
 		
@@ -564,6 +571,7 @@ public class Model {
 		
 		Node current = new Node(xStart, yStart, null, 0, heuristicCost(xStart, yStart, xEnd, yEnd));
 		
+		// TODO fix arrayoutofboundexception
 		if(xEnd < 0 || xEnd > maxX || yEnd < 0 || yEnd > maxY || xStart < 0 || xStart > maxX || yStart < 0 || yStart > maxY ||
 				d_tileMap[yEnd][xEnd] || d_tileMap[yStart][xStart] ) {
 			Stack<Node> path = new Stack<Node>();

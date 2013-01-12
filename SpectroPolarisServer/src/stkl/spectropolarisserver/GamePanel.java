@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -45,7 +46,14 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 		Graphics2D g2d = (Graphics2D) g;
 		
 		d_scale = getHeight() / 768.0f;
+		float width = getHeight() * d_scale;
+		float horOffset = width - 1024;
+		
+		g2d.translate(horOffset, 0);
 		g2d.scale(d_scale, d_scale);
+		
+		g2d.setColor(Color.BLACK);
+		g2d.fillRect((int)-horOffset, 0, (int) horOffset, 768);
 		
 		d_model.draw(g2d);
 	}

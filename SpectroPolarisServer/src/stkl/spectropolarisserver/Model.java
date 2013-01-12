@@ -31,6 +31,9 @@ public class Model {
 	private final int d_mapWidth = 800;
 	private final int d_mapHeight = 768;
 	
+	private int d_maxTileX;
+	private int d_maxTileY;
+	
 	// this rectangle is here to temporarily draw a block when creating them
 	private Rectangle d_tmpBlock;
 	
@@ -77,14 +80,16 @@ public class Model {
 		d_ammo = new ArrayList<AmmoPickup>();
 		d_timeSinceAmmoPlacement = d_randGenerator.nextInt(330);
 		
-		int hillX = d_randGenerator.nextInt(d_mapWidth-HILL_WIDTH);
-		int hillY = d_randGenerator.nextInt(d_mapHeight-HILL_WIDTH);
-		d_hill = new Rectangle(hillX, hillY, HILL_WIDTH, HILL_WIDTH);
-		d_timeSinceLastHillMove = 0;
-		d_hillTouched = false;
-
+		d_maxTileX = d_mapWidth / d_tileSize - 1;
+		d_maxTileY = d_mapHeight / d_tileSize - 1;
 		d_tileMap = new boolean[d_mapHeight / d_tileSize][d_mapWidth / d_tileSize];
 		d_tmpBlock = null;
+		
+		int hillX = d_randGenerator.nextInt(d_maxTileX - HILL_WIDTH / d_tileSize);
+		int hillY = d_randGenerator.nextInt(d_maxTileY - HILL_WIDTH / d_tileSize);
+		d_hill = new Rectangle(hillX * d_tileSize, hillY * d_tileSize, HILL_WIDTH, HILL_WIDTH);
+		d_timeSinceLastHillMove = 0;
+		d_hillTouched = false;
 
 		try {		
 			DataInputStream file = new DataInputStream(new FileInputStream("map.dat"));
@@ -262,8 +267,8 @@ public class Model {
 		
 		// Move hill if needed, 1800 steps ~ 60 seconds
 		if(d_timeSinceLastHillMove > 1800) {
-			d_hill.x = d_randGenerator.nextInt(d_mapWidth-HILL_WIDTH);
-			d_hill.y = d_randGenerator.nextInt(d_mapHeight-HILL_WIDTH);
+			d_hill.x = d_randGenerator.nextInt(d_maxTileX - HILL_WIDTH / d_tileSize) * d_tileSize;
+			d_hill.y = d_randGenerator.nextInt(d_maxTileY - HILL_WIDTH / d_tileSize) * d_tileSize;
 			d_timeSinceLastHillMove = 0;
 			// Tell enemies the hill moved
 			synchronized(d_enemies) {
@@ -559,8 +564,8 @@ public class Model {
 		int yEnd = (int) (yEndCoord / d_tileSize);
 		
 		// Grid is [EndCoord/d_tileSize], so max value is EndCoord/d_tileSize - 1
-		int maxY = d_mapHeight / d_tileSize - 1;
-		int maxX = d_mapWidth / d_tileSize - 1;
+		int maxY = d_maxTileY;
+		int maxX = d_maxTileX;
 
 		// Used to store which nodes have been visisted
 		boolean[][] visited = new boolean[maxY][maxX];

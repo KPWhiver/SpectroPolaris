@@ -197,6 +197,7 @@ public class Model {
 		canvas.translate(-d_player.xOffset() + d_context.centerHorizontal(),
 				 -d_player.yOffset() + d_context.centerVertical());
 				
+		// draw pickups
 		synchronized(d_health) {
 			for(HealthPickup pickup : d_health)
 				pickup.draw(canvas);
@@ -207,6 +208,7 @@ public class Model {
 				pickup.draw(canvas);
 		}
 		
+		// draw bullets
 		synchronized(d_bullets) {
 			for(Bullet bullet : d_bullets)
 				bullet.draw(canvas);
@@ -215,21 +217,22 @@ public class Model {
 		canvas.translate(d_player.xOffset() - d_context.centerHorizontal(),
 				 d_player.yOffset() - d_context.centerVertical());
 		
+		// draw player
 		d_player.draw(canvas, d_context.centerHorizontal(), d_context.centerVertical());
 		
 		Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		
 
-		
-		
 		canvas.translate(-d_player.xOffset() + d_context.centerHorizontal(),
 				 -d_player.yOffset() + d_context.centerVertical());
 		
+		// draw enemies (and other players)
 		synchronized(d_characters) {
 			for(GameCharacter character : d_characters)
 				character.draw(canvas);
 		}
 		
+		// draw map
 		for(int y = 0; y != d_mapHeight / d_tileSize; ++y) {
 			for(int x = 0; x != d_mapWidth / d_tileSize; ++x) {
 				if(d_tileMap[y][x] == true)
@@ -238,25 +241,25 @@ public class Model {
 							d_blockPaint);
 			}
 		}
-		
+	
 		canvas.drawRect(0, 0, d_mapWidth, d_mapHeight, d_borderPaint);
 		
 		canvas.translate(d_player.xOffset() - d_context.centerHorizontal(),
 				 d_player.yOffset() - d_context.centerVertical());
 		
 		paint.setColor(Color.GRAY);
-		canvas.drawRect(d_context.centerHorizontal() - 50, d_context.centerVertical() + 50, 
-				d_context.centerHorizontal() + 50, d_context.centerVertical() + 55, paint);
+		canvas.drawRect(d_context.centerHorizontal() - 50, d_context.centerVertical() + 30, 
+				d_context.centerHorizontal() + 50, d_context.centerVertical() + 35, paint);
 		paint.setColor(Color.RED);
-		canvas.drawRect(d_context.centerHorizontal() - 50, d_context.centerVertical() + 50, 
-				d_context.centerHorizontal() - 50 + d_player.health(), d_context.centerVertical() + 55, paint);
+		canvas.drawRect(d_context.centerHorizontal() - 50, d_context.centerVertical() + 30, 
+				d_context.centerHorizontal() - 50 + d_player.health(), d_context.centerVertical() + 35, paint);
 		
 		paint.setColor(Color.GRAY);
-		canvas.drawRect(d_context.centerHorizontal() - 50, d_context.centerVertical() + 56, 
-				d_context.centerHorizontal() + 50, d_context.centerVertical() + 61, paint);
+		canvas.drawRect(d_context.centerHorizontal() - 50, d_context.centerVertical() + 36, 
+				d_context.centerHorizontal() + 50, d_context.centerVertical() + 41, paint);
 		paint.setColor(Color.YELLOW);
-		canvas.drawRect(d_context.centerHorizontal() - 50, d_context.centerVertical() + 56, 
-				d_context.centerHorizontal() - 50 + d_player.ammo(), d_context.centerVertical() + 61, paint);
+		canvas.drawRect(d_context.centerHorizontal() - 50, d_context.centerVertical() + 36, 
+				d_context.centerHorizontal() - 50 + d_player.ammo(), d_context.centerVertical() + 41, paint);
 		
 		paint.setColor(Color.CYAN);
 		//paint.setTextSize(20);

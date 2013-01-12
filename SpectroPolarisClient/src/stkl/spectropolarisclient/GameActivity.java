@@ -76,11 +76,11 @@ public class GameActivity extends Activity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN){
-            d_model.player().changeWeapon(1);
+            d_model.player().changeWeapon(-1);
             return true;
         }
         else if(keyCode == KeyEvent.KEYCODE_VOLUME_UP){
-        	d_model.player().changeWeapon(-1);
+        	d_model.player().changeWeapon(1);
             return true;
         }
 

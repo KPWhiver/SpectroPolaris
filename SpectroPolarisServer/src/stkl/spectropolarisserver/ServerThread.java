@@ -42,25 +42,7 @@ public class ServerThread extends Thread {
 		}
 	}
 	
-	private void receivePlayer() throws Exception {
-		//ByteBuffer buffer = ByteBuffer.allocate(20 + Bullet.sendSize());
-		
-		//int numOfBytes = d_in.read(buffer.array());
-			  			  
-		//if(numOfBytes < 0)
-		//	throw new Exception("Connection to client lost");
-			    
-	    //if(numOfBytes < 16) {
-	    //    System.out.println("Received only " + numOfBytes + " bytes in receivePlayer");
-	    //    return;
-	    //}
-	  
-		//float x = buffer.getFloat();
-		//float y = buffer.getFloat();
-		//float direction = buffer.getFloat();
-		//float speed = buffer.getFloat();
-		//int health = buffer.getInt();
-		
+	private void receivePlayer() throws Exception {		
 		d_player.update(d_in);//x, y, direction, speed, health);
 		
 		int bulletPresent = d_in.readInt();
@@ -69,30 +51,18 @@ public class ServerThread extends Thread {
 	}
 	
 	private void receiveNamecolor() throws Exception {
-		// Read next 4 bytes (int, lengthOfString) from stream
-		//d_in.read(intByteBuffer.array());
+
 		int stringLength = d_in.readInt();
-		//intByteBuffer.clear();
 		
 		// Prepare to read string
 		ByteBuffer buffer = ByteBuffer.allocate(stringLength);
 		
 		d_in.readFully(buffer.array());
-	  			  
-		//if(numOfBytes < 0)
-		//	throw new Exception("Connection to client lost");
-			    
-	    //if(numOfBytes < stringLength) {
-	    //    System.out.println("Received only " + numOfBytes + " bytes in receiveNamecolor");
-	    //    return;
-	    //}
-	  
+	  			  	  
 	    String name = new String(buffer.array());
 	    
-		// Read next 4 bytes (int, lengthOfString) from stream
-		//d_in.read(intByteBuffer.array());
+
 		int color = d_in.readInt();
-		//intByteBuffer.clear();
 		
 		d_player.setName(name);
 		d_player.setColor(color);

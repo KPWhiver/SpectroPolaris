@@ -20,6 +20,7 @@ public class GameCharacter {
 	private int d_id;
 	
 	private int d_health;
+	private int d_ammo;
 	
 	private final int d_radius = 5;
 	
@@ -46,6 +47,7 @@ public class GameCharacter {
 		d_id = s_count;
 		++s_count;
 		d_health = 100;
+		d_ammo = 100;
 		d_coor = new Point2D.Float(x, y);
 	}
 	
@@ -63,6 +65,7 @@ public class GameCharacter {
 		d_direction = in.readFloat();
 		d_speed = in.readFloat();
 		d_health = in.readInt();
+		d_ammo = in.readInt();
 	}
 	
 	public void step() {
@@ -100,6 +103,10 @@ public class GameCharacter {
     
     public int health() {
     	return d_health;
+    }
+    
+    public int ammo() {
+    	return d_ammo;
     }
     
 	public Color color() {

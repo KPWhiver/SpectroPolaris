@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Vibrator;
@@ -49,7 +50,9 @@ public class Player {
 	
 	private Random d_random;
 
-	private static Bitmap s_bitmap;
+	private static Bitmap s_cross;
+	private static Bitmap s_pistol;
+	private static Bitmap s_shotgun;
 	private static boolean s_initialized = false;
 	
 	public Player(int x, int y, Paint paint) {		
@@ -167,7 +170,9 @@ public class Player {
 
     public void draw(Canvas canvas, int centerHorizontal, int centerVertical) {
 		if(s_initialized == false) {
-			s_bitmap = BitmapFactory.decodeResource(GameActivity.getInstance().getResources(), R.drawable.cross);
+			s_cross = BitmapFactory.decodeResource(GameActivity.getInstance().getResources(), R.drawable.cross);
+			s_pistol = BitmapFactory.decodeResource(GameActivity.getInstance().getResources(), R.drawable.pistol);
+			s_shotgun = BitmapFactory.decodeResource(GameActivity.getInstance().getResources(), R.drawable.shotgun);
 			s_initialized = true;
 		}
     	
@@ -179,9 +184,38 @@ public class Player {
     		d_rect.right = (int) (centerHorizontal + d_radius);
     		d_rect.top = (int) (centerVertical - d_radius);
     		
-    		canvas.drawBitmap(s_bitmap, null, d_rect, null);
+    		canvas.drawBitmap(s_cross, null, d_rect, null);
     	}
 	}
+    
+    static private Rect s_gunRect = new Rect(0, 0, 0, 0);
+    
+    public void drawUI(Canvas canvas, Paint paint, int centerHorizontal, int centerVertical) {
+    	paint.setColor(Color.GRAY);
+		canvas.drawRect(centerHorizontal - 25, centerVertical + 35, 
+				centerHorizontal + 25, centerVertical + 38, paint);
+		paint.setColor(Color.RED);
+		canvas.drawRect(centerHorizontal - 25, centerVertical + 35, 
+				centerHorizontal - 25 + d_health / 2, centerVertical + 38, paint);
+		
+		paint.setColor(Color.GRAY);
+		canvas.drawRect(centerHorizontal - 25, centerVertical + 39, 
+				centerHorizontal + 25, centerVertical + 42, paint);
+		paint.setColor(Color.YELLOW);
+		canvas.drawRect(centerHorizontal - 25, centerVertical + 39, 
+				centerHorizontal - 25 + d_ammo / 2, centerVertical + 42, paint);
+		
+		s_gunRect.bottom = (int) (centerVertical + 40);
+		s_gunRect.left = (int) (centerHorizontal + 30);
+		s_gunRect.right = (int) (centerHorizontal + 50);
+		s_gunRect.top = (int) (centerVertical + 35);
+		
+		Bitmap bitmap = s_pistol;
+		if(d_weaponIndex == 1)
+			bitmap = s_shotgun;
+		
+		canvas.drawBitmap(bitmap, null, s_gunRect, null);
+    }
 
 	public int id() {
 		return d_id;

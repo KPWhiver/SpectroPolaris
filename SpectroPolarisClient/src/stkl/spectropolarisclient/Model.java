@@ -245,19 +245,7 @@ public class Model {
 		canvas.translate(d_player.xOffset() - d_context.centerHorizontal(),
 				 d_player.yOffset() - d_context.centerVertical());
 		
-		paint.setColor(Color.GRAY);
-		canvas.drawRect(d_context.centerHorizontal() - 50, d_context.centerVertical() + 30, 
-				d_context.centerHorizontal() + 50, d_context.centerVertical() + 35, paint);
-		paint.setColor(Color.RED);
-		canvas.drawRect(d_context.centerHorizontal() - 50, d_context.centerVertical() + 30, 
-				d_context.centerHorizontal() - 50 + d_player.health(), d_context.centerVertical() + 35, paint);
-		
-		paint.setColor(Color.GRAY);
-		canvas.drawRect(d_context.centerHorizontal() - 50, d_context.centerVertical() + 36, 
-				d_context.centerHorizontal() + 50, d_context.centerVertical() + 41, paint);
-		paint.setColor(Color.YELLOW);
-		canvas.drawRect(d_context.centerHorizontal() - 50, d_context.centerVertical() + 36, 
-				d_context.centerHorizontal() - 50 + d_player.ammo(), d_context.centerVertical() + 41, paint);
+		d_player.drawUI(canvas, paint, d_context.centerHorizontal(), d_context.centerVertical());
 		
 		paint.setColor(Color.CYAN);
 		//paint.setTextSize(20);

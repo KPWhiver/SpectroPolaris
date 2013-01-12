@@ -25,6 +25,10 @@ public class Player {
 	private int d_health;
 	private int d_ammo;
 	
+	private int d_weaponIndex;
+	private final int MAX_WEAPON_INDEX = 1;
+	// Index 0: pistol, Index 1: shotgun
+	
 	private Paint d_paint;
 	
 	private int d_id;
@@ -47,6 +51,7 @@ public class Player {
 		d_lastBullet = null;
 		d_vibrator = null;
 		d_ammo = MAX_AMMO;
+		d_weaponIndex = 0;
 	}
 	
 	private long d_timeSinceLastBullet = 0;
@@ -58,12 +63,19 @@ public class Player {
 		d_speed = (float) (Math.max(Math.min(distance, MAX_OFFSET), MIN_OFFSET) * SPEED_MOD);
 		
 		if(d_ammo > 0 && xShootOffset != 0 && yShootOffset != 0 && System.nanoTime() - d_timeSinceLastBullet > 250000000) {
-			d_shootDirection = (float) Math.atan2(xShootOffset, yShootOffset);
-			d_lastBullet = GameActivity.getInstance().model().addBullet();
+			switch(d_weaponIndex) {
+			case 0:
+				d_shootDirection = (float) Math.atan2(xShootOffset, yShootOffset);
+				d_lastBullet = GameActivity.getInstance().model().addBullet();
+				
+				d_lastBullet.instantiate(d_x, d_y, d_shootDirection, d_id);
+				d_ammo--;
+				d_timeSinceLastBullet = System.nanoTime();
+				break;
+			case 1:
+				break;
 			
-			d_lastBullet.instantiate(d_x, d_y, d_shootDirection, d_id);
-			d_ammo--;
-			d_timeSinceLastBullet = System.nanoTime();
+			}
 		}
 		
 	}
@@ -160,5 +172,9 @@ public class Player {
 
 	private float dot(float x1, float y1, float x2, float y2) {
 		return x1 * x2 + y1 * y2;
+	}
+	
+	public void changeWeapon(int direction) {
+		d_weaponIndex = Math.min(Math.max(d_weaponIndex + direction, 0), MAX_WEAPON_INDEX);
 	}
 }

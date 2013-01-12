@@ -10,6 +10,7 @@ public class Enemy extends GameCharacter {
 	private Node goal;
 	private int lastPlayerPath;
 	private long d_timeSinceLastBullet = 0;
+	private final int SHOOTING_DISTANCE = 60;
 	private static Random random = new Random();
 	private static float d_spread = 10;
 
@@ -34,7 +35,7 @@ public class Enemy extends GameCharacter {
 		Player player = model.closestPlayer(coor().x, coor().y, 100);
 		if(player != null && lastPlayerPath < 0) {			
 			
-			if(player.distanceFrom(coor().x, coor().y) < 80 && model.visible(coor().x, coor().y, player.coor().x, player.coor().y) == null) {				
+			if(player.distanceFrom(coor().x, coor().y) < SHOOTING_DISTANCE && model.visible(coor().x, coor().y, player.coor().x, player.coor().y) == null) {				
 				if(System.nanoTime() - d_timeSinceLastBullet > 250000000) {
 					model.addBullet().instantiate(coor().x, coor().y, 
 							(float) Math.atan2(player.coor().x - coor().x + (random.nextFloat() - 0.5) * d_spread, player.coor().y - coor().y + (random.nextFloat() - 0.5) * d_spread), id());

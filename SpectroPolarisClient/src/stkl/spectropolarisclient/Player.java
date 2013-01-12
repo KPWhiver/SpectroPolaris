@@ -73,8 +73,13 @@ public class Player {
 				d_timeSinceLastBullet = System.nanoTime();
 				break;
 			case 1:
+				d_shootDirection = (float) Math.atan2(xShootOffset, yShootOffset);
+				d_lastBullet = GameActivity.getInstance().model().addBullet();
+				
+				d_lastBullet.instantiate(d_x, d_y, d_shootDirection, d_id);
+				d_ammo--;
+				d_timeSinceLastBullet = System.nanoTime();
 				break;
-			
 			}
 		}
 		

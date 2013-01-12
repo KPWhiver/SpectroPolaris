@@ -190,8 +190,6 @@ public class Model {
 		
 		canvas.scale(6 * d_scale, 6 * d_scale, d_context.centerHorizontal(), d_context.centerVertical());
 		
-		
-		
 		canvas.translate(-d_player.xOffset() + d_context.centerHorizontal(),
 				 -d_player.yOffset() + d_context.centerVertical());
 				
@@ -212,17 +210,16 @@ public class Model {
 				bullet.draw(canvas);
 		}
 		
-		canvas.translate(d_player.xOffset() - d_context.centerHorizontal(),
-				 d_player.yOffset() - d_context.centerVertical());
+		//canvas.translate(d_player.xOffset() - d_context.centerHorizontal(),
+		//		 d_player.yOffset() - d_context.centerVertical());
 		
-		// draw player
-		d_player.draw(canvas, d_context.centerHorizontal(), d_context.centerVertical());
+		
 		
 		Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		
 
-		canvas.translate(-d_player.xOffset() + d_context.centerHorizontal(),
-				 -d_player.yOffset() + d_context.centerVertical());
+		//canvas.translate(-d_player.xOffset() + d_context.centerHorizontal(),
+		//		 -d_player.yOffset() + d_context.centerVertical());
 		
 		// draw enemies (and other players)
 		synchronized(d_characters) {
@@ -242,8 +239,16 @@ public class Model {
 	
 		canvas.drawRect(0, 0, d_mapWidth, d_mapHeight, d_borderPaint);
 		
-		canvas.translate(d_player.xOffset() - d_context.centerHorizontal(),
-				 d_player.yOffset() - d_context.centerVertical());
+		//canvas.translate(d_player.xOffset() - d_context.centerHorizontal(),
+		//		 d_player.yOffset() - d_context.centerVertical());
+		
+		canvas.restore();
+		canvas.save();
+		
+		canvas.scale(6 * d_scale, 6 * d_scale, d_context.centerHorizontal(), d_context.centerVertical());
+		
+		// draw player
+		d_player.draw(canvas, d_context.centerHorizontal(), d_context.centerVertical());
 		
 		d_player.drawUI(canvas, paint, d_context.centerHorizontal(), d_context.centerVertical());
 		

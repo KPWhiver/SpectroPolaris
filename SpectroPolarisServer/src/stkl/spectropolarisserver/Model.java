@@ -561,6 +561,7 @@ public class Model {
 		// Grid is [EndCoord/d_tileSize], so max value is EndCoord/d_tileSize - 1
 		int maxY = d_mapHeight / d_tileSize - 1;
 		int maxX = d_mapWidth / d_tileSize - 1;
+		System.out.println(maxX + " " + maxY);
 
 		// Used to store which nodes have been visisted
 		boolean[][] visited = new boolean[maxY][maxX];

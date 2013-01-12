@@ -565,13 +565,6 @@ public class Model {
 		
 		int maxY = d_maxTileY;
 		int maxX = d_maxTileX;
-
-		// Used to store which nodes have been visisted
-		boolean[][] visited = new boolean[maxY+1][maxX+1];
-		// Used to store references to nodes so they can be updated
-		Node[][] nodes =  new Node[maxY+1][maxX+1];
-		// Used to store nodes ordered by cost
-		PriorityQueue<Node> queue = new PriorityQueue<Node>();
 		
 		Node current = new Node(xStart, yStart, null, 0, heuristicCost(xStart, yStart, xEnd, yEnd));
 		
@@ -581,6 +574,13 @@ public class Model {
 			path.push(current);
 			return path;
 		}
+
+		// Used to store which nodes have been visisted
+		boolean[][] visited = new boolean[maxY+1][maxX+1];
+		// Used to store references to nodes so they can be updated
+		Node[][] nodes =  new Node[maxY+1][maxX+1];
+		// Used to store nodes ordered by cost
+		PriorityQueue<Node> queue = new PriorityQueue<Node>();
 		
 		queue.add(current);
 		nodes[yStart][xStart] = current;
@@ -607,7 +607,7 @@ public class Model {
 					int newX = current.x() + x;
 					int newY = current.y() + y;
 					// Check if the new node is still within the map, is not blocked and not already visited
-					if(newX >= 0 && newX < maxX && newY >= 0 && newY < maxY && !d_tileMap[newY][newX] && !visited[newY][newX]) {
+					if(newX >= 0 && newX <= maxX && newY >= 0 && newY <= maxY && !d_tileMap[newY][newX] && !visited[newY][newX]) {
 						// If a diagonal movement, check for nearby corners which wouldn't allow this move
 						if((x!=0 && y!=0) && (d_tileMap[newY][current.x()] || d_tileMap[current.y()][newX]))
 							continue;

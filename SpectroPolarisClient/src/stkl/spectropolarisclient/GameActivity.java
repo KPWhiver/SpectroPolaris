@@ -3,6 +3,7 @@ package stkl.spectropolarisclient;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.Window;
@@ -71,6 +72,21 @@ public class GameActivity extends Activity {
         getMenuInflater().inflate(R.menu.activity_game, menu);
         return true;
     }
+    
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN){
+            d_model.player().changeWeapon(1);
+            return true;
+        }
+        else if(keyCode == KeyEvent.KEYCODE_VOLUME_UP){
+        	d_model.player().changeWeapon(-1);
+            return true;
+        }
+
+        return false;
+    }
+
     
     @Override
 	public boolean onTouchEvent(MotionEvent event) {

@@ -27,6 +27,7 @@ public class Player {
 	
 	private int d_weaponIndex;
 	private final int MAX_WEAPON_INDEX = 1;
+	// Index 0: pistol, Index 1: shotgun
 	
 	private Paint d_paint;
 	
@@ -62,12 +63,19 @@ public class Player {
 		d_speed = (float) (Math.max(Math.min(distance, MAX_OFFSET), MIN_OFFSET) * SPEED_MOD);
 		
 		if(d_ammo > 0 && xShootOffset != 0 && yShootOffset != 0 && System.nanoTime() - d_timeSinceLastBullet > 250000000) {
-			d_shootDirection = (float) Math.atan2(xShootOffset, yShootOffset);
-			d_lastBullet = GameActivity.getInstance().model().addBullet();
+			switch(d_weaponIndex) {
+			case 0:
+				d_shootDirection = (float) Math.atan2(xShootOffset, yShootOffset);
+				d_lastBullet = GameActivity.getInstance().model().addBullet();
+				
+				d_lastBullet.instantiate(d_x, d_y, d_shootDirection, d_id);
+				d_ammo--;
+				d_timeSinceLastBullet = System.nanoTime();
+				break;
+			case 1:
+				break;
 			
-			d_lastBullet.instantiate(d_x, d_y, d_shootDirection, d_id);
-			d_ammo--;
-			d_timeSinceLastBullet = System.nanoTime();
+			}
 		}
 		
 	}

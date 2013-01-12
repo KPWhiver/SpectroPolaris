@@ -563,14 +563,13 @@ public class Model {
 		int xEnd = (int) (xEndCoord / d_tileSize);
 		int yEnd = (int) (yEndCoord / d_tileSize);
 		
-		// Grid is [EndCoord/d_tileSize], so max value is EndCoord/d_tileSize - 1
 		int maxY = d_maxTileY;
 		int maxX = d_maxTileX;
 
 		// Used to store which nodes have been visisted
-		boolean[][] visited = new boolean[maxY][maxX];
+		boolean[][] visited = new boolean[maxY+1][maxX+1];
 		// Used to store references to nodes so they can be updated
-		Node[][] nodes =  new Node[maxY][maxX];
+		Node[][] nodes =  new Node[maxY+1][maxX+1];
 		// Used to store nodes ordered by cost
 		PriorityQueue<Node> queue = new PriorityQueue<Node>();
 		

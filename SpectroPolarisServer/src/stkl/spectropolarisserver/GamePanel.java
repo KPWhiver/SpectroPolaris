@@ -24,10 +24,12 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 	//private Block d_edit;
 	
 	private float d_scale;
+	private float d_horScaledOffset;
 	
 	public GamePanel() {
 		d_model = new Model();
-		d_scale = 1;
+		d_scale = 0;
+		d_horScaledOffset = 0;
 		setFocusable(true);
 		
 		addMouseListener(this);
@@ -44,16 +46,18 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 		super.paintComponent(g);
 		
 		Graphics2D g2d = (Graphics2D) g;
+		if(d_scale == 0) {
+			d_scale = getHeight() / 768.0f;
+			float scaledWidth = getWidth() / d_scale;
+			d_horScaledOffset = scaledWidth - 1024;
+		}
 		
-		d_scale = getHeight() / 768.0f;
-		float width = getHeight() * d_scale;
-		float horOffset = width - 1024;
 		
-		g2d.translate(horOffset, 0);
 		g2d.scale(d_scale, d_scale);
+		g2d.translate(d_horScaledOffset, 0);
 		
 		g2d.setColor(Color.BLACK);
-		g2d.fillRect((int)-horOffset, 0, (int) horOffset, 768);
+		g2d.fillRect((int)-d_horScaledOffset, 0, (int) d_horScaledOffset, 768);
 		
 		d_model.draw(g2d);
 	}
@@ -72,7 +76,7 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		int eventX = (int) (e.getX() / d_scale);
+		int eventX = (int) (e.getX() / d_scale - d_horScaledOffset);
 		int eventY = (int) (e.getY() / d_scale);
 		
 		
@@ -113,7 +117,7 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		int eventX = (int) (e.getX() / d_scale);
+		int eventX = (int) (e.getX() / d_scale - d_horScaledOffset);
 		int eventY = (int) (e.getY() / d_scale);
 		
 		if(d_xStart < 0)

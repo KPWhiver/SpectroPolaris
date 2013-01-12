@@ -48,8 +48,6 @@ public class Player {
 	private float d_radius = 2.5f;
 	
 	private Random d_random;
-	
-	public Player(int x, int y, Paint paint) {
 
 	private static Bitmap s_bitmap;
 	private static boolean s_initialized = false;

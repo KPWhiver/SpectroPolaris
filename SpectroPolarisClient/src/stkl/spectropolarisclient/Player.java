@@ -78,7 +78,7 @@ public class Player {
 			d_y = potentialY;
 		}
 			
-		Client.getInstance().sent(d_x, d_y, d_direction, d_speed, d_health, d_lastBullet);
+		Client.getInstance().sent(d_x, d_y, d_direction, d_speed, d_health, d_ammo, d_lastBullet);
 		d_lastBullet = null;
 	}
 	

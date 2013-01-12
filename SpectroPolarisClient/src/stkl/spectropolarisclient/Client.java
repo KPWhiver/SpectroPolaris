@@ -68,12 +68,12 @@ public class Client extends Thread {
 		return instance;
 	}
 	
-	public void sent(float x, float y, float direction, float speed, int health, Bullet bullet) {
+	public void sent(float x, float y, float direction, float speed, int health, int ammo, Bullet bullet) {
 		if(!connected)
 			return;
 		
 		try {
-			int allocSize = 28;
+			int allocSize = 32;
 			if(bullet != null)
 				allocSize += Bullet.sendSize();
 			
@@ -85,6 +85,7 @@ public class Client extends Thread {
 			buffer.putFloat(direction);
 			buffer.putFloat(speed);
 			buffer.putInt(health);
+			buffer.putInt(ammo);
 			
 			// send a "boolean" telling us if a bullet is being sent
 			if(bullet == null)

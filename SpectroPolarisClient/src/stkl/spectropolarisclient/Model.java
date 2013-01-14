@@ -295,7 +295,35 @@ public class Model {
 	}
 	
 	public Point collision(float cX1, float cY1, float cX2, float cY2) {
-		boolean xLast = true;
+		float vecX = cX2 - cX1;
+		float vecY = cY2 - cY1;
+		
+		float factor = 5 / (float) Math.sqrt(vecX * vecX + vecY * vecY);
+		vecX *= factor;
+		vecY *= factor;
+		
+		cX1 += vecX;
+		cY1 += vecY;
+		
+		while(true) {
+			int tileX = (int) (cX1 / 10);
+			int tileY = (int) (cY1 / 10);
+			
+			// check if points are outside of map range
+			if(tileX < 0 || tileY < 0 || tileX >= d_mapWidth / d_tileSize || tileY >= d_mapHeight / d_tileSize)
+				return null;
+			
+			if((cX2 - cX1) * (cX2 - cX1) + (cY2 - cY1) * (cY2 - cY1) < 9)
+				return new Point((int) cX1, (int) cY1);
+			
+			if(d_tileMap[tileY][tileX])
+				return new Point((int) cX1, (int) cY1);
+			
+			cX1 += vecX;
+			cY1 += vecY;
+		}
+		
+		/*boolean xLast = true;
 		int x1 = (int) (cX1 / d_tileSize);
 		int y1 = (int) (cY1 / d_tileSize);
 		int x2 = (int) (cX2 / d_tileSize);
@@ -337,7 +365,7 @@ public class Model {
 			// check if points are outside of map range
 			if(x1 < 0 || y1 < 0 || x1 >= d_mapWidth / d_tileSize || y1 >= d_mapHeight / d_tileSize)
 				return null;
-		}
+		}*/
 	}
 	
 	public void receive(DataInputStream in, int numOfCharacters, int numOfBullets, int numOfHealthPickups, int numOfAmmoPickups) throws Exception {

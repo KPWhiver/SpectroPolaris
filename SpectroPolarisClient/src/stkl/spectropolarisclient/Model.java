@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.PointF;
 
 public class Model {
 	private ArrayList<GameCharacter> d_characters;
@@ -267,16 +268,16 @@ public class Model {
 		}
 	}
 
-	public boolean collision(float potentialX, float potentialY, float d_radius) {
-		if(potentialX < d_radius || potentialX + d_radius > d_mapWidth 
-				|| potentialY < d_radius || potentialY + d_radius > d_mapHeight) {
+	public boolean collision(float potentialX, float potentialY, float radius) {
+		if(potentialX < radius || potentialX + radius > d_mapWidth 
+				|| potentialY < radius || potentialY + radius > d_mapHeight) {
 			return true;
 		}
 				
-		int startX = ((int) (potentialX - d_radius)) / d_tileSize;
-		int startY = ((int) (potentialY - d_radius)) / d_tileSize;
-		int endX = Math.min(1 + ((int) (potentialX + d_radius)) / d_tileSize, d_mapWidth / d_tileSize);
-		int endY = Math.min(1 + ((int) (potentialY + d_radius)) / d_tileSize, d_mapHeight / d_tileSize);
+		int startX = ((int) (potentialX - radius)) / d_tileSize;
+		int startY = ((int) (potentialY - radius)) / d_tileSize;
+		int endX = Math.min(1 + ((int) (potentialX + radius)) / d_tileSize, d_mapWidth / d_tileSize);
+		int endY = Math.min(1 + ((int) (potentialY + radius)) / d_tileSize, d_mapHeight / d_tileSize);
 		
 		for(int yIdx = startY; yIdx != endY; ++yIdx) {
 			for(int xIdx = startX; xIdx != endX; ++xIdx) {
@@ -292,6 +293,22 @@ public class Model {
 			//	return true;
 		//}	
 		return false;
+	}
+	
+	public PointF slide(float currentX, float currentY, float potentialX, float potentialY, float radius) {
+		boolean collX = collision(potentialX, currentY, radius);
+		boolean collY = collision(currentX, potentialY, radius);
+		
+		float nextX = currentX;
+		float nextY = currentY;
+		
+		if(!collY)
+			nextY = potentialY;
+		
+		if(!collX)
+			nextX = potentialX;
+		
+		return new PointF(nextX, nextY);
 	}
 	
 	public Point collision(float cX1, float cY1, float cX2, float cY2) {

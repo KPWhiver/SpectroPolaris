@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.os.Vibrator;
 import android.util.FloatMath;
@@ -121,11 +122,10 @@ public class Player {
 			float potentialX = d_x + FloatMath.sin(d_direction) * d_speed;
 			float potentialY = d_y + FloatMath.cos(d_direction) * d_speed;
 			
-			if(GameActivity.getInstance().model().collision(potentialX, potentialY, d_radius) == false)
-			{
-				d_x = potentialX;
-				d_y = potentialY;
-			}
+			PointF point = GameActivity.getInstance().model().slide(d_x, d_y, potentialX, potentialY, d_radius);
+			
+			d_x = point.x;
+			d_y = point.y;
 		}
 		
 		synchronized(d_lastBullets) {

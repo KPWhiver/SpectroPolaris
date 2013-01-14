@@ -35,7 +35,7 @@ public class Player {
 	private final int MAX_WEAPON_INDEX = 1;
 	private final int NUM_BULLETS_FIRED_SHOTGUN = 6;
 	private final int NUM_BULLETS_CONSUMED_SHOTGUN = 2;
-	private final int SHOTGUN_MAX_SPREAD_MOD = 1;
+	private final float SHOTGUN_MAX_SPREAD_MOD = 0.5f;
 	// Index 0: pistol, Index 1: shotgun
 	
 	private Paint d_paint;

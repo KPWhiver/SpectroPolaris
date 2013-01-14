@@ -46,11 +46,11 @@ public class Model {
 	
 	// pickup related
 	private ArrayList<HealthPickup> d_health;
-	private final int d_maxNumOfHealth = 3;
+	private final int d_maxNumOfHealth = 4;
 	private int d_timeSinceHealthPlacement;
 	
 	private ArrayList<AmmoPickup> d_ammo;
-	private final int d_maxNumOfAmmo = 3;
+	private final int d_maxNumOfAmmo = 6;
 	private int d_timeSinceAmmoPlacement;
 	
 	private Random d_randGenerator;

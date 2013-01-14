@@ -93,9 +93,10 @@ public class Player {
 					d_lastBullets.add(bullet);
 				}
 				d_ammo--;
+				d_timeSinceLastBullet = System.nanoTime();
 				break;
 			case 1:
-				if(d_ammo > NUM_BULLETS_CONSUMED_SHOTGUN) {
+				if(d_ammo > NUM_BULLETS_CONSUMED_SHOTGUN && System.nanoTime() - d_timeSinceLastBullet > 750000000) {
 					for(int idx = 0; idx < NUM_BULLETS_FIRED_SHOTGUN; ++idx) {
 						bullet = GameActivity.getInstance().model().addBullet();
 						float direction = d_shootDirection + ((d_random.nextFloat()-0.5f) * SHOTGUN_MAX_SPREAD_MOD);
@@ -105,10 +106,11 @@ public class Player {
 						}
 					}
 					d_ammo -= NUM_BULLETS_CONSUMED_SHOTGUN;
+					d_timeSinceLastBullet = System.nanoTime();
 				}
 				break;
 			}
-			d_timeSinceLastBullet = System.nanoTime();
+			
 		}
 		
 	}

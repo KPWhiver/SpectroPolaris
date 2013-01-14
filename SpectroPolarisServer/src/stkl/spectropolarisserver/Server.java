@@ -90,7 +90,7 @@ public class Server extends Thread {
     }
     
     public String ip() {
-    	return d_ip;
+    	return d_ip != null ? d_ip: "";
     }
     
     public int port() {

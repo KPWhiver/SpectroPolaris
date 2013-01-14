@@ -47,7 +47,7 @@ public class Model {
 	public Model(GameActivity context, int color) {
 		Paint playerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		playerPaint.setColor(color);
-		d_player = new Player(10, 10, playerPaint);
+		d_player = new Player(370, 260, playerPaint);
 		d_characters = new ArrayList<GameCharacter>();
 		
 		d_bullets = new ArrayList<Bullet>();

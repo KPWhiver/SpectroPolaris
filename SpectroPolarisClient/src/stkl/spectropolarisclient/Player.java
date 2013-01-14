@@ -16,7 +16,7 @@ import android.util.FloatMath;
 public class Player {
 	private final int MAX_OFFSET = 50;
 	private final int MIN_OFFSET = -MAX_OFFSET;
-	private final double SPEED_MOD = 0.05;
+	private final double SPEED_MOD = 0.02;
 	
 	private final int MAX_AMMO = 100;
 	
@@ -74,6 +74,9 @@ public class Player {
 	private long d_timeSinceLastBullet = 0;
 	
 	public void update(float xMoveOffset, float yMoveOffset, float xShootOffset, float yShootOffset) {
+		if(d_health == 0)
+			return;
+		
 		d_direction = (float) Math.atan2(xMoveOffset, yMoveOffset);
 		
 		float distance = (float) Math.hypot(xMoveOffset, yMoveOffset);
@@ -111,16 +114,16 @@ public class Player {
 	}
 	
 	public void step() {
-		if(d_health == 0)
-			return;
+		if(d_health != 0) {
 		
-		float potentialX = d_x + FloatMath.sin(d_direction) * d_speed;
-		float potentialY = d_y + FloatMath.cos(d_direction) * d_speed;
-		
-		if(GameActivity.getInstance().model().collision(potentialX, potentialY, d_radius) == false)
-		{
-			d_x = potentialX;
-			d_y = potentialY;
+			float potentialX = d_x + FloatMath.sin(d_direction) * d_speed;
+			float potentialY = d_y + FloatMath.cos(d_direction) * d_speed;
+			
+			if(GameActivity.getInstance().model().collision(potentialX, potentialY, d_radius) == false)
+			{
+				d_x = potentialX;
+				d_y = potentialY;
+			}
 		}
 		
 		synchronized(d_lastBullets) {

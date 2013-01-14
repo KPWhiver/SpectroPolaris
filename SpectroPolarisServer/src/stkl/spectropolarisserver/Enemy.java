@@ -11,6 +11,7 @@ public class Enemy extends GameCharacter {
 	private int lastPlayerPath;
 	private long d_timeSinceLastBullet = 0;
 	private final int SHOOTING_DISTANCE = 60;
+	private final float MAX_SPEED = 0.8f;
 	private static Random random = new Random();
 	private static float d_spread = 0.2f;
 
@@ -30,7 +31,7 @@ public class Enemy extends GameCharacter {
 	public void step() {
 		Model model = SpectroPolaris.frame().gamePanel().model();
 		
-		setSpeed(1);
+		setSpeed(MAX_SPEED);
 		
 		Player player = model.closestPlayer(coor().x, coor().y, 100);
 		if(player != null && lastPlayerPath < 0) {			

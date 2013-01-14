@@ -27,10 +27,12 @@ public class SpectroPolaris
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		s_frame = new Frame();
+		
 		
 		s_server = new Server(1337);
 		s_server.start();
+		
+		s_frame = new Frame();
 		
 		s_paused = true;
 		

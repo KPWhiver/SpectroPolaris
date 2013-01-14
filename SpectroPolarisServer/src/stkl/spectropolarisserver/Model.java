@@ -532,7 +532,7 @@ public class Model {
 	 * Return null if a direct line between x1, y1 and x2, y2 can be drawn. Otherwise, return a Point with the coordinates of the collision.
 	 */
 	public Point visible(float cX1, float cY1, float cX2, float cY2) {
-		/*float vecX = cX2 - cX1;
+		float vecX = cX2 - cX1;
 		float vecY = cY2 - cY1;
 		
 		float factor = 5 / (float) Math.sqrt(vecX * vecX + vecY * vecY);
@@ -558,9 +558,9 @@ public class Model {
 			
 			cX1 += vecX;
 			cY1 += vecY;
-		}*/
+		}
 		
-		boolean xLast = true;
+		/*boolean xLast = true;
 		
 		int x1 = (int) (cX1 / d_tileSize);
 		int y1 = (int) (cY1 / d_tileSize);
@@ -604,7 +604,7 @@ public class Model {
 			// check if points are outside of map range
 			if(x1 < 0 || y1 < 0 || x1 >= d_mapWidth / d_tileSize || y1 >= d_mapHeight / d_tileSize)
 				return null;
-		}
+		}*/
 	}
 	
 	/*

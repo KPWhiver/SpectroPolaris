@@ -11,6 +11,7 @@ public class Enemy extends GameCharacter {
 	private int lastPlayerPath;
 	private long d_timeSinceLastBullet = 0;
 	private final int SHOOTING_DISTANCE = 60;
+	private final int PATROL_DISTANCE = 150;
 	private static Random random = new Random();
 	private static float d_spread = 0.2f;
 
@@ -19,8 +20,8 @@ public class Enemy extends GameCharacter {
 		Model model = SpectroPolaris.frame().gamePanel().model();
 		
 		// Go to random point with x is between: hill.left - 100, hill.right + 100 and y between: hill.top - 100, hill.bottom + 100
-		path = model.findPath(coor().x, coor().y, model.hill().x + (random.nextInt(model.hill().width + 200)) - 100,
-							  model.hill().y + (random.nextInt(model.hill().height + 200)) - 100);
+		path = model.findPath(coor().x, coor().y, model.hill().x + (random.nextInt(model.hill().width + 2*PATROL_DISTANCE)) - PATROL_DISTANCE,
+							  model.hill().y + (random.nextInt(model.hill().height + 2*PATROL_DISTANCE)) - PATROL_DISTANCE);
 
 		goal = path.pop();
 		lastPlayerPath = 0;

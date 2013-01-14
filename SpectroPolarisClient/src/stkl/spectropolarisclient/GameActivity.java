@@ -80,7 +80,7 @@ public class GameActivity extends Activity {
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
             	if (action == KeyEvent.ACTION_DOWN) {
-            	d_model.player().changeWeapon(-1);
+            		d_model.player().changeWeapon(-1);
             	}
             	return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:

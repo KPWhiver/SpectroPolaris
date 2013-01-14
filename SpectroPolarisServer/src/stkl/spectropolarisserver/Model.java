@@ -56,7 +56,12 @@ public class Model {
 	private Random d_randGenerator;
 	
 	// enemy related
-	private final int d_maxNumOfEnemies = 25;
+	private final int MAX_ENEMIES_PER_PLAYER = 15;
+	private final int INITIAL_ENEMIES = 10;
+	private final int TIME_BETWEEN_SPAWNS = 5000;
+	private boolean d_initial_spawned = false;;
+	private long d_timeSinceLastEnemy;
+	
 	
 	// debug
 	private boolean d_drawPaths;
@@ -109,6 +114,8 @@ public class Model {
 			System.out.println(e.getMessage() + ", java... :|");
 			e.printStackTrace();
 		}
+		
+		d_timeSinceLastEnemy = 0;
 	}
 	
 	public Bullet addBullet() {
@@ -206,7 +213,33 @@ public class Model {
 		}
 	}
 	
+	public void addEnemy() {
+		int x = d_randGenerator.nextInt(d_mapWidth - 10);
+		int y = d_randGenerator.nextInt(d_mapHeight - 10);
+		
+		boolean xOrY = d_randGenerator.nextBoolean();
+		int maxOrMin = d_randGenerator.nextInt(2);
+		
+		if(xOrY)
+			x = maxOrMin * (d_mapWidth - 10);
+		else
+			y = maxOrMin * (d_mapHeight - 10);
+				
+		synchronized(d_enemies) {
+			if(!d_tileMap[y / d_tileSize][x / d_tileSize]) {
+				d_enemies.add(new Enemy(x, y, Color.RED));
+				d_timeSinceLastEnemy = System.currentTimeMillis();
+			}
+		}
+	}
+	
 	public void step() {
+		if(!d_initial_spawned) {
+			for(int i = 0; i != INITIAL_ENEMIES; ++i)
+				addEnemy();
+			d_initial_spawned = true;
+		}
+		
 		if(d_health.size() < d_maxNumOfHealth) {
 			++d_timeSinceHealthPlacement;
 			
@@ -245,24 +278,8 @@ public class Model {
 		}
 		
 		// Place enemy on random location on the edge of the map;
-		if(d_enemies.size() < d_maxNumOfEnemies) {
-			int x = d_randGenerator.nextInt(d_mapWidth - 10);
-			int y = d_randGenerator.nextInt(d_mapHeight - 10);
-			
-			boolean xOrY = d_randGenerator.nextBoolean();
-			int maxOrMin = d_randGenerator.nextInt(2);
-			
-			if(xOrY)
-				x = maxOrMin * (d_mapWidth - 10);
-			else
-				y = maxOrMin * (d_mapHeight - 10);
-					
-			synchronized(d_enemies) {
-				if(!d_tileMap[y / d_tileSize][x / d_tileSize]) {
-					d_enemies.add(new Enemy(x, y, Color.RED));
-				}
-			}
-			
+		if(System.currentTimeMillis() - d_timeSinceLastEnemy > TIME_BETWEEN_SPAWNS && d_enemies.size() < MAX_ENEMIES_PER_PLAYER * d_players.size()) {
+			addEnemy();
 		}
 		
 		// Move hill if needed, 1800 steps ~ 60 seconds

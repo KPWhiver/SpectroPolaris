@@ -486,7 +486,12 @@ public class Model {
 			g2d.drawString("waiting for players", 805, 20);
 		
 		g2d.drawString("Points: " + d_points, 805, 730);
-		g2d.drawString("Connect to: " + SpectroPolaris.server().ip(), 805, 750);
+		try {
+			g2d.drawString("Connect to: " + SpectroPolaris.server().ip(), 805, 750);
+		} catch(NullPointerException e) {
+			System.err.println("Model.draw:drawing serverip - Not yet initialized: " + e.getMessage());
+			g2d.drawString("Connect to: <Initializing>", 805, 750);
+		}
 	}
 	
 	public void removeGameCharacter(GameCharacter character) {

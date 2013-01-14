@@ -551,7 +551,7 @@ public class Model {
 				return null;
 			
 			if((cX2 - cX1) * (cX2 - cX1) + (cY2 - cY1) * (cY2 - cY1) < 9)
-				return new Point((int) cX1, (int) cY1);
+				return null;
 			
 			if(d_tileMap[tileY][tileX])
 				return new Point((int) cX1, (int) cY1);
@@ -559,8 +559,9 @@ public class Model {
 			cX1 += vecX;
 			cY1 += vecY;
 		}
-		
-		/*boolean xLast = true;
+
+		/*
+		boolean xLast = true;
 		
 		int x1 = (int) (cX1 / d_tileSize);
 		int y1 = (int) (cY1 / d_tileSize);

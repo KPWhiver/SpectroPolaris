@@ -40,8 +40,8 @@ public class Bullet {
 	public void instantiate(float x, float y, float direction, int id) {
 		d_x1 = x;
 		d_y1 = y;
-    	d_x2 = d_x1 + FloatMath.sin(direction) * 1000;
-		d_y2 = d_y1 + FloatMath.cos(direction) * 1000;
+    	d_x2 = d_x1 + FloatMath.sin(direction) * 250;
+		d_y2 = d_y1 + FloatMath.cos(direction) * 250;
 		Point point = GameActivity.getInstance().model().collision(d_x1, d_y1, d_x2, d_y2);
 		
 		if(point != null) {

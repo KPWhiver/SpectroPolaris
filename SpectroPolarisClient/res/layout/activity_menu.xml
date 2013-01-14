@@ -16,7 +16,7 @@
         android:textColor="#ffff00"
         android:textStyle="bold"
         tools:context=".MenuActivity"
-        android:layout_marginBottom="10dp" />
+        android:layout_marginBottom="30dp" />
     
    
     <Button
@@ -26,13 +26,6 @@
         android:text="@string/menu_join"
         android:layout_marginBottom="10dp"
         android:onClick="joinGame"/>
-    
-    <Button
-        android:id="@+id/menu_options"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:text="@string/menu_options"
-        android:layout_marginBottom="10dp"/>
     
     <Button
         android:id="@+id/menu_quit"

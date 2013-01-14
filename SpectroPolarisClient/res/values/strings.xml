@@ -7,7 +7,6 @@
     <string name="title_color_picker">ColorPicker</string>
     <string name="menu_title">SpectroPolaris</string>
     <string name="menu_join">Join game</string>
-    <string name="menu_options">Options</string>
     <string name="menu_quit">Quit game</string>
     <string name="title_activity_join">JoinActivity</string>
     <string name="menu_hostIP">Host IP:</string>

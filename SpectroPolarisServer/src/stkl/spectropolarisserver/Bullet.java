@@ -36,8 +36,8 @@ public class Bullet {
 	public void instantiate(float x, float y, float direction, int id) {
 		d_line.x1 = x;
 		d_line.y1 = y;
-    	d_line.x2 = (float) (d_line.x1 + Math.sin(direction) * 1000);
-		d_line.y2 = (float) (d_line.y1 + Math.cos(direction) * 1000);
+    	d_line.x2 = (float) (d_line.x1 + Math.sin(direction) * 250);
+		d_line.y2 = (float) (d_line.y1 + Math.cos(direction) * 250);
 		Point point = SpectroPolaris.frame().gamePanel().model().visible(d_line.x1, d_line.y1, d_line.x2, d_line.y2);
 		
 		if(point != null) {

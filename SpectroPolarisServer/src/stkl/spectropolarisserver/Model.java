@@ -517,6 +517,9 @@ public class Model {
 		float distance = range;
 		
 		for(Player player: d_players) {
+			if(player.health() == 0)
+				continue;
+			
 			if(Math.hypot(player.x() - x, player.y() - y) < distance)
 				closestPlayer = player;
 		}

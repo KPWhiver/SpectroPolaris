@@ -16,7 +16,7 @@ public class Player extends GameCharacter {
 	
     public void drawUI(Graphics2D g2d, int index) {
     	g2d.setColor(color());
-    	g2d.fillRect(805, 5 + index * 50, 214, 40);
+    	g2d.fillRect(805, 5 + index * 50, 150, 40);
     	g2d.setColor(Color.BLACK);
     	
     	if(health() > 0)
@@ -25,18 +25,18 @@ public class Player extends GameCharacter {
     		g2d.drawString("Dead: " + d_name, 820, 15 + index * 50 + 10);
 		
     	g2d.setColor(Color.GRAY);
-    	g2d.fillRect(810, 35 + index * 50, 200, 5);
+    	g2d.fillRect(810, 35 + index * 50, 140, 5);
     	g2d.setColor(Color.RED);
-    	g2d.fillRect(810, 35 + index * 50, health() * 2, 5);
+    	g2d.fillRect(810, 35 + index * 50, (int) (health() * 1.4), 5);
     	g2d.setColor(Color.BLACK);
-    	g2d.drawRect(810, 35 + index * 50, 200, 5);
+    	g2d.drawRect(810, 35 + index * 50, 140, 5);
     	
     	g2d.setColor(Color.GRAY);
-    	g2d.fillRect(810, 40 + index * 50, 200, 5);
+    	g2d.fillRect(810, 40 + index * 50, 140, 5);
     	g2d.setColor(Color.YELLOW);
-    	g2d.fillRect(810, 40 + index * 50, ammo() * 2, 5);
+    	g2d.fillRect(810, 40 + index * 50, (int) (ammo() * 1.4), 5);
     	g2d.setColor(Color.BLACK);
-    	g2d.drawRect(810, 40 + index * 50, 200, 5);
+    	g2d.drawRect(810, 40 + index * 50, 140, 5);
 	}
 
 	public void setName(String name) {

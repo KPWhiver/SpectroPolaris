@@ -49,7 +49,7 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 		if(d_scale == 0) {
 			d_scale = getHeight() / 768.0f;
 			float scaledWidth = getWidth() / d_scale;
-			d_horScaledOffset = scaledWidth - 1024;
+			d_horScaledOffset = scaledWidth - 960;
 		}
 		
 		

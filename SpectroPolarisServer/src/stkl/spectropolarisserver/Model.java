@@ -249,7 +249,8 @@ public class Model {
 				int y = d_randGenerator.nextInt(d_mapHeight - 10);
 				
 				synchronized(d_health) {
-					if(!d_tileMap[y / d_tileSize][x / d_tileSize]) {
+					if(!d_tileMap[y / d_tileSize][x / d_tileSize] && !d_tileMap[y / d_tileSize + 1][x / d_tileSize] && 
+					    !d_tileMap[y / d_tileSize][x / d_tileSize + 1] && !d_tileMap[y / d_tileSize + 1][x / d_tileSize + 1]) {
 						d_health.add(new HealthPickup(x, y));
 						d_timeSinceHealthPlacement = 0;
 						break;
@@ -268,7 +269,8 @@ public class Model {
 				int y = d_randGenerator.nextInt(d_mapHeight - 10);
 				
 				synchronized(d_ammo) {
-					if(!d_tileMap[y / d_tileSize][x / d_tileSize]) {
+	         if(!d_tileMap[y / d_tileSize][x / d_tileSize] && !d_tileMap[y / d_tileSize + 1][x / d_tileSize] && 
+	              !d_tileMap[y / d_tileSize][x / d_tileSize + 1] && !d_tileMap[y / d_tileSize + 1][x / d_tileSize + 1]) {
 						d_ammo.add(new AmmoPickup(x, y));
 						d_timeSinceAmmoPlacement = 0;
 						break;
@@ -467,7 +469,7 @@ public class Model {
 		}		
 
 		// draw right most block
-		g2d.fillRect(800, 0, 224, 768);
+		g2d.fillRect(800, 0, 160, 768);
 		
 		/* 
 		g2d.setColor(Color.BLUE);
@@ -487,7 +489,7 @@ public class Model {
 		
 		g2d.drawString("Points: " + d_points, 805, 730);
 		try {
-			g2d.drawString("Connect to: " + SpectroPolaris.server().ip(), 805, 750);
+			g2d.drawString("IP: " + SpectroPolaris.server().ip(), 805, 750);
 		} catch(NullPointerException e) {
 			System.err.println("Model.draw:drawing serverip - Not yet initialized: " + e.getMessage());
 			g2d.drawString("Connect to: <Initializing>", 805, 750);

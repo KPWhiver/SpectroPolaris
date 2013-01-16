@@ -30,7 +30,7 @@ public class GameCharacter {
 	
 	public static int sendSize() {
 		
-		return 6 * 4;
+		return 7 * 4;
 	}
 	
 	public void addToBuffer(ByteBuffer buffer) {
@@ -39,6 +39,7 @@ public class GameCharacter {
 		buffer.putFloat(d_direction);
 		buffer.putFloat(d_speed);
 		buffer.putInt(d_color.getRGB());
+		buffer.putInt(d_health);
 		buffer.putInt(d_id);
 	}
 	

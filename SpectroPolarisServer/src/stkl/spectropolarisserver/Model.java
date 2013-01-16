@@ -58,8 +58,8 @@ public class Model {
 	// enemy related
 	private final int MAX_ENEMIES_PER_PLAYER = 15;
 	private final int INITIAL_ENEMIES = 10;
-	private final int TIME_BETWEEN_SPAWNS = 5000;
-	private boolean d_initial_spawned = false;;
+	private final int TIME_BETWEEN_SPAWNS = 2000;
+	private boolean d_initial_spawned = false;
 	private long d_timeSinceLastEnemy;
 	
 	
@@ -283,7 +283,7 @@ public class Model {
 		}
 		
 		// Move hill if needed, 1800 steps ~ 60 seconds
-		if(d_timeSinceLastHillMove > 1800) {
+		if(d_timeSinceLastHillMove > 900) {
 			d_hill.x = d_randGenerator.nextInt(d_maxTileX - HILL_WIDTH / d_tileSize) * d_tileSize;
 			d_hill.y = d_randGenerator.nextInt(d_maxTileY - HILL_WIDTH / d_tileSize) * d_tileSize;
 			d_timeSinceLastHillMove = 0;

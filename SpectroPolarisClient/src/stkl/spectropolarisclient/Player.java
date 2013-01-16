@@ -72,6 +72,10 @@ public class Player {
 		d_random = new Random();
 	}
 	
+	public static Bitmap cross() {
+		return s_cross;
+	}
+	
 	private long d_timeSinceLastBullet = 0;
 	
 	public void update(float xMoveOffset, float yMoveOffset, float xShootOffset, float yShootOffset) {

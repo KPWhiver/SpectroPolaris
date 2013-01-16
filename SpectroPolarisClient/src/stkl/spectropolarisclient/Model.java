@@ -403,6 +403,7 @@ public class Model {
 				float direction = in.readFloat();
 				float speed = in.readFloat();
 				int color = in.readInt();
+				int health = in.readInt();
 				int id = in.readInt();
 				
 				//buffer.clear();
@@ -418,16 +419,16 @@ public class Model {
 				}
 				
 				if(idx < d_characters.size())
-					d_characters.get(idx).instantiate(x, y, direction, speed, color, id);
+					d_characters.get(idx).instantiate(x, y, direction, speed, color, health, id);
 				else {
-					GameCharacter character = new GameCharacter(x, y, direction, speed, color, id);
+					GameCharacter character = new GameCharacter(x, y, direction, speed, color, health, id);
 					d_characters.add(character);
 				}
 			}
 			
 			if(numOfCharacters < d_characters.size()) {
 				for(int idx = numOfCharacters; idx != d_characters.size(); ++idx)
-					d_characters.get(idx).instantiate(0, 0, 0, 0, 0, -1);
+					d_characters.get(idx).instantiate(0, 0, 0, 0, 0, 0, -1);
 			}
 		
 		}

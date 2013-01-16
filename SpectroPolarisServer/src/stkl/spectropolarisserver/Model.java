@@ -514,14 +514,18 @@ public class Model {
 	 */
 	public Player closestPlayer(float x, float y, int range) {
 		Player closestPlayer =  null;
-		float distance = range;
+		double distance = range;
+		double currentDistance;
 		
 		for(Player player: d_players) {
 			if(player.health() == 0)
 				continue;
 			
-			if(Math.hypot(player.x() - x, player.y() - y) < distance)
+			currentDistance = Math.hypot(player.x() - x, player.y() - y);
+			if(currentDistance < distance) {
 				closestPlayer = player;
+				distance = currentDistance;
+			}
 		}
 		
 		return closestPlayer;

@@ -99,7 +99,7 @@ public class Enemy extends GameCharacter {
 
 	public boolean checkIfShot(Bullet bullet) {
 		if(bullet.line().ptSegDistSq(coor()) < radius() * radius())
-			return changeHealth(-50);
+			return changeHealth(-34);
 		
 		return false;
 	} 

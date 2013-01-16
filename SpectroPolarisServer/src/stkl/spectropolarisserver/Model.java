@@ -57,7 +57,7 @@ public class Model {
 	
 	// enemy related
 	private final int MAX_ENEMIES_PER_PLAYER = 15;
-	private final int INITIAL_ENEMIES = 10;
+	private final int INITIAL_ENEMIES = 1000;
 	private final int TIME_BETWEEN_SPAWNS = 2000;
 	private boolean d_initial_spawned = false;
 	private long d_timeSinceLastEnemy;
@@ -265,8 +265,8 @@ public class Model {
 			
 			// find free spot to place ammo
 			while(d_timeSinceAmmoPlacement > 330) {
-				int x = d_randGenerator.nextInt(d_mapWidth - 10);
-				int y = d_randGenerator.nextInt(d_mapHeight - 10);
+				int x = d_randGenerator.nextInt(d_mapWidth - 20);
+				int y = d_randGenerator.nextInt(d_mapHeight - 20);
 				
 				synchronized(d_ammo) {
 	         if(!d_tileMap[y / d_tileSize][x / d_tileSize] && !d_tileMap[y / d_tileSize + 1][x / d_tileSize] && 

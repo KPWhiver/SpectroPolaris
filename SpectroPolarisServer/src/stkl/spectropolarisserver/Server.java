@@ -54,15 +54,17 @@ public class Server extends Thread {
 	}
 	
 	public void send(byte[] message) {
-		Iterator<ServerThread> iter = d_threads.iterator();
-		while(iter.hasNext()) {
-			if(iter.next().send(message) == false) {
-				iter.remove();
-				System.out.println("Connection thrown away");
-				
-				// if no more players pause game
-				if(d_threads.size() == 0)
-					SpectroPolaris.setPaused(true);
+		synchronized(d_threads) {
+			Iterator<ServerThread> iter = d_threads.iterator();
+			while(iter.hasNext()) {
+				if(iter.next().send(message) == false) {
+					iter.remove();
+					System.out.println("Connection thrown away");
+					
+					// if no more players pause game
+					if(d_threads.size() == 0)
+						SpectroPolaris.setPaused(true);
+				}
 			}
 		}
 	}
@@ -78,8 +80,9 @@ public class Server extends Thread {
 				Socket socket = d_server.accept();
 				ServerThread thread = new ServerThread(socket);
 				thread.start();
-				
-				d_threads.add(thread);
+				synchronized(d_threads) {
+					d_threads.add(thread);
+				}
 				
 				// if game is paused unpause it
 				SpectroPolaris.setPaused(false);

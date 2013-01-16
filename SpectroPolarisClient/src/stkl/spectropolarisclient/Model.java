@@ -486,7 +486,7 @@ public class Model {
 			// Check if a ammo pickup has been picked up
 			if(numOfAmmoPickups < d_lastNumOfAmmoPickups) {
 				synchronized(d_player) {
-					d_player.incAmmo(50);
+					d_player.incAmmo(25);
 				}
 			}
 			

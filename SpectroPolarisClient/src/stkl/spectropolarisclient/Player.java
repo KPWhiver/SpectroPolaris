@@ -73,6 +73,13 @@ public class Player {
 	}
 	
 	public static Bitmap cross() {
+		if(s_initialized == false) {
+			s_cross = BitmapFactory.decodeResource(GameActivity.getInstance().getResources(), R.drawable.cross);
+			s_pistol = BitmapFactory.decodeResource(GameActivity.getInstance().getResources(), R.drawable.pistol);
+			s_shotgun = BitmapFactory.decodeResource(GameActivity.getInstance().getResources(), R.drawable.shotgun);
+			s_initialized = true;
+		}
+		
 		return s_cross;
 	}
 	
@@ -177,12 +184,7 @@ public class Player {
 	private Rect d_rect = new Rect(0, 0, 0, 0);
 
     public void draw(Canvas canvas, int centerHorizontal, int centerVertical) {
-		if(s_initialized == false) {
-			s_cross = BitmapFactory.decodeResource(GameActivity.getInstance().getResources(), R.drawable.cross);
-			s_pistol = BitmapFactory.decodeResource(GameActivity.getInstance().getResources(), R.drawable.pistol);
-			s_shotgun = BitmapFactory.decodeResource(GameActivity.getInstance().getResources(), R.drawable.shotgun);
-			s_initialized = true;
-		}
+    	cross();
     	
     	if(d_health > 0)
     		canvas.drawCircle(centerHorizontal, centerVertical, d_radius, d_paint);
@@ -192,7 +194,7 @@ public class Player {
     		d_rect.right = (int) (centerHorizontal + d_radius);
     		d_rect.top = (int) (centerVertical - d_radius);
     		
-    		canvas.drawBitmap(s_cross, null, d_rect, null);
+    		canvas.drawBitmap(cross(), null, d_rect, null);
     	}
 	}
     
@@ -238,7 +240,7 @@ public class Player {
 			return;
 		
 		if(sqrDistanceToLine(x1, y1, x2, y2) < d_radius * d_radius)
-			changeHealth(-1);
+			changeHealth(-2);
 	}
 	
 	private float sqrDistanceToLine(float x1, float y1, float x2, float y2) {
